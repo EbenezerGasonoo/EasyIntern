@@ -1,0 +1,71 @@
+.job-detail-page {
+  padding: 40px 0;
+  min-height: calc(100vh - 80px);
+}
+
+.job-detail-header {
+  margin-bottom: 30px;
+}
+
+.job-detail-header h1 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.company-info {
+  color: #666;
+  font-size: 18px;
+}
+
+.job-detail-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 30px;
+}
+
+.job-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.job-main h2 {
+  color: #4a90e2;
+  margin-bottom: 15px;
+}
+
+.job-main ul {
+  margin-left: 20px;
+}
+
+.job-main li {
+  margin-bottom: 8px;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.job-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.job-sidebar {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+@media (max-width: 968px) {
+  .job-detail-content {
+    grid-template-columns: 1fr;
+  }
+
+  .job-sidebar {
+    position: static;
+  }
+}

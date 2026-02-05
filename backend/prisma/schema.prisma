@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  COMPANY
+  INTERN
+}
+
+enum ApplicationStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  userType  UserType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company Company?
+  intern  Intern?
+
+  @@map("users")
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  name        String
+  description String?
+  website     String?
+  industry    String?
+  location    String?
+  logo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs        Job[]
+
+  @@map("companies")
+}
+
+model Intern {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  firstName   String
+  lastName    String
+  bio         String?
+  skills      String[] // Array of skills
+  education   String?
+  experience  String?
+  location    String?
+  resume      String?  // URL to resume file
+  profilePic  String?  // URL to profile picture
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@map("interns")
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  companyId   String
+  title       String
+  description String
+  requirements String[]
+  location    String?
+  remote      Boolean  @default(false)
+  duration    String?  // e.g., "3 months", "6 months"
+  stipend     String?  // e.g., "$500/month", "Unpaid"
+  skills      String[] // Required skills
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  applications Application[]
+
+  @@map("jobs")
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  jobId     String
+  internId  String
+  status    ApplicationStatus @default(PENDING)
+  coverLetter String?
+  appliedAt DateTime          @default(now())
+  reviewedAt DateTime?
+  updatedAt DateTime           @updatedAt
+
+  job      Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  intern   Intern  @relation(fields: [internId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, internId])
+  @@map("applications")
+}
