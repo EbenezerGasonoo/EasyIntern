@@ -1,10 +1,8 @@
 name: Deploy frontend to GitHub Pages
 
+# Disabled: use Vercel for frontend instead (see DEPLOY_VERCEL.md)
 on:
-  push:
-    branches:
-      - main
-      - master
+  workflow_dispatch:
 
 permissions:
   contents: read
