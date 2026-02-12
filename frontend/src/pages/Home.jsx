@@ -10,21 +10,35 @@ function Home() {
   const [interns, setInterns] = useState([])
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [apiError, setApiError] = useState(null)
 
   useEffect(() => {
     fetchData()
   }, [])
 
   const fetchData = async () => {
+    setApiError(null)
     try {
       const [internsRes, jobsRes] = await Promise.all([
-        api.get('/intern/browse').catch(() => ({ data: [] })),
-        api.get('/jobs').catch(() => ({ data: [] }))
+        api.get('/intern/browse').catch((err) => {
+          console.error('Interns API error:', err)
+          return { data: [] }
+        }),
+        api.get('/jobs').catch((err) => {
+          console.error('Jobs API error:', err)
+          return { data: [] }
+        })
       ])
-      setInterns(internsRes.data.slice(0, 6))
-      setJobs(jobsRes.data.slice(0, 6))
+      const internList = Array.isArray(internsRes.data) ? internsRes.data : []
+      const jobList = Array.isArray(jobsRes.data) ? jobsRes.data : []
+      setInterns(internList.slice(0, 6))
+      setJobs(jobList.slice(0, 6))
+      if (internList.length === 0 && jobList.length === 0) {
+        setApiError('No data yet. Make sure the backend is deployed and the database is seeded (see DEPLOY_VERCEL.md).')
+      }
     } catch (error) {
       console.error('Failed to fetch data:', error)
+      setApiError('Could not load data. Check that the API URL is correct and the backend is running.')
     } finally {
       setLoading(false)
     }
@@ -46,6 +60,11 @@ function Home() {
 
   return (
     <div className="home">
+      {apiError && (
+        <div className="api-error-banner">
+          <p>{apiError}</p>
+        </div>
+      )}
       <section className="hero">
         <div className="container">
           <h1>Find Talented Interns & Opportunities</h1>

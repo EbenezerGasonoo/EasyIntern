@@ -44,3 +44,25 @@ The frontend is set up to deploy on **Vercel** instead of GitHub Pages. Do this 
 | Frontend  | `frontend`  | `VITE_API_URL` = `https://YOUR-BACKEND-URL.vercel.app/api` |
 
 After this, every push to your main branch will redeploy both. No GitHub Actions needed.
+
+---
+
+## 3. Seed the database (so sample data shows)
+
+The app shows interns and jobs from the database. If you see “No interns” / “No jobs” or an empty home page, the **production** database needs to be seeded.
+
+1. Use the **same** `DATABASE_URL` that your backend on Vercel uses (Supabase project, with `?pgbouncer=true` if it’s the pooler URL).
+2. In `backend/.env` set that URL (or run the command below with it).
+3. From your Mac, in the project folder, run:
+
+```bash
+cd backend
+npm install
+npx prisma db push
+npx prisma db seed
+```
+
+- `db push` syncs the schema to the DB (if you didn’t run migrations).
+- `db seed` inserts the sample companies and interns (e.g. MTN, Vodafone, students from KNUST, UG, etc.; password for all: `password123`).
+
+4. Redeploy or refresh the frontend – the home page should now show the sample data.

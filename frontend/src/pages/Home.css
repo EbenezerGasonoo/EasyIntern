@@ -3,6 +3,22 @@
   background: #ffffff;
 }
 
+.api-error-banner {
+  background: #fff3cd;
+  color: #856404;
+  padding: 12px 24px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #ffc107;
+}
+
+.api-error-banner p {
+  margin: 0;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .hero {
   background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
   color: white;
