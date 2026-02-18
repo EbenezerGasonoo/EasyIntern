@@ -66,3 +66,30 @@ npx prisma db seed
 - `db seed` inserts the sample companies and interns (e.g. MTN, Vodafone, students from KNUST, UG, etc.; password for all: `password123`).
 
 4. Redeploy or refresh the frontend – the home page should now show the sample data.
+
+---
+
+## 4. Profile photo upload (optional)
+
+Interns can upload a profile photo from their Profile page. To enable uploads (instead of “paste URL” only):
+
+1. **Supabase Dashboard** → your project → **Storage** → **New bucket** → name: `profile-pictures` → set to **Public** → Create.
+2. **Settings** → **API**: copy **Project URL** and **service_role** key (keep this secret).
+3. In **backend** (local `.env` and Vercel env vars), add:
+   - `SUPABASE_URL` = your Project URL (e.g. `https://xxxx.supabase.co`)
+   - `SUPABASE_SERVICE_ROLE_KEY` = the service_role key
+
+Without these, interns can still set a **profile picture URL** (paste a link) in the same form.
+
+---
+
+## 5. Company profile extras (optional)
+
+If you already created the database with the original setup, run this in **Supabase SQL Editor** to add company profile fields (benefits, company size, contact email):
+
+```sql
+-- From backend/prisma/add-company-fields.sql
+ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "benefits" TEXT;
+ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "companySize" TEXT;
+ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "contactEmail" TEXT;
+```

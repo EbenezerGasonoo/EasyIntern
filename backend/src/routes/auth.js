@@ -9,6 +9,9 @@ const router = express.Router();
 // Register Company
 router.post('/register/company', async (req, res) => {
   try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
+    }
     const { email, password, name, description, website, industry, location } = req.body;
 
     if (!email || !password || !name) {
@@ -61,18 +64,26 @@ router.post('/register/company', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    const message = error.code === 'P2002' ? 'This email is already registered' : (error.message || 'Registration failed');
+    res.status(500).json({ error: message });
   }
 });
 
 // Register Intern
 router.post('/register/intern', async (req, res) => {
   try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
+    }
     const { email, password, firstName, lastName, bio, skills, education, location } = req.body;
 
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
     }
+
+    // Normalize skills to array of non-empty strings
+    const skillsArray = Array.isArray(skills) ? skills : (typeof skills === 'string' ? skills.split(',').map(s => s.trim()) : []);
+    const skillsClean = skillsArray.filter(Boolean);
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -94,9 +105,9 @@ router.post('/register/intern', async (req, res) => {
             firstName,
             lastName,
             bio,
-            skills: skills || [],
-            education,
-            location,
+            skills: skillsClean,
+            education: education || null,
+            location: location || null,
           },
         },
       },
@@ -121,7 +132,8 @@ router.post('/register/intern', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Registration failed' });
+    const message = error.code === 'P2002' ? 'This email is already registered' : (error.message || 'Registration failed');
+    res.status(500).json({ error: message });
   }
 });
 

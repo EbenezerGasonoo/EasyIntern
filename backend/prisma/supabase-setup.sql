@@ -29,6 +29,9 @@ CREATE TABLE "companies" (
     "industry" TEXT,
     "location" TEXT,
     "logo" TEXT,
+    "benefits" TEXT,
+    "companySize" TEXT,
+    "contactEmail" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

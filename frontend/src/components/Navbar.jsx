@@ -20,8 +20,12 @@ function Navbar() {
             <Logo size="large" />
           </Link>
           <div className="navbar-links">
-            <Link to="/interns">Browse Interns</Link>
-            <Link to="/jobs">Browse Jobs</Link>
+            {user?.userType !== 'INTERN' && (
+              <Link to="/interns">Browse Interns</Link>
+            )}
+            {user?.userType !== 'COMPANY' && (
+              <Link to="/jobs">Browse Jobs</Link>
+            )}
             {user ? (
               <>
                 {user.userType === 'COMPANY' ? (

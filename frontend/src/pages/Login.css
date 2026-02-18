@@ -131,6 +131,32 @@
   cursor: not-allowed;
 }
 
+.login-demo {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+
+.login-demo-label {
+  display: block;
+  font-size: 13px;
+  color: #717171;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.login-demo-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-demo-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+}
+
 .login-switch {
   text-align: center;
   margin-top: 28px;

@@ -1,20 +1,30 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import { sampleJobs } from '../data/sampleData'
 import './Jobs.css'
 
 function Jobs() {
+  const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const [jobs, setJobs] = useState([])
+  const [jobs, setJobs] = useState(sampleJobs)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('')
   const [remote, setRemote] = useState('')
 
+  // Browse Jobs is for interns only; redirect companies to their dashboard
   useEffect(() => {
+    if (!authLoading && user?.userType === 'COMPANY') {
+      navigate('/company/dashboard', { replace: true })
+    }
+  }, [authLoading, user?.userType, navigate])
+
+  useEffect(() => {
+    if (user?.userType === 'COMPANY') return
     fetchJobs()
-  }, [])
+  }, [user?.userType])
 
   const fetchJobs = async () => {
     try {
@@ -37,6 +47,10 @@ function Jobs() {
   const handleSearch = (e) => {
     e.preventDefault()
     fetchJobs()
+  }
+
+  if (authLoading || (!authLoading && user?.userType === 'COMPANY')) {
+    return <div className="loading">Loading...</div>
   }
 
   if (loading) {

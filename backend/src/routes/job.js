@@ -79,6 +79,9 @@ router.get('/:id', async (req, res) => {
             logo: true,
             location: true,
             industry: true,
+            benefits: true,
+            companySize: true,
+            contactEmail: true,
           },
         },
         _count: {
@@ -101,7 +104,7 @@ router.get('/:id', async (req, res) => {
 // Create job (company only)
 router.post('/', authenticate, requireCompany, async (req, res) => {
   try {
-    const { title, description, requirements, location, remote, duration, stipend, skills } = req.body;
+    const { title, description, requirements, responsibilities, benefits, location, remote, duration, stipend, skills } = req.body;
 
     if (!title || !description) {
       return res.status(400).json({ error: 'Title and description are required' });
@@ -121,6 +124,8 @@ router.post('/', authenticate, requireCompany, async (req, res) => {
         title,
         description,
         requirements: requirements || [],
+        responsibilities: responsibilities || [],
+        benefits: benefits || [],
         location,
         remote: remote || false,
         duration,
@@ -147,7 +152,7 @@ router.post('/', authenticate, requireCompany, async (req, res) => {
 // Update job (company only)
 router.put('/:id', authenticate, requireCompany, async (req, res) => {
   try {
-    const { title, description, requirements, location, remote, duration, stipend, skills } = req.body;
+    const { title, description, requirements, responsibilities, benefits, location, remote, duration, stipend, skills } = req.body;
 
     const company = await prisma.company.findUnique({
       where: { userId: req.userId },
@@ -172,6 +177,8 @@ router.put('/:id', authenticate, requireCompany, async (req, res) => {
         title,
         description,
         requirements: requirements || [],
+        responsibilities: responsibilities || [],
+        benefits: benefits || [],
         location,
         remote,
         duration,

@@ -1,8 +1,63 @@
 import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate, requireIntern } from '../middleware/auth.js';
+import { getSupabase, PROFILE_BUCKET } from '../utils/supabase.js';
 
 const router = express.Router();
+
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
+
+// Upload profile picture (intern only)
+router.post('/upload-profile-picture', authenticate, requireIntern, async (req, res) => {
+  try {
+    const { image: dataUrl } = req.body || {};
+    if (!dataUrl || typeof dataUrl !== 'string') {
+      return res.status(400).json({ error: 'Image data is required (base64 data URL)' });
+    }
+
+    const match = dataUrl.match(/^data:(image\/(jpeg|png|webp));base64,(.+)$/i);
+    if (!match) {
+      return res.status(400).json({ error: 'Invalid image. Use JPEG, PNG, or WebP.' });
+    }
+    const mime = match[1].toLowerCase();
+    const ext = match[2].toLowerCase() === 'jpeg' ? 'jpg' : match[2];
+    const base64 = match[3];
+
+    const buffer = Buffer.from(base64, 'base64');
+    if (buffer.length > MAX_SIZE_BYTES) {
+      return res.status(400).json({ error: 'Image must be 2MB or smaller.' });
+    }
+
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({
+        error: 'Image upload is not configured. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to enable uploads, or use a profile picture URL instead.',
+      });
+    }
+
+    const path = `interns/${req.userId}/${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from(PROFILE_BUCKET)
+      .upload(path, buffer, { contentType: mime, upsert: false });
+
+    if (uploadError) {
+      console.error('Supabase upload error:', uploadError);
+      if (uploadError.message?.includes('Bucket not found')) {
+        return res.status(503).json({
+          error: 'Storage bucket not set up. Create a bucket named "profile-pictures" in Supabase Dashboard (Storage).',
+        });
+      }
+      return res.status(500).json({ error: 'Upload failed. Try again or use a profile picture URL.' });
+    }
+
+    const { data: urlData } = supabase.storage.from(PROFILE_BUCKET).getPublicUrl(path);
+    res.json({ url: urlData.publicUrl });
+  } catch (err) {
+    console.error('Upload profile picture error:', err);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
 
 // PUBLIC: Get all intern profiles (for browsing)
 router.get('/browse', async (req, res) => {

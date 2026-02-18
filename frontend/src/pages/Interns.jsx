@@ -6,17 +6,25 @@ import { sampleInterns } from '../data/sampleData'
 import './Interns.css'
 
 function Interns() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const [interns, setInterns] = useState([])
+  const [interns, setInterns] = useState(sampleInterns)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('')
   const [skills, setSkills] = useState('')
 
+  // Browse Interns is for companies only; redirect interns to their dashboard
   useEffect(() => {
+    if (!authLoading && user?.userType === 'INTERN') {
+      navigate('/intern/dashboard', { replace: true })
+    }
+  }, [authLoading, user?.userType, navigate])
+
+  useEffect(() => {
+    if (user?.userType === 'INTERN') return
     fetchInterns()
-  }, [])
+  }, [user?.userType])
 
   const fetchInterns = async () => {
     try {
@@ -54,6 +62,10 @@ function Interns() {
     }
     // Navigate to intern detail page or show contact form
     navigate(`/interns/${internId}`)
+  }
+
+  if (authLoading || (!authLoading && user?.userType === 'INTERN')) {
+    return <div className="loading">Loading...</div>
   }
 
   if (loading) {

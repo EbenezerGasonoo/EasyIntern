@@ -42,9 +42,90 @@
   flex-shrink: 0;
 }
 
+.intern-profile-info {
+  min-width: 0;
+}
+
 .intern-detail-header h1 {
   margin: 0;
   color: #333;
+}
+
+.intern-location {
+  margin: 6px 0 0;
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.intern-location-icon {
+  flex-shrink: 0;
+}
+
+.intern-at-a-glance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.intern-glance-item {
+  background: #f0f4f8;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.intern-education-one-liner {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.intern-detail-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.intern-detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+}
+
+.intern-detail-sidebar-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.intern-detail-sidebar-card h3 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #4a90e2;
+  font-weight: 600;
+}
+
+.location-card .intern-sidebar-location {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.location-pin {
+  flex-shrink: 0;
 }
 
 .intern-detail-content {
@@ -98,5 +179,20 @@
 
   .intern-detail-header .btn {
     width: 100%;
+  }
+
+  .intern-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .intern-detail-sidebar {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .intern-detail-sidebar-card {
+    min-width: 200px;
+    flex: 1;
   }
 }

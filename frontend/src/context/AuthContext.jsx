@@ -13,7 +13,17 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    if (token) {
+    const demoUser = localStorage.getItem('demoUser')
+    if (token && (token === 'demo-intern' || token === 'demo-company')) {
+      if (demoUser) {
+        try {
+          setUser(JSON.parse(demoUser))
+        } catch (_) {
+          setUser(null)
+        }
+      }
+      setLoading(false)
+    } else if (token) {
       fetchUser()
     } else {
       setLoading(false)
@@ -26,6 +36,7 @@ export function AuthProvider({ children }) {
       setUser(response.data)
     } catch (error) {
       localStorage.removeItem('token')
+      localStorage.removeItem('demoUser')
       setUser(null)
     } finally {
       setLoading(false)
@@ -39,6 +50,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('demoUser')
     setUser(null)
   }
 
