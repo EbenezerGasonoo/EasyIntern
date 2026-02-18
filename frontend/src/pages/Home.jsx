@@ -68,11 +68,10 @@ function Home() {
       )}
 
       <section className="landing-hero">
-        <div className="landing-hero-bg" aria-hidden />
-        <div className="container landing-hero-inner">
+        <div className="landing-hero-inner container">
           <p className="landing-hero-badge">Where talent meets opportunity</p>
           <h1 className="landing-hero-title">
-            Your next internship—<br className="landing-hero-br" />or your next hire—<br className="landing-hero-br-mobile" />starts here
+            Your next internship or your next hire starts here
           </h1>
           <p className="landing-hero-sub">
             Join students and companies across Ghana. Create a profile, browse opportunities, and connect in one place.
