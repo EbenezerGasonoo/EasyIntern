@@ -68,14 +68,14 @@ router.get('/browse', async (req, res) => {
 
     if (search) {
       where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { bio: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search } },
+        { lastName: { contains: search } },
+        { bio: { contains: search } },
       ];
     }
 
     if (location) {
-      where.location = { contains: location, mode: 'insensitive' };
+      where.location = { contains: location };
     }
 
     const interns = await prisma.intern.findMany({

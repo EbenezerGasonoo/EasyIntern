@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -64,7 +64,7 @@ model Intern {
   firstName   String
   lastName    String
   bio         String?
-  skills      String[] // Array of skills
+  skills      Json     // MySQL-compatible JSON array of skills
   education   String?
   experience  String?
   location    String?
@@ -84,14 +84,14 @@ model Job {
   companyId     String
   title         String
   description   String
-  requirements  String[]
-  responsibilities String[] @default([]) // Day-to-day duties
-  benefits      String[]  @default([])  // Job-specific perks, e.g. mentorship, certificate
+  requirements  Json
+  responsibilities Json
+  benefits      Json
   location      String?
   remote        Boolean  @default(false)
   duration      String?  // e.g., "3 months", "6 months"
   stipend       String?  // e.g., "$500/month", "Unpaid"
-  skills        String[] // Required skills
+  skills        Json     // Required skills
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
