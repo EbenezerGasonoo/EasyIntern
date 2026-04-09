@@ -61,11 +61,7 @@ function Home() {
 
   return (
     <div className="landing">
-      {apiError && (
-        <div className="landing-api-banner">
-          <p>{apiError}</p>
-        </div>
-      )}
+
 
       <section className="landing-hero">
         <div className="landing-hero-inner container">
