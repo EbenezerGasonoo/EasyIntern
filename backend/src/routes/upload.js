@@ -1,33 +1,44 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
-import { getSupabase, PROFILE_BUCKET } from '../utils/supabase.js';
 import prisma from '../utils/db.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const router = express.Router();
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, '../../uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const saveLocalFile = (base64Data, originalName, userId) => {
+    const extension = path.extname(originalName) || '.png';
+    const fileName = `${userId}_${Date.now()}${extension}`;
+    const filePath = path.join(uploadDir, fileName);
+    
+    // Remove header if present
+    const base64Content = base64Data.includes('base64,') 
+        ? base64Data.split('base64,')[1] 
+        : base64Data;
+        
+    const buffer = Buffer.from(base64Content, 'base64');
+    fs.writeFileSync(filePath, buffer);
+    
+    return fileName;
+};
 
 router.post('/profile-pic', authenticate, async (req, res) => {
   try {
-    const { image, fileName } = req.body; // Base64 image
+    const { image, fileName } = req.body;
     if (!image) return res.status(400).json({ error: 'No image provided' });
 
-    const supabase = getSupabase();
-    if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
-
-    const buffer = Buffer.from(image.replace(/^data:image\/\w+;base64,/, ""), 'base64');
-    const path = `${req.userId}/${Date.now()}_${fileName || 'profile.png'}`;
-
-    const { data, error } = await supabase.storage
-      .from(PROFILE_BUCKET)
-      .upload(path, buffer, {
-        contentType: 'image/png',
-        upsert: true
-      });
-
-    if (error) throw error;
-
-    const { data: { publicUrl } } = supabase.storage
-      .from(PROFILE_BUCKET)
-      .getPublicUrl(path);
+    const savedFileName = saveLocalFile(image, fileName || 'profile.png', req.userId);
+    const protocol = req.protocol === 'http' && req.headers['x-forwarded-proto'] === 'https' ? 'https' : req.protocol;
+    const publicUrl = `${protocol}://${req.get('host')}/uploads/${savedFileName}`;
 
     // Update user profile
     const user = await prisma.user.findUnique({
@@ -56,26 +67,12 @@ router.post('/profile-pic', authenticate, async (req, res) => {
 
 router.post('/document', authenticate, async (req, res) => {
   try {
-    const { file, fileName, type } = req.body; // Base64 file
+    const { file, fileName, type } = req.body;
     if (!file) return res.status(400).json({ error: 'No file provided' });
 
-    const supabase = getSupabase();
-    if (!supabase) return res.status(500).json({ error: 'Supabase not configured' });
-
-    const buffer = Buffer.from(file.split(',')[1], 'base64');
-    const path = `${req.userId}/docs/${Date.now()}_${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from('documents')
-      .upload(path, buffer, {
-        upsert: true
-      });
-
-    if (error) throw error;
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('documents')
-      .getPublicUrl(path);
+    const savedFileName = saveLocalFile(file, fileName, req.userId);
+    const protocol = req.protocol === 'http' && req.headers['x-forwarded-proto'] === 'https' ? 'https' : req.protocol;
+    const publicUrl = `${protocol}://${req.get('host')}/uploads/${savedFileName}`;
 
     if (type === 'registration') {
         await prisma.company.update({

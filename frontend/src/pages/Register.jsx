@@ -7,6 +7,7 @@ import './Auth.css'
 function Register() {
   const [searchParams] = useSearchParams()
   const typeParam = searchParams.get('type')
+  const [userType, setUserType] = useState(typeParam === 'company' ? 'COMPANY' : 'INTERN')
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
