@@ -4,6 +4,22 @@
   background-color: #f5f5f5;
 }
 
+.intern-detail {
+  padding: 2rem 0;
+}
+
+.contact-details {
+  background: var(--bg-light);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.contact-details p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
 .intern-detail-header {
   display: flex;
   justify-content: space-between;

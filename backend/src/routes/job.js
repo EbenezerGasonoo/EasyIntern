@@ -7,7 +7,7 @@ const router = express.Router();
 // Get all jobs (public)
 router.get('/', async (req, res) => {
   try {
-    const { search, location, remote, skills } = req.query;
+    const { search, location, remote, skills, industry } = req.query;
 
     const where = {};
 
@@ -19,11 +19,19 @@ router.get('/', async (req, res) => {
     }
 
     if (location) {
-      where.location = { contains: location };
+      // Requirement 7: The location search must be exact
+      where.location = location;
     }
 
     if (remote !== undefined) {
       where.remote = remote === 'true';
+    }
+
+    if (industry) {
+      // Requirement 6: Internship opportunities search by industries
+      where.company = {
+        industry: { contains: industry }
+      };
     }
 
     const jobs = await prisma.job.findMany({

@@ -1,6 +1,7 @@
 import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate, requireIntern, requireCompany } from '../middleware/auth.js';
+import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
@@ -56,6 +57,7 @@ router.post('/', authenticate, requireIntern, async (req, res) => {
           include: {
             company: {
               select: {
+                userId: true,
                 name: true,
                 logo: true,
               },
@@ -70,6 +72,15 @@ router.post('/', authenticate, requireIntern, async (req, res) => {
           },
         },
       },
+    });
+
+    // Notify Company
+    await prisma.notification.create({
+      data: {
+        userId: application.job.company.userId,
+        message: `${application.intern.firstName} ${application.intern.lastName} applied for ${application.job.title}.`,
+        type: 'INFO'
+      }
     });
 
     res.status(201).json(application);
@@ -171,6 +182,7 @@ router.patch('/:id/status', authenticate, requireCompany, async (req, res) => {
           include: {
             user: {
               select: {
+                id: true,
                 email: true,
               },
             },
@@ -178,6 +190,30 @@ router.patch('/:id/status', authenticate, requireCompany, async (req, res) => {
         },
       },
     });
+
+    // Create In-App Notification
+    await prisma.notification.create({
+      data: {
+        userId: updatedApplication.intern.user.id,
+        message: `Your application for ${updatedApplication.job.title} has been ${status.toLowerCase()}.`,
+        type: status === 'ACCEPTED' ? 'SUCCESS' : (status === 'REJECTED' ? 'WARNING' : 'INFO')
+      }
+    });
+
+    // Requirement 13: Email confirmation ( sign and accepted internship )
+    if (status === 'ACCEPTED') {
+      try {
+        await sendEmail({
+          to: updatedApplication.intern.user.email,
+          subject: `Internship Accepted: ${updatedApplication.job.title}`,
+          html: `<h1>Congratulations!</h1>
+                 <p>Your application for the <strong>${updatedApplication.job.title}</strong> internship at <strong>${updatedApplication.job.company.name}</strong> has been accepted!</p>
+                 <p>Please log in to the portal to view the next steps.</p>`
+        });
+      } catch (err) {
+        console.error('Failed to send acceptance email:', err);
+      }
+    }
 
     res.json(updatedApplication);
   } catch (error) {

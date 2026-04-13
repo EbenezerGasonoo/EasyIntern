@@ -44,3 +44,39 @@
 .navbar-links .btn {
   margin-left: 8px;
 }
+
+.navbar-links a, .navbar-links button {
+  margin-left: 1.5rem;
+}
+
+.nav-profile {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.nav-notifications {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -12px;
+  background-color: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  padding: 0px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 0 0 2px white;
+}

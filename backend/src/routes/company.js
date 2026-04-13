@@ -38,7 +38,7 @@ router.get('/profile', authenticate, requireCompany, async (req, res) => {
 // Update company profile
 router.put('/profile', authenticate, requireCompany, async (req, res) => {
   try {
-    const { name, description, website, industry, location, logo, benefits, companySize, contactEmail } = req.body;
+    const { name, description, website, industry, location, logo, benefits, companySize, contactEmail, phone, registrationDoc, internIntake, mapLocation } = req.body;
 
     const company = await prisma.company.update({
       where: { userId: req.userId },
@@ -49,9 +49,13 @@ router.put('/profile', authenticate, requireCompany, async (req, res) => {
         industry,
         location,
         logo,
-        benefits: benefits ?? undefined,
-        companySize: companySize ?? undefined,
-        contactEmail: contactEmail ?? undefined,
+        benefits,
+        companySize,
+        contactEmail,
+        phone,
+        registrationDoc,
+        internIntake,
+        mapLocation,
       },
     });
 

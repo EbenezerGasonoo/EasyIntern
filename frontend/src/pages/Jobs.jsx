@@ -13,6 +13,7 @@ function Jobs() {
   const [search, setSearch] = useState('')
   const [location, setLocation] = useState('')
   const [remote, setRemote] = useState('')
+  const [industry, setIndustry] = useState('')
 
   // Browse Jobs is for interns only; redirect companies to their dashboard
   useEffect(() => {
@@ -32,6 +33,7 @@ function Jobs() {
       if (search) params.search = search
       if (location) params.location = location
       if (remote) params.remote = remote
+      if (industry) params.industry = industry
 
       const response = await api.get('/jobs', { params })
       const data = Array.isArray(response.data) ? response.data : []
@@ -72,18 +74,30 @@ function Jobs() {
           />
           <input
             type="text"
-            placeholder="Location"
+            placeholder="Exact Location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             className="search-input"
           />
-          <label>
+          <select 
+            value={industry} 
+            onChange={(e) => setIndustry(e.target.value)}
+            className="search-input"
+          >
+            <option value="">By Industry</option>
+            <option value="Technology">Technology</option>
+            <option value="Banking">Banking</option>
+            <option value="Telecommunications">Telecommunications</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Education">Education</option>
+          </select>
+          <label className="remote-label">
             <input
               type="checkbox"
               checked={remote === 'true'}
               onChange={(e) => setRemote(e.target.checked ? 'true' : '')}
             />
-            Remote only
+            Remote
           </label>
           <button type="submit" className="btn btn-primary">
             Search

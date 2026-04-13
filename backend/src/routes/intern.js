@@ -120,19 +120,11 @@ router.get('/:id', async (req, res) => {
   try {
     const intern = await prisma.intern.findUnique({
       where: { id: req.params.id },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        bio: true,
-        skills: true,
-        education: true,
-        experience: true,
-        location: true,
-        resume: true,
-        profilePic: true,
-        createdAt: true,
-      },
+      include: {
+        user: {
+          select: { email: true }
+        }
+      }
     });
 
     if (!intern) {
@@ -187,7 +179,7 @@ router.get('/profile', authenticate, requireIntern, async (req, res) => {
 // Update intern profile
 router.put('/profile', authenticate, requireIntern, async (req, res) => {
   try {
-    const { firstName, lastName, bio, skills, education, experience, location, resume, profilePic } = req.body;
+    const { firstName, lastName, bio, skills, education, experience, location, resume, profilePic, phone } = req.body;
 
     const intern = await prisma.intern.update({
       where: { userId: req.userId },
@@ -195,6 +187,7 @@ router.put('/profile', authenticate, requireIntern, async (req, res) => {
         firstName,
         lastName,
         bio,
+        phone,
         skills: skills || [],
         education,
         experience,

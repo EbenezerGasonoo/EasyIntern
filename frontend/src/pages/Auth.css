@@ -29,6 +29,32 @@
   max-width: 500px;
   border: 1px solid #e0e7ff;
   transition: box-shadow 0.2s;
+  .form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 5px;
+}
   animation: cardPopIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
   flex: 1;
 }

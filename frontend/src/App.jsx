@@ -11,6 +11,10 @@ import JobDetail from './pages/JobDetail'
 import Interns from './pages/Interns'
 import InternDetail from './pages/InternDetail'
 import Profile from './pages/Profile'
+import Help from './pages/Help'
+import VerifyEmailNotice from './pages/VerifyEmailNotice'
+import VerifyEmail from './pages/VerifyEmail'
+import Notifications from './pages/Notifications'
 import './App.css'
 
 function PrivateRoute({ children, requireType }) {
@@ -41,6 +45,9 @@ function AppRoutes() {
       <Route path="/jobs/:id" element={<JobDetail />} />
       <Route path="/interns" element={<Interns />} />
       <Route path="/interns/:id" element={<InternDetail />} />
+      <Route path="/help" element={<Help />} />
+      <Route path="/verify-email-notice" element={<VerifyEmailNotice />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route
         path="/company/dashboard"
         element={
@@ -54,6 +61,14 @@ function AppRoutes() {
         element={
           <PrivateRoute requireType="INTERN">
             <InternDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <PrivateRoute>
+            <Notifications />
           </PrivateRoute>
         }
       />

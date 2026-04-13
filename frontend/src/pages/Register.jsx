@@ -7,7 +7,7 @@ import './Auth.css'
 function Register() {
   const [searchParams] = useSearchParams()
   const typeParam = searchParams.get('type')
-  const [userType, setUserType] = useState(typeParam === 'company' ? 'COMPANY' : 'INTERN')
+  const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,6 +18,10 @@ function Register() {
     website: '',
     industry: '',
     location: '',
+    phone: '',
+    companySize: '',
+    internIntake: '',
+    mapLocation: '',
     bio: '',
     skills: '',
     education: '',
@@ -49,12 +53,17 @@ function Register() {
               website: formData.website,
               industry: formData.industry,
               location: formData.location,
+              phone: formData.phone,
+              companySize: formData.companySize,
+              internIntake: formData.internIntake,
+              mapLocation: formData.mapLocation,
             }
           : {
               email: formData.email,
               password: formData.password,
               firstName: formData.firstName,
               lastName: formData.lastName,
+              phone: formData.phone,
               bio: formData.bio,
               skills: formData.skills
                 ? formData.skills.split(',').map((s) => s.trim())
@@ -65,11 +74,7 @@ function Register() {
 
       const response = await api.post(endpoint, payload)
       login(response.data.token, response.data.user)
-      navigate(
-        userType === 'COMPANY'
-          ? '/company/dashboard'
-          : '/intern/dashboard'
-      )
+      navigate('/verify-email-notice')
     } catch (err) {
       setError(err.response?.data?.error || 'Registration failed')
     } finally {
@@ -111,12 +116,31 @@ function Register() {
           </div>
           <div className="form-group">
             <label>Password</label>
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button 
+                type="button" 
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label>Phone Number</label>
             <input
-              type="password"
-              name="password"
-              value={formData.password}
+              type="tel"
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -159,11 +183,45 @@ function Register() {
                 />
               </div>
               <div className="form-group">
+                <label>Company Size*</label>
+                <select
+                  name="companySize"
+                  value={formData.companySize}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select size</option>
+                  <option value="1-10">1-10</option>
+                  <option value="11-50">11-50</option>
+                  <option value="51-200">51-200</option>
+                  <option value="200+">200+</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Intern Intake per Year</label>
+                <input
+                  type="text"
+                  name="internIntake"
+                  value={formData.internIntake}
+                  onChange={handleChange}
+                  placeholder="e.g. 5 interns"
+                />
+              </div>
+              <div className="form-group">
                 <label>Location</label>
                 <input
                   type="text"
                   name="location"
                   value={formData.location}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Google Maps Location (URL or Embed)</label>
+                <input
+                  type="text"
+                  name="mapLocation"
+                  value={formData.mapLocation}
                   onChange={handleChange}
                 />
               </div>

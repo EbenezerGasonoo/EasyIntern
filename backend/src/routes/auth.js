@@ -1,8 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import prisma from '../utils/db.js';
 import { authenticate } from '../middleware/auth.js';
+import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
@@ -12,10 +14,10 @@ router.post('/register/company', async (req, res) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
     }
-    const { email, password, name, description, website, industry, location } = req.body;
+    const { email, password, name, description, website, industry, location, phone, companySize, internIntake, mapLocation } = req.body;
 
-    if (!email || !password || !name) {
-      return res.status(400).json({ error: 'Email, password, and company name are required' });
+    if (!email || !password || !name || !companySize) {
+      return res.status(400).json({ error: 'Email, password, company name, and company size are required' });
     }
 
     // Check if user exists
@@ -26,6 +28,7 @@ router.post('/register/company', async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     // Create user and company
     const user = await prisma.user.create({
@@ -33,6 +36,7 @@ router.post('/register/company', async (req, res) => {
         email,
         password: hashedPassword,
         userType: 'COMPANY',
+        verificationToken,
         company: {
           create: {
             name,
@@ -40,10 +44,22 @@ router.post('/register/company', async (req, res) => {
             website,
             industry,
             location,
+            phone,
+            companySize,
+            internIntake,
+            mapLocation
           },
         },
       },
       include: { company: true },
+    });
+
+    // Send verification email
+    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    await sendEmail({
+      to: email,
+      subject: 'Verify your Easy Intern account',
+      html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`
     });
 
     // Generate token
@@ -75,7 +91,7 @@ router.post('/register/intern', async (req, res) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
     }
-    const { email, password, firstName, lastName, bio, skills, education, location } = req.body;
+    const { email, password, firstName, lastName, bio, skills, education, location, phone } = req.body;
 
     if (!email || !password || !firstName || !lastName) {
       return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
@@ -93,6 +109,7 @@ router.post('/register/intern', async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     // Create user and intern
     const user = await prisma.user.create({
@@ -100,11 +117,13 @@ router.post('/register/intern', async (req, res) => {
         email,
         password: hashedPassword,
         userType: 'INTERN',
+        verificationToken,
         intern: {
           create: {
             firstName,
             lastName,
             bio,
+            phone,
             skills: skillsClean,
             education: education || null,
             location: location || null,
@@ -112,6 +131,14 @@ router.post('/register/intern', async (req, res) => {
         },
       },
       include: { intern: true },
+    });
+
+    // Send verification email
+    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    await sendEmail({
+      to: email,
+      subject: 'Verify your Easy Intern account',
+      html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`
     });
 
     // Generate token
@@ -134,6 +161,33 @@ router.post('/register/intern', async (req, res) => {
     console.error('Registration error:', error);
     const message = error.code === 'P2002' ? 'This email is already registered' : (error.message || 'Registration failed');
     res.status(500).json({ error: message });
+  }
+});
+
+// Verify Email
+router.get('/verify-email', async (req, res) => {
+  try {
+    const { token } = req.query;
+    if (!token) return res.status(400).json({ error: 'Token is required' });
+
+    const user = await prisma.user.findFirst({
+      where: { verificationToken: token }
+    });
+
+    if (!user) return res.status(400).json({ error: 'Invalid or expired token' });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        verificationToken: null
+      }
+    });
+
+    res.json({ message: 'Email verified successfully' });
+  } catch (error) {
+    console.error('Email verification error:', error);
+    res.status(500).json({ error: 'Verification failed' });
   }
 });
 

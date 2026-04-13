@@ -38,6 +38,7 @@ function Profile() {
           firstName: demo.firstName ?? '',
           lastName: demo.lastName ?? '',
           bio: demo.bio ?? '',
+          phone: demo.phone ?? '',
           skills: Array.isArray(demo.skills) ? demo.skills : [],
           education: demo.education ?? '',
           experience: demo.experience ?? '',
@@ -55,7 +56,11 @@ function Profile() {
           website: demo.website ?? '',
           industry: demo.industry ?? '',
           location: demo.location ?? '',
+          phone: demo.phone ?? '',
           logo: demo.logo ?? '',
+          registrationDoc: demo.registrationDoc ?? '',
+          internIntake: demo.internIntake ?? '',
+          mapLocation: demo.mapLocation ?? '',
           benefits: demo.benefits ?? '',
           companySize: demo.companySize ?? '',
           contactEmail: demo.contactEmail ?? '',
@@ -67,39 +72,43 @@ function Profile() {
     }
   }
 
-  const handlePhotoUpload = async (e) => {
+  const handleFileUpload = async (e, type) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const allowed = ['image/jpeg', 'image/png', 'image/webp']
-    if (!allowed.includes(file.type)) {
-      setPhotoError('Please choose a JPEG, PNG, or WebP image.')
+    
+    // Size check
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File must be 5MB or smaller.')
       return
     }
-    if (file.size > 2 * 1024 * 1024) {
-      setPhotoError('Image must be 2MB or smaller.')
-      return
-    }
-    setPhotoError('')
-    setUploadingPhoto(true)
+
+    setSaving(true)
     try {
       const reader = new FileReader()
       reader.onload = async () => {
         try {
           const dataUrl = reader.result
-          const { data } = await api.post('/intern/upload-profile-picture', { image: dataUrl })
+          const endpoint = type === 'profilePic' || type === 'logo' ? '/upload/profile-pic' : '/upload/document'
+          const payload = type === 'profilePic' || type === 'logo' 
+            ? { image: dataUrl, fileName: file.name }
+            : { file: dataUrl, fileName: file.name, type: type === 'resume' ? 'resume' : 'registration' }
+
+          const { data } = await api.post(endpoint, payload)
           if (data?.url) {
-            setFormData((prev) => ({ ...prev, profilePic: data.url }))
+            setFormData((prev) => ({ ...prev, [type]: data.url }))
+            setSuccess(`${type} uploaded successfully!`)
+            setTimeout(() => setSuccess(''), 3000)
           }
         } catch (err) {
-          setPhotoError(err.response?.data?.error || 'Upload failed. You can paste an image URL below instead.')
+          setError(err.response?.data?.error || 'Upload failed.')
         } finally {
-          setUploadingPhoto(false)
+          setSaving(false)
         }
       }
       reader.readAsDataURL(file)
     } catch (err) {
-      setPhotoError('Upload failed. Try again or use a URL below.')
-      setUploadingPhoto(false)
+      setError('Upload failed. Try again.')
+      setSaving(false)
     }
     e.target.value = ''
   }
@@ -274,6 +283,16 @@ function Profile() {
                   </div>
                 </div>
                 <div className="form-group">
+                  <label>Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone || ''}
+                    onChange={handleChange}
+                    placeholder="e.g. +233 24 123 4567"
+                  />
+                </div>
+                <div className="form-group">
                   <label>Experience</label>
                   <textarea
                     name="experience"
@@ -284,13 +303,26 @@ function Profile() {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Resume URL (optional)</label>
+                  <label>Resume</label>
+                  <div className="file-upload-wrapper">
+                    <input
+                      type="file"
+                      id="resume-upload"
+                      onChange={(e) => handleFileUpload(e, 'resume')}
+                      hidden
+                    />
+                    <label htmlFor="resume-upload" className="btn btn-secondary">
+                      {saving ? 'Uploading...' : 'Upload Resume Document'}
+                    </label>
+                    {formData.resume && <span className="file-name">✅ Resume uploaded</span>}
+                  </div>
                   <input
                     type="url"
                     name="resume"
                     value={formData.resume || ''}
                     onChange={handleChange}
-                    placeholder="https://..."
+                    placeholder="Or paste resume URL (Google Drive, Dropbox, etc.)"
+                    className="mt-2"
                   />
                 </div>
 
@@ -311,12 +343,12 @@ function Profile() {
                     </div>
                     <div className="profile-photo-actions">
                       <label className="btn btn-secondary profile-photo-upload-btn">
-                        {uploadingPhoto ? 'Uploading...' : 'Upload photo'}
+                        {saving ? 'Uploading...' : 'Upload photo'}
                         <input
                           type="file"
                           accept="image/jpeg,image/png,image/webp"
-                          onChange={handlePhotoUpload}
-                          disabled={uploadingPhoto}
+                          onChange={(e) => handleFileUpload(e, 'profilePic')}
+                          disabled={saving}
                           className="profile-photo-input"
                         />
                       </label>
@@ -579,27 +611,82 @@ function Profile() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Company size</label>
+                    <label>Company size*</label>
                     <select
                       name="companySize"
                       value={formData.companySize || ''}
                       onChange={handleChange}
+                      required
                     >
-                      {COMPANY_SIZES.map((opt) => (
-                        <option key={opt.value || 'empty'} value={opt.value}>{opt.label}</option>
-                      ))}
+                      <option value="">Select size</option>
+                      <option value="1-10">1-10</option>
+                      <option value="11-50">11-50</option>
+                      <option value="51-200">51-200</option>
+                      <option value="200+">200+</option>
                     </select>
                   </div>
                 </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone || ''}
+                      onChange={handleChange}
+                      placeholder="e.g. +233 24 123 4567"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Intern Intake per Year</label>
+                    <input
+                      type="text"
+                      name="internIntake"
+                      value={formData.internIntake || ''}
+                      onChange={handleChange}
+                      placeholder="e.g. 10 interns"
+                    />
+                  </div>
+                </div>
                 <div className="form-group">
-                  <label>Company logo URL (optional)</label>
+                  <label>Google Maps Location (URL or Embed)</label>
                   <input
-                    type="url"
-                    name="logo"
-                    value={formData.logo || ''}
+                    type="text"
+                    name="mapLocation"
+                    value={formData.mapLocation || ''}
                     onChange={handleChange}
-                    placeholder="https://..."
+                    placeholder="Paste Google Maps URL or embed iframe"
                   />
+                </div>
+                <div className="form-group">
+                   <label>Company Logo</label>
+                   <div className="file-upload-wrapper">
+                      <input
+                        type="file"
+                        id="logo-upload"
+                        onChange={(e) => handleFileUpload(e, 'logo')}
+                        hidden
+                      />
+                      <label htmlFor="logo-upload" className="btn btn-secondary">
+                        {saving ? 'Uploading...' : 'Upload Logo'}
+                      </label>
+                      {formData.logo && <span className="file-name">✅ Logo uploaded</span>}
+                   </div>
+                </div>
+                <div className="form-group">
+                   <label>Registration Document</label>
+                   <div className="file-upload-wrapper">
+                      <input
+                        type="file"
+                        id="reg-doc-upload"
+                        onChange={(e) => handleFileUpload(e, 'registrationDoc')}
+                        hidden
+                      />
+                      <label htmlFor="reg-doc-upload" className="btn btn-secondary">
+                        {saving ? 'Uploading...' : 'Upload Registration Doc'}
+                      </label>
+                      {formData.registrationDoc && <span className="file-name">✅ Document uploaded</span>}
+                   </div>
                 </div>
               </div>
 
@@ -682,6 +769,30 @@ function Profile() {
                     <span>📍 {displayProfile.location}</span>
                   </div>
                 )}
+                {displayProfile.phone && (
+                  <div className="profile-detail-row">
+                    <span className="profile-detail-label">Phone</span>
+                    <span>{displayProfile.phone}</span>
+                  </div>
+                )}
+                {displayProfile.internIntake && (
+                  <div className="profile-detail-row">
+                    <span className="profile-detail-label">Intern Intake</span>
+                    <span>{displayProfile.internIntake} per year</span>
+                  </div>
+                )}
+                {displayProfile.mapLocation && (
+                   <div className="profile-map-container mt-4">
+                      <h3>Find us on Google Maps</h3>
+                      {displayProfile.mapLocation.includes('<iframe') ? (
+                         <div dangerouslySetInnerHTML={{ __html: displayProfile.mapLocation }} />
+                      ) : (
+                         <a href={displayProfile.mapLocation} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
+                            View on Google Maps
+                         </a>
+                      )}
+                   </div>
+                )}
               </section>
             )}
 
@@ -692,6 +803,18 @@ function Profile() {
                   <span className="profile-detail-label">Enquiries</span>
                   <a href={`mailto:${displayProfile.contactEmail || user?.email}`} className="profile-link">
                     {displayProfile.contactEmail || user?.email}
+                  </a>
+                </div>
+              </section>
+            )}
+
+            {displayProfile.registrationDoc && (
+              <section className="card profile-section">
+                <h2>Verified Documents</h2>
+                <div className="profile-detail-row">
+                  <span className="profile-detail-label">Registration</span>
+                  <a href={displayProfile.registrationDoc} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+                    View Document
                   </a>
                 </div>
               </section>

@@ -131,6 +131,13 @@ function InternDetail() {
 
             <div className="intern-detail-content">
               <div className="card">
+                <h2>Contact Information</h2>
+                <div className="contact-details">
+                  <p><strong>Email:</strong> {intern.user?.email}</p>
+                  {intern.phone && <p><strong>Phone:</strong> {intern.phone}</p>}
+                </div>
+              </div>
+              <div className="card">
                 <h2>About</h2>
                 {intern.bio ? (
                   <p>{intern.bio}</p>
