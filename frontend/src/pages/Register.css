@@ -121,18 +121,20 @@
 }
 
 .register-title {
-  margin: 0 0 8px;
+  margin: 0 0 10px;
   font-size: clamp(1.4rem, 2vw, 1.95rem);
   color: #1a2030;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  max-width: 460px;
 }
 
 .register-subtitle {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
   color: #5b6270;
   font-size: 0.92rem;
   line-height: 1.45;
+  max-width: 460px;
 }
 
 .user-type-selector {
@@ -417,6 +419,11 @@
   .register-card {
     padding: 28px 24px 22px;
   }
+
+  .register-title,
+  .register-subtitle {
+    max-width: none;
+  }
 }
 
 @media (max-width: 540px) {
@@ -435,6 +442,15 @@
 
   .register-card {
     padding: 22px 16px 18px;
+  }
+
+  .register-title {
+    margin-bottom: 8px;
+  }
+
+  .register-subtitle {
+    margin-bottom: 16px;
+    font-size: 0.88rem;
   }
 
   .user-type-selector {
