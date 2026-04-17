@@ -11,14 +11,12 @@ function Home() {
   const [interns, setInterns] = useState(sampleInterns.slice(0, 6))
   const [jobs, setJobs] = useState(sampleJobs.slice(0, 6))
   const [loading, setLoading] = useState(true)
-  const [apiError, setApiError] = useState(null)
 
   useEffect(() => {
     fetchData()
   }, [])
 
   const fetchData = async () => {
-    setApiError(null)
     try {
       const [internsRes, jobsRes] = await Promise.all([
         api.get('/intern/browse').catch(() => ({ data: [] })),
@@ -29,17 +27,14 @@ function Home() {
       if (internList.length > 0 || jobList.length > 0) {
         setInterns(internList.slice(0, 6))
         setJobs(jobList.slice(0, 6))
-        setApiError(null)
       } else {
         setInterns(sampleInterns.slice(0, 6))
         setJobs(sampleJobs.slice(0, 6))
-        setApiError('Showing sample data. Seed the database to see real data (see DEPLOY_VERCEL.md).')
       }
     } catch (error) {
       console.error('Failed to fetch data:', error)
       setInterns(sampleInterns.slice(0, 6))
       setJobs(sampleJobs.slice(0, 6))
-      setApiError('Using sample data. API unavailable — check backend and VITE_API_URL.')
     } finally {
       setLoading(false)
     }
@@ -59,10 +54,15 @@ function Home() {
     navigate(`/interns/${internId}`)
   }
 
+  const platformStats = [
+    { label: 'Talented Interns', value: '500+' },
+    { label: 'Active Opportunities', value: '200+' },
+    { label: 'University Profiles', value: '10+' },
+    { label: 'Companies Hiring', value: '50+' },
+  ]
+
   return (
     <div className="landing">
-
-
       <section className="landing-hero">
         <div className="landing-hero-inner container">
           <p className="landing-hero-badge">Where talent meets opportunity</p>
@@ -87,6 +87,50 @@ function Home() {
           <p className="landing-hero-login">
             Already have an account? <Link to="/login">Log in</Link>
           </p>
+
+          <div className="landing-stats">
+            {platformStats.map((stat) => (
+              <div key={stat.label} className="landing-stat">
+                <span className="landing-stat-value">{stat.value}</span>
+                <span className="landing-stat-label">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-trust">
+        <div className="container">
+          <p className="landing-trust-lead">Built for students and companies in Ghana</p>
+          <div className="landing-trust-tags">
+            <span>Verified student profiles</span>
+            <span>Skill-based matching</span>
+            <span>Intern-first onboarding</span>
+            <span>Company-ready candidate pipeline</span>
+          </div>
+          <div className="landing-social-links" aria-label="EasyIntern social media">
+            <a
+              href="https://www.facebook.com/share/1N4j4nmKuq/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Facebook
+            </a>
+            <a
+              href="https://www.instagram.com/easyinterninc?igsh=aDgzcGx2dWs4aDRh&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://x.com/easyinterninc?s=21"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              X
+            </a>
+          </div>
         </div>
       </section>
 

@@ -38,6 +38,11 @@ export type Job = $Result.DefaultSelection<Prisma.$JobPayload>
  * 
  */
 export type Application = $Result.DefaultSelection<Prisma.$ApplicationPayload>
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
 
 /**
  * Enums
@@ -242,6 +247,16 @@ export class PrismaClient<
     * ```
     */
   get application(): Prisma.ApplicationDelegate<ExtArgs>;
+
+  /**
+   * `prisma.notification`: Exposes CRUD operations for the **Notification** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Notifications
+    * const notifications = await prisma.notification.findMany()
+    * ```
+    */
+  get notification(): Prisma.NotificationDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -687,7 +702,8 @@ export namespace Prisma {
     Company: 'Company',
     Intern: 'Intern',
     Job: 'Job',
-    Application: 'Application'
+    Application: 'Application',
+    Notification: 'Notification'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -703,7 +719,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "company" | "intern" | "job" | "application"
+      modelProps: "user" | "company" | "intern" | "job" | "application" | "notification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1037,6 +1053,72 @@ export namespace Prisma {
           }
         }
       }
+      Notification: {
+        payload: Prisma.$NotificationPayload<ExtArgs>
+        fields: Prisma.NotificationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NotificationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findFirst: {
+            args: Prisma.NotificationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          findMany: {
+            args: Prisma.NotificationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>[]
+          }
+          create: {
+            args: Prisma.NotificationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          createMany: {
+            args: Prisma.NotificationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.NotificationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          update: {
+            args: Prisma.NotificationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          deleteMany: {
+            args: Prisma.NotificationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NotificationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.NotificationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NotificationPayload>
+          }
+          aggregate: {
+            args: Prisma.NotificationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNotification>
+          }
+          groupBy: {
+            args: Prisma.NotificationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NotificationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NotificationCountArgs<ExtArgs>
+            result: $Utils.Optional<NotificationCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1194,6 +1276,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type UserCountOutputType
+   */
+
+  export type UserCountOutputType = {
+    notifications: number
+  }
+
+  export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the UserCountOutputType
+     */
+    select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+
+  /**
    * Count Type CompanyCountOutputType
    */
 
@@ -1305,6 +1418,10 @@ export namespace Prisma {
     email: string | null
     password: string | null
     userType: $Enums.UserType | null
+    isEmailVerified: boolean | null
+    verificationToken: string | null
+    resetToken: string | null
+    resetTokenExpiry: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1314,6 +1431,10 @@ export namespace Prisma {
     email: string | null
     password: string | null
     userType: $Enums.UserType | null
+    isEmailVerified: boolean | null
+    verificationToken: string | null
+    resetToken: string | null
+    resetTokenExpiry: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1323,6 +1444,10 @@ export namespace Prisma {
     email: number
     password: number
     userType: number
+    isEmailVerified: number
+    verificationToken: number
+    resetToken: number
+    resetTokenExpiry: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1334,6 +1459,10 @@ export namespace Prisma {
     email?: true
     password?: true
     userType?: true
+    isEmailVerified?: true
+    verificationToken?: true
+    resetToken?: true
+    resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1343,6 +1472,10 @@ export namespace Prisma {
     email?: true
     password?: true
     userType?: true
+    isEmailVerified?: true
+    verificationToken?: true
+    resetToken?: true
+    resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1352,6 +1485,10 @@ export namespace Prisma {
     email?: true
     password?: true
     userType?: true
+    isEmailVerified?: true
+    verificationToken?: true
+    resetToken?: true
+    resetTokenExpiry?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1434,6 +1571,10 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified: boolean
+    verificationToken: string | null
+    resetToken: string | null
+    resetTokenExpiry: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -1460,10 +1601,16 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     userType?: boolean
+    isEmailVerified?: boolean
+    verificationToken?: boolean
+    resetToken?: boolean
+    resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
     intern?: boolean | User$internArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
 
@@ -1472,6 +1619,10 @@ export namespace Prisma {
     email?: boolean
     password?: boolean
     userType?: boolean
+    isEmailVerified?: boolean
+    verificationToken?: boolean
+    resetToken?: boolean
+    resetTokenExpiry?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -1479,6 +1630,8 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     company?: boolean | User$companyArgs<ExtArgs>
     intern?: boolean | User$internArgs<ExtArgs>
+    notifications?: boolean | User$notificationsArgs<ExtArgs>
+    _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1486,12 +1639,17 @@ export namespace Prisma {
     objects: {
       company: Prisma.$CompanyPayload<ExtArgs> | null
       intern: Prisma.$InternPayload<ExtArgs> | null
+      notifications: Prisma.$NotificationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       email: string
       password: string
       userType: $Enums.UserType
+      isEmailVerified: boolean
+      verificationToken: string | null
+      resetToken: string | null
+      resetTokenExpiry: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -1836,6 +1994,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     company<T extends User$companyArgs<ExtArgs> = {}>(args?: Subset<T, User$companyArgs<ExtArgs>>): Prisma__CompanyClient<$Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     intern<T extends User$internArgs<ExtArgs> = {}>(args?: Subset<T, User$internArgs<ExtArgs>>): Prisma__InternClient<$Result.GetResult<Prisma.$InternPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1869,6 +2028,10 @@ export namespace Prisma {
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly userType: FieldRef<"User", 'UserType'>
+    readonly isEmailVerified: FieldRef<"User", 'Boolean'>
+    readonly verificationToken: FieldRef<"User", 'String'>
+    readonly resetToken: FieldRef<"User", 'String'>
+    readonly resetTokenExpiry: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -2200,6 +2363,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.notifications
+   */
+  export type User$notificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2232,7 +2415,11 @@ export namespace Prisma {
     website: string | null
     industry: string | null
     location: string | null
+    phone: string | null
     logo: string | null
+    registrationDoc: string | null
+    internIntake: string | null
+    mapLocation: string | null
     benefits: string | null
     companySize: string | null
     contactEmail: string | null
@@ -2248,7 +2435,11 @@ export namespace Prisma {
     website: string | null
     industry: string | null
     location: string | null
+    phone: string | null
     logo: string | null
+    registrationDoc: string | null
+    internIntake: string | null
+    mapLocation: string | null
     benefits: string | null
     companySize: string | null
     contactEmail: string | null
@@ -2264,7 +2455,11 @@ export namespace Prisma {
     website: number
     industry: number
     location: number
+    phone: number
     logo: number
+    registrationDoc: number
+    internIntake: number
+    mapLocation: number
     benefits: number
     companySize: number
     contactEmail: number
@@ -2282,7 +2477,11 @@ export namespace Prisma {
     website?: true
     industry?: true
     location?: true
+    phone?: true
     logo?: true
+    registrationDoc?: true
+    internIntake?: true
+    mapLocation?: true
     benefits?: true
     companySize?: true
     contactEmail?: true
@@ -2298,7 +2497,11 @@ export namespace Prisma {
     website?: true
     industry?: true
     location?: true
+    phone?: true
     logo?: true
+    registrationDoc?: true
+    internIntake?: true
+    mapLocation?: true
     benefits?: true
     companySize?: true
     contactEmail?: true
@@ -2314,7 +2517,11 @@ export namespace Prisma {
     website?: true
     industry?: true
     location?: true
+    phone?: true
     logo?: true
+    registrationDoc?: true
+    internIntake?: true
+    mapLocation?: true
     benefits?: true
     companySize?: true
     contactEmail?: true
@@ -2403,7 +2610,11 @@ export namespace Prisma {
     website: string | null
     industry: string | null
     location: string | null
+    phone: string | null
     logo: string | null
+    registrationDoc: string | null
+    internIntake: string | null
+    mapLocation: string | null
     benefits: string | null
     companySize: string | null
     contactEmail: string | null
@@ -2436,7 +2647,11 @@ export namespace Prisma {
     website?: boolean
     industry?: boolean
     location?: boolean
+    phone?: boolean
     logo?: boolean
+    registrationDoc?: boolean
+    internIntake?: boolean
+    mapLocation?: boolean
     benefits?: boolean
     companySize?: boolean
     contactEmail?: boolean
@@ -2456,7 +2671,11 @@ export namespace Prisma {
     website?: boolean
     industry?: boolean
     location?: boolean
+    phone?: boolean
     logo?: boolean
+    registrationDoc?: boolean
+    internIntake?: boolean
+    mapLocation?: boolean
     benefits?: boolean
     companySize?: boolean
     contactEmail?: boolean
@@ -2484,7 +2703,11 @@ export namespace Prisma {
       website: string | null
       industry: string | null
       location: string | null
+      phone: string | null
       logo: string | null
+      registrationDoc: string | null
+      internIntake: string | null
+      mapLocation: string | null
       benefits: string | null
       companySize: string | null
       contactEmail: string | null
@@ -2868,7 +3091,11 @@ export namespace Prisma {
     readonly website: FieldRef<"Company", 'String'>
     readonly industry: FieldRef<"Company", 'String'>
     readonly location: FieldRef<"Company", 'String'>
+    readonly phone: FieldRef<"Company", 'String'>
     readonly logo: FieldRef<"Company", 'String'>
+    readonly registrationDoc: FieldRef<"Company", 'String'>
+    readonly internIntake: FieldRef<"Company", 'String'>
+    readonly mapLocation: FieldRef<"Company", 'String'>
     readonly benefits: FieldRef<"Company", 'String'>
     readonly companySize: FieldRef<"Company", 'String'>
     readonly contactEmail: FieldRef<"Company", 'String'>
@@ -3220,11 +3447,17 @@ export namespace Prisma {
   export type InternMinAggregateOutputType = {
     id: string | null
     userId: string | null
+    studentId: string | null
+    dateOfBirth: Date | null
+    ghanaCardNumber: string | null
+    ghanaCardDocument: string | null
+    isVerified: boolean | null
     firstName: string | null
     lastName: string | null
     bio: string | null
+    phone: string | null
     education: string | null
-    experience: string | null
+    educationWebsite: string | null
     location: string | null
     resume: string | null
     profilePic: string | null
@@ -3235,11 +3468,17 @@ export namespace Prisma {
   export type InternMaxAggregateOutputType = {
     id: string | null
     userId: string | null
+    studentId: string | null
+    dateOfBirth: Date | null
+    ghanaCardNumber: string | null
+    ghanaCardDocument: string | null
+    isVerified: boolean | null
     firstName: string | null
     lastName: string | null
     bio: string | null
+    phone: string | null
     education: string | null
-    experience: string | null
+    educationWebsite: string | null
     location: string | null
     resume: string | null
     profilePic: string | null
@@ -3250,11 +3489,18 @@ export namespace Prisma {
   export type InternCountAggregateOutputType = {
     id: number
     userId: number
+    studentId: number
+    dateOfBirth: number
+    ghanaCardNumber: number
+    ghanaCardDocument: number
+    isVerified: number
     firstName: number
     lastName: number
     bio: number
+    phone: number
     skills: number
     education: number
+    educationWebsite: number
     experience: number
     location: number
     resume: number
@@ -3268,11 +3514,17 @@ export namespace Prisma {
   export type InternMinAggregateInputType = {
     id?: true
     userId?: true
+    studentId?: true
+    dateOfBirth?: true
+    ghanaCardNumber?: true
+    ghanaCardDocument?: true
+    isVerified?: true
     firstName?: true
     lastName?: true
     bio?: true
+    phone?: true
     education?: true
-    experience?: true
+    educationWebsite?: true
     location?: true
     resume?: true
     profilePic?: true
@@ -3283,11 +3535,17 @@ export namespace Prisma {
   export type InternMaxAggregateInputType = {
     id?: true
     userId?: true
+    studentId?: true
+    dateOfBirth?: true
+    ghanaCardNumber?: true
+    ghanaCardDocument?: true
+    isVerified?: true
     firstName?: true
     lastName?: true
     bio?: true
+    phone?: true
     education?: true
-    experience?: true
+    educationWebsite?: true
     location?: true
     resume?: true
     profilePic?: true
@@ -3298,11 +3556,18 @@ export namespace Prisma {
   export type InternCountAggregateInputType = {
     id?: true
     userId?: true
+    studentId?: true
+    dateOfBirth?: true
+    ghanaCardNumber?: true
+    ghanaCardDocument?: true
+    isVerified?: true
     firstName?: true
     lastName?: true
     bio?: true
+    phone?: true
     skills?: true
     education?: true
+    educationWebsite?: true
     experience?: true
     location?: true
     resume?: true
@@ -3387,12 +3652,19 @@ export namespace Prisma {
   export type InternGroupByOutputType = {
     id: string
     userId: string
+    studentId: string | null
+    dateOfBirth: Date | null
+    ghanaCardNumber: string | null
+    ghanaCardDocument: string | null
+    isVerified: boolean
     firstName: string
     lastName: string
     bio: string | null
+    phone: string | null
     skills: JsonValue
     education: string | null
-    experience: string | null
+    educationWebsite: string | null
+    experience: JsonValue | null
     location: string | null
     resume: string | null
     profilePic: string | null
@@ -3420,11 +3692,18 @@ export namespace Prisma {
   export type InternSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     userId?: boolean
+    studentId?: boolean
+    dateOfBirth?: boolean
+    ghanaCardNumber?: boolean
+    ghanaCardDocument?: boolean
+    isVerified?: boolean
     firstName?: boolean
     lastName?: boolean
     bio?: boolean
+    phone?: boolean
     skills?: boolean
     education?: boolean
+    educationWebsite?: boolean
     experience?: boolean
     location?: boolean
     resume?: boolean
@@ -3440,11 +3719,18 @@ export namespace Prisma {
   export type InternSelectScalar = {
     id?: boolean
     userId?: boolean
+    studentId?: boolean
+    dateOfBirth?: boolean
+    ghanaCardNumber?: boolean
+    ghanaCardDocument?: boolean
+    isVerified?: boolean
     firstName?: boolean
     lastName?: boolean
     bio?: boolean
+    phone?: boolean
     skills?: boolean
     education?: boolean
+    educationWebsite?: boolean
     experience?: boolean
     location?: boolean
     resume?: boolean
@@ -3468,12 +3754,19 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       userId: string
+      studentId: string | null
+      dateOfBirth: Date | null
+      ghanaCardNumber: string | null
+      ghanaCardDocument: string | null
+      isVerified: boolean
       firstName: string
       lastName: string
       bio: string | null
+      phone: string | null
       skills: Prisma.JsonValue
       education: string | null
-      experience: string | null
+      educationWebsite: string | null
+      experience: Prisma.JsonValue | null
       location: string | null
       resume: string | null
       profilePic: string | null
@@ -3852,12 +4145,19 @@ export namespace Prisma {
   interface InternFieldRefs {
     readonly id: FieldRef<"Intern", 'String'>
     readonly userId: FieldRef<"Intern", 'String'>
+    readonly studentId: FieldRef<"Intern", 'String'>
+    readonly dateOfBirth: FieldRef<"Intern", 'DateTime'>
+    readonly ghanaCardNumber: FieldRef<"Intern", 'String'>
+    readonly ghanaCardDocument: FieldRef<"Intern", 'String'>
+    readonly isVerified: FieldRef<"Intern", 'Boolean'>
     readonly firstName: FieldRef<"Intern", 'String'>
     readonly lastName: FieldRef<"Intern", 'String'>
     readonly bio: FieldRef<"Intern", 'String'>
+    readonly phone: FieldRef<"Intern", 'String'>
     readonly skills: FieldRef<"Intern", 'Json'>
     readonly education: FieldRef<"Intern", 'String'>
-    readonly experience: FieldRef<"Intern", 'String'>
+    readonly educationWebsite: FieldRef<"Intern", 'String'>
+    readonly experience: FieldRef<"Intern", 'Json'>
     readonly location: FieldRef<"Intern", 'String'>
     readonly resume: FieldRef<"Intern", 'String'>
     readonly profilePic: FieldRef<"Intern", 'String'>
@@ -6101,6 +6401,896 @@ export namespace Prisma {
 
 
   /**
+   * Model Notification
+   */
+
+  export type AggregateNotification = {
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  export type NotificationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    message: string | null
+    type: string | null
+    isRead: boolean | null
+    createdAt: Date | null
+  }
+
+  export type NotificationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    message: string | null
+    type: string | null
+    isRead: boolean | null
+    createdAt: Date | null
+  }
+
+  export type NotificationCountAggregateOutputType = {
+    id: number
+    userId: number
+    message: number
+    type: number
+    isRead: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type NotificationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    message?: true
+    type?: true
+    isRead?: true
+    createdAt?: true
+  }
+
+  export type NotificationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    message?: true
+    type?: true
+    isRead?: true
+    createdAt?: true
+  }
+
+  export type NotificationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    message?: true
+    type?: true
+    isRead?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type NotificationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notification to aggregate.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Notifications
+    **/
+    _count?: true | NotificationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NotificationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type GetNotificationAggregateType<T extends NotificationAggregateArgs> = {
+        [P in keyof T & keyof AggregateNotification]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNotification[P]>
+      : GetScalarType<T[P], AggregateNotification[P]>
+  }
+
+
+
+
+  export type NotificationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithAggregationInput | NotificationOrderByWithAggregationInput[]
+    by: NotificationScalarFieldEnum[] | NotificationScalarFieldEnum
+    having?: NotificationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NotificationCountAggregateInputType | true
+    _min?: NotificationMinAggregateInputType
+    _max?: NotificationMaxAggregateInputType
+  }
+
+  export type NotificationGroupByOutputType = {
+    id: string
+    userId: string
+    message: string
+    type: string
+    isRead: boolean
+    createdAt: Date
+    _count: NotificationCountAggregateOutputType | null
+    _min: NotificationMinAggregateOutputType | null
+    _max: NotificationMaxAggregateOutputType | null
+  }
+
+  type GetNotificationGroupByPayload<T extends NotificationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NotificationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NotificationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+            : GetScalarType<T[P], NotificationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NotificationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    message?: boolean
+    type?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["notification"]>
+
+
+  export type NotificationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    message?: boolean
+    type?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+  }
+
+  export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Notification"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      message: string
+      type: string
+      isRead: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["notification"]>
+    composites: {}
+  }
+
+  type NotificationGetPayload<S extends boolean | null | undefined | NotificationDefaultArgs> = $Result.GetResult<Prisma.$NotificationPayload, S>
+
+  type NotificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<NotificationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: NotificationCountAggregateInputType | true
+    }
+
+  export interface NotificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Notification'], meta: { name: 'Notification' } }
+    /**
+     * Find zero or one Notification that matches the filter.
+     * @param {NotificationFindUniqueArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NotificationFindUniqueArgs>(args: SelectSubset<T, NotificationFindUniqueArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Notification that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {NotificationFindUniqueOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NotificationFindUniqueOrThrowArgs>(args: SelectSubset<T, NotificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Notification that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NotificationFindFirstArgs>(args?: SelectSubset<T, NotificationFindFirstArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Notification that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindFirstOrThrowArgs} args - Arguments to find a Notification
+     * @example
+     * // Get one Notification
+     * const notification = await prisma.notification.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NotificationFindFirstOrThrowArgs>(args?: SelectSubset<T, NotificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Notifications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Notifications
+     * const notifications = await prisma.notification.findMany()
+     * 
+     * // Get first 10 Notifications
+     * const notifications = await prisma.notification.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const notificationWithIdOnly = await prisma.notification.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NotificationFindManyArgs>(args?: SelectSubset<T, NotificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Notification.
+     * @param {NotificationCreateArgs} args - Arguments to create a Notification.
+     * @example
+     * // Create one Notification
+     * const Notification = await prisma.notification.create({
+     *   data: {
+     *     // ... data to create a Notification
+     *   }
+     * })
+     * 
+     */
+    create<T extends NotificationCreateArgs>(args: SelectSubset<T, NotificationCreateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Notifications.
+     * @param {NotificationCreateManyArgs} args - Arguments to create many Notifications.
+     * @example
+     * // Create many Notifications
+     * const notification = await prisma.notification.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NotificationCreateManyArgs>(args?: SelectSubset<T, NotificationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Notification.
+     * @param {NotificationDeleteArgs} args - Arguments to delete one Notification.
+     * @example
+     * // Delete one Notification
+     * const Notification = await prisma.notification.delete({
+     *   where: {
+     *     // ... filter to delete one Notification
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NotificationDeleteArgs>(args: SelectSubset<T, NotificationDeleteArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Notification.
+     * @param {NotificationUpdateArgs} args - Arguments to update one Notification.
+     * @example
+     * // Update one Notification
+     * const notification = await prisma.notification.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NotificationUpdateArgs>(args: SelectSubset<T, NotificationUpdateArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Notifications.
+     * @param {NotificationDeleteManyArgs} args - Arguments to filter Notifications to delete.
+     * @example
+     * // Delete a few Notifications
+     * const { count } = await prisma.notification.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NotificationDeleteManyArgs>(args?: SelectSubset<T, NotificationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Notifications
+     * const notification = await prisma.notification.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NotificationUpdateManyArgs>(args: SelectSubset<T, NotificationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Notification.
+     * @param {NotificationUpsertArgs} args - Arguments to update or create a Notification.
+     * @example
+     * // Update or create a Notification
+     * const notification = await prisma.notification.upsert({
+     *   create: {
+     *     // ... data to create a Notification
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Notification we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NotificationUpsertArgs>(args: SelectSubset<T, NotificationUpsertArgs<ExtArgs>>): Prisma__NotificationClient<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Notifications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationCountArgs} args - Arguments to filter Notifications to count.
+     * @example
+     * // Count the number of Notifications
+     * const count = await prisma.notification.count({
+     *   where: {
+     *     // ... the filter for the Notifications we want to count
+     *   }
+     * })
+    **/
+    count<T extends NotificationCountArgs>(
+      args?: Subset<T, NotificationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NotificationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NotificationAggregateArgs>(args: Subset<T, NotificationAggregateArgs>): Prisma.PrismaPromise<GetNotificationAggregateType<T>>
+
+    /**
+     * Group by Notification.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NotificationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NotificationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NotificationGroupByArgs['orderBy'] }
+        : { orderBy?: NotificationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NotificationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNotificationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Notification model
+   */
+  readonly fields: NotificationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Notification.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Notification model
+   */ 
+  interface NotificationFieldRefs {
+    readonly id: FieldRef<"Notification", 'String'>
+    readonly userId: FieldRef<"Notification", 'String'>
+    readonly message: FieldRef<"Notification", 'String'>
+    readonly type: FieldRef<"Notification", 'String'>
+    readonly isRead: FieldRef<"Notification", 'Boolean'>
+    readonly createdAt: FieldRef<"Notification", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Notification findUnique
+   */
+  export type NotificationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findUniqueOrThrow
+   */
+  export type NotificationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification findFirst
+   */
+  export type NotificationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findFirstOrThrow
+   */
+  export type NotificationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notification to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Notifications.
+     */
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification findMany
+   */
+  export type NotificationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter, which Notifications to fetch.
+     */
+    where?: NotificationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Notifications to fetch.
+     */
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Notifications.
+     */
+    cursor?: NotificationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Notifications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Notifications.
+     */
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * Notification create
+   */
+  export type NotificationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Notification.
+     */
+    data: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+  }
+
+  /**
+   * Notification createMany
+   */
+  export type NotificationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Notifications.
+     */
+    data: NotificationCreateManyInput | NotificationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Notification update
+   */
+  export type NotificationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Notification.
+     */
+    data: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+    /**
+     * Choose, which Notification to update.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification updateMany
+   */
+  export type NotificationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Notifications.
+     */
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyInput>
+    /**
+     * Filter which Notifications to update
+     */
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * Notification upsert
+   */
+  export type NotificationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Notification to update in case it exists.
+     */
+    where: NotificationWhereUniqueInput
+    /**
+     * In case the Notification found by the `where` argument doesn't exist, create a new Notification with this data.
+     */
+    create: XOR<NotificationCreateInput, NotificationUncheckedCreateInput>
+    /**
+     * In case the Notification was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NotificationUpdateInput, NotificationUncheckedUpdateInput>
+  }
+
+  /**
+   * Notification delete
+   */
+  export type NotificationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    /**
+     * Filter which Notification to delete.
+     */
+    where: NotificationWhereUniqueInput
+  }
+
+  /**
+   * Notification deleteMany
+   */
+  export type NotificationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Notifications to delete
+     */
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * Notification without action
+   */
+  export type NotificationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6119,6 +7309,10 @@ export namespace Prisma {
     email: 'email',
     password: 'password',
     userType: 'userType',
+    isEmailVerified: 'isEmailVerified',
+    verificationToken: 'verificationToken',
+    resetToken: 'resetToken',
+    resetTokenExpiry: 'resetTokenExpiry',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -6134,7 +7328,11 @@ export namespace Prisma {
     website: 'website',
     industry: 'industry',
     location: 'location',
+    phone: 'phone',
     logo: 'logo',
+    registrationDoc: 'registrationDoc',
+    internIntake: 'internIntake',
+    mapLocation: 'mapLocation',
     benefits: 'benefits',
     companySize: 'companySize',
     contactEmail: 'contactEmail',
@@ -6148,11 +7346,18 @@ export namespace Prisma {
   export const InternScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
+    studentId: 'studentId',
+    dateOfBirth: 'dateOfBirth',
+    ghanaCardNumber: 'ghanaCardNumber',
+    ghanaCardDocument: 'ghanaCardDocument',
+    isVerified: 'isVerified',
     firstName: 'firstName',
     lastName: 'lastName',
     bio: 'bio',
+    phone: 'phone',
     skills: 'skills',
     education: 'education',
+    educationWebsite: 'educationWebsite',
     experience: 'experience',
     location: 'location',
     resume: 'resume',
@@ -6198,6 +7403,18 @@ export namespace Prisma {
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
 
 
+  export const NotificationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    message: 'message',
+    type: 'type',
+    isRead: 'isRead',
+    createdAt: 'createdAt'
+  };
+
+  export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -6211,6 +7428,14 @@ export namespace Prisma {
   };
 
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
   export const NullsOrder: {
@@ -6250,6 +7475,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -6260,13 +7492,6 @@ export namespace Prisma {
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -6295,10 +7520,15 @@ export namespace Prisma {
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
     userType?: EnumUserTypeFilter<"User"> | $Enums.UserType
+    isEmailVerified?: BoolFilter<"User"> | boolean
+    verificationToken?: StringNullableFilter<"User"> | string | null
+    resetToken?: StringNullableFilter<"User"> | string | null
+    resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     company?: XOR<CompanyNullableRelationFilter, CompanyWhereInput> | null
     intern?: XOR<InternNullableRelationFilter, InternWhereInput> | null
+    notifications?: NotificationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -6306,10 +7536,15 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     userType?: SortOrder
+    isEmailVerified?: SortOrder
+    verificationToken?: SortOrderInput | SortOrder
+    resetToken?: SortOrderInput | SortOrder
+    resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     company?: CompanyOrderByWithRelationInput
     intern?: InternOrderByWithRelationInput
+    notifications?: NotificationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -6320,10 +7555,15 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringFilter<"User"> | string
     userType?: EnumUserTypeFilter<"User"> | $Enums.UserType
+    isEmailVerified?: BoolFilter<"User"> | boolean
+    verificationToken?: StringNullableFilter<"User"> | string | null
+    resetToken?: StringNullableFilter<"User"> | string | null
+    resetTokenExpiry?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     company?: XOR<CompanyNullableRelationFilter, CompanyWhereInput> | null
     intern?: XOR<InternNullableRelationFilter, InternWhereInput> | null
+    notifications?: NotificationListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -6331,6 +7571,10 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     userType?: SortOrder
+    isEmailVerified?: SortOrder
+    verificationToken?: SortOrderInput | SortOrder
+    resetToken?: SortOrderInput | SortOrder
+    resetTokenExpiry?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -6346,6 +7590,10 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
     userType?: EnumUserTypeWithAggregatesFilter<"User"> | $Enums.UserType
+    isEmailVerified?: BoolWithAggregatesFilter<"User"> | boolean
+    verificationToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    resetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    resetTokenExpiry?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -6361,7 +7609,11 @@ export namespace Prisma {
     website?: StringNullableFilter<"Company"> | string | null
     industry?: StringNullableFilter<"Company"> | string | null
     location?: StringNullableFilter<"Company"> | string | null
+    phone?: StringNullableFilter<"Company"> | string | null
     logo?: StringNullableFilter<"Company"> | string | null
+    registrationDoc?: StringNullableFilter<"Company"> | string | null
+    internIntake?: StringNullableFilter<"Company"> | string | null
+    mapLocation?: StringNullableFilter<"Company"> | string | null
     benefits?: StringNullableFilter<"Company"> | string | null
     companySize?: StringNullableFilter<"Company"> | string | null
     contactEmail?: StringNullableFilter<"Company"> | string | null
@@ -6379,7 +7631,11 @@ export namespace Prisma {
     website?: SortOrderInput | SortOrder
     industry?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     logo?: SortOrderInput | SortOrder
+    registrationDoc?: SortOrderInput | SortOrder
+    internIntake?: SortOrderInput | SortOrder
+    mapLocation?: SortOrderInput | SortOrder
     benefits?: SortOrderInput | SortOrder
     companySize?: SortOrderInput | SortOrder
     contactEmail?: SortOrderInput | SortOrder
@@ -6400,7 +7656,11 @@ export namespace Prisma {
     website?: StringNullableFilter<"Company"> | string | null
     industry?: StringNullableFilter<"Company"> | string | null
     location?: StringNullableFilter<"Company"> | string | null
+    phone?: StringNullableFilter<"Company"> | string | null
     logo?: StringNullableFilter<"Company"> | string | null
+    registrationDoc?: StringNullableFilter<"Company"> | string | null
+    internIntake?: StringNullableFilter<"Company"> | string | null
+    mapLocation?: StringNullableFilter<"Company"> | string | null
     benefits?: StringNullableFilter<"Company"> | string | null
     companySize?: StringNullableFilter<"Company"> | string | null
     contactEmail?: StringNullableFilter<"Company"> | string | null
@@ -6418,7 +7678,11 @@ export namespace Prisma {
     website?: SortOrderInput | SortOrder
     industry?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     logo?: SortOrderInput | SortOrder
+    registrationDoc?: SortOrderInput | SortOrder
+    internIntake?: SortOrderInput | SortOrder
+    mapLocation?: SortOrderInput | SortOrder
     benefits?: SortOrderInput | SortOrder
     companySize?: SortOrderInput | SortOrder
     contactEmail?: SortOrderInput | SortOrder
@@ -6440,7 +7704,11 @@ export namespace Prisma {
     website?: StringNullableWithAggregatesFilter<"Company"> | string | null
     industry?: StringNullableWithAggregatesFilter<"Company"> | string | null
     location?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Company"> | string | null
     logo?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    registrationDoc?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    internIntake?: StringNullableWithAggregatesFilter<"Company"> | string | null
+    mapLocation?: StringNullableWithAggregatesFilter<"Company"> | string | null
     benefits?: StringNullableWithAggregatesFilter<"Company"> | string | null
     companySize?: StringNullableWithAggregatesFilter<"Company"> | string | null
     contactEmail?: StringNullableWithAggregatesFilter<"Company"> | string | null
@@ -6454,12 +7722,19 @@ export namespace Prisma {
     NOT?: InternWhereInput | InternWhereInput[]
     id?: StringFilter<"Intern"> | string
     userId?: StringFilter<"Intern"> | string
+    studentId?: StringNullableFilter<"Intern"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"Intern"> | Date | string | null
+    ghanaCardNumber?: StringNullableFilter<"Intern"> | string | null
+    ghanaCardDocument?: StringNullableFilter<"Intern"> | string | null
+    isVerified?: BoolFilter<"Intern"> | boolean
     firstName?: StringFilter<"Intern"> | string
     lastName?: StringFilter<"Intern"> | string
     bio?: StringNullableFilter<"Intern"> | string | null
+    phone?: StringNullableFilter<"Intern"> | string | null
     skills?: JsonFilter<"Intern">
     education?: StringNullableFilter<"Intern"> | string | null
-    experience?: StringNullableFilter<"Intern"> | string | null
+    educationWebsite?: StringNullableFilter<"Intern"> | string | null
+    experience?: JsonNullableFilter<"Intern">
     location?: StringNullableFilter<"Intern"> | string | null
     resume?: StringNullableFilter<"Intern"> | string | null
     profilePic?: StringNullableFilter<"Intern"> | string | null
@@ -6472,11 +7747,18 @@ export namespace Prisma {
   export type InternOrderByWithRelationInput = {
     id?: SortOrder
     userId?: SortOrder
+    studentId?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    ghanaCardNumber?: SortOrderInput | SortOrder
+    ghanaCardDocument?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     bio?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     skills?: SortOrder
     education?: SortOrderInput | SortOrder
+    educationWebsite?: SortOrderInput | SortOrder
     experience?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     resume?: SortOrderInput | SortOrder
@@ -6493,12 +7775,19 @@ export namespace Prisma {
     AND?: InternWhereInput | InternWhereInput[]
     OR?: InternWhereInput[]
     NOT?: InternWhereInput | InternWhereInput[]
+    studentId?: StringNullableFilter<"Intern"> | string | null
+    dateOfBirth?: DateTimeNullableFilter<"Intern"> | Date | string | null
+    ghanaCardNumber?: StringNullableFilter<"Intern"> | string | null
+    ghanaCardDocument?: StringNullableFilter<"Intern"> | string | null
+    isVerified?: BoolFilter<"Intern"> | boolean
     firstName?: StringFilter<"Intern"> | string
     lastName?: StringFilter<"Intern"> | string
     bio?: StringNullableFilter<"Intern"> | string | null
+    phone?: StringNullableFilter<"Intern"> | string | null
     skills?: JsonFilter<"Intern">
     education?: StringNullableFilter<"Intern"> | string | null
-    experience?: StringNullableFilter<"Intern"> | string | null
+    educationWebsite?: StringNullableFilter<"Intern"> | string | null
+    experience?: JsonNullableFilter<"Intern">
     location?: StringNullableFilter<"Intern"> | string | null
     resume?: StringNullableFilter<"Intern"> | string | null
     profilePic?: StringNullableFilter<"Intern"> | string | null
@@ -6511,11 +7800,18 @@ export namespace Prisma {
   export type InternOrderByWithAggregationInput = {
     id?: SortOrder
     userId?: SortOrder
+    studentId?: SortOrderInput | SortOrder
+    dateOfBirth?: SortOrderInput | SortOrder
+    ghanaCardNumber?: SortOrderInput | SortOrder
+    ghanaCardDocument?: SortOrderInput | SortOrder
+    isVerified?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     bio?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
     skills?: SortOrder
     education?: SortOrderInput | SortOrder
+    educationWebsite?: SortOrderInput | SortOrder
     experience?: SortOrderInput | SortOrder
     location?: SortOrderInput | SortOrder
     resume?: SortOrderInput | SortOrder
@@ -6533,12 +7829,19 @@ export namespace Prisma {
     NOT?: InternScalarWhereWithAggregatesInput | InternScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Intern"> | string
     userId?: StringWithAggregatesFilter<"Intern"> | string
+    studentId?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    dateOfBirth?: DateTimeNullableWithAggregatesFilter<"Intern"> | Date | string | null
+    ghanaCardNumber?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    ghanaCardDocument?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    isVerified?: BoolWithAggregatesFilter<"Intern"> | boolean
     firstName?: StringWithAggregatesFilter<"Intern"> | string
     lastName?: StringWithAggregatesFilter<"Intern"> | string
     bio?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"Intern"> | string | null
     skills?: JsonWithAggregatesFilter<"Intern">
     education?: StringNullableWithAggregatesFilter<"Intern"> | string | null
-    experience?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    educationWebsite?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    experience?: JsonNullableWithAggregatesFilter<"Intern">
     location?: StringNullableWithAggregatesFilter<"Intern"> | string | null
     resume?: StringNullableWithAggregatesFilter<"Intern"> | string | null
     profilePic?: StringNullableWithAggregatesFilter<"Intern"> | string | null
@@ -6723,15 +8026,80 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Application"> | Date | string
   }
 
+  export type NotificationWhereInput = {
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    userId?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    isRead?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type NotificationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type NotificationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: NotificationWhereInput | NotificationWhereInput[]
+    OR?: NotificationWhereInput[]
+    NOT?: NotificationWhereInput | NotificationWhereInput[]
+    userId?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    isRead?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type NotificationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    _count?: NotificationCountOrderByAggregateInput
+    _max?: NotificationMaxOrderByAggregateInput
+    _min?: NotificationMinOrderByAggregateInput
+  }
+
+  export type NotificationScalarWhereWithAggregatesInput = {
+    AND?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    OR?: NotificationScalarWhereWithAggregatesInput[]
+    NOT?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Notification"> | string
+    userId?: StringWithAggregatesFilter<"Notification"> | string
+    message?: StringWithAggregatesFilter<"Notification"> | string
+    type?: StringWithAggregatesFilter<"Notification"> | string
+    isRead?: BoolWithAggregatesFilter<"Notification"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Notification"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
     intern?: InternCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -6739,10 +8107,15 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
     intern?: InternUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -6750,10 +8123,15 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
     intern?: InternUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -6761,10 +8139,15 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
     intern?: InternUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -6772,6 +8155,10 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -6781,6 +8168,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6790,6 +8181,10 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6801,7 +8196,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -6819,7 +8218,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -6835,7 +8238,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6853,7 +8260,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6870,7 +8281,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -6885,7 +8300,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6901,7 +8320,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6911,12 +8334,19 @@ export namespace Prisma {
 
   export type InternCreateInput = {
     id?: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -6929,12 +8359,19 @@ export namespace Prisma {
   export type InternUncheckedCreateInput = {
     id?: string
     userId: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -6945,12 +8382,19 @@ export namespace Prisma {
 
   export type InternUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6963,12 +8407,19 @@ export namespace Prisma {
   export type InternUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -6980,12 +8431,19 @@ export namespace Prisma {
   export type InternCreateManyInput = {
     id?: string
     userId: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -6995,12 +8453,19 @@ export namespace Prisma {
 
   export type InternUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7011,12 +8476,19 @@ export namespace Prisma {
   export type InternUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -7221,6 +8693,68 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type NotificationCreateInput = {
+    id?: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutNotificationsInput
+  }
+
+  export type NotificationUncheckedCreateInput = {
+    id?: string
+    userId: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutNotificationsNestedInput
+  }
+
+  export type NotificationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationCreateManyInput = {
+    id?: string
+    userId: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[]
@@ -7240,6 +8774,36 @@ export namespace Prisma {
     in?: $Enums.UserType[]
     notIn?: $Enums.UserType[]
     not?: NestedEnumUserTypeFilter<$PrismaModel> | $Enums.UserType
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -7263,11 +8827,30 @@ export namespace Prisma {
     isNot?: InternWhereInput | null
   }
 
+  export type NotificationListRelationFilter = {
+    every?: NotificationWhereInput
+    some?: NotificationWhereInput
+    none?: NotificationWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
     userType?: SortOrder
+    isEmailVerified?: SortOrder
+    verificationToken?: SortOrder
+    resetToken?: SortOrder
+    resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7277,6 +8860,10 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     userType?: SortOrder
+    isEmailVerified?: SortOrder
+    verificationToken?: SortOrder
+    resetToken?: SortOrder
+    resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7286,6 +8873,10 @@ export namespace Prisma {
     email?: SortOrder
     password?: SortOrder
     userType?: SortOrder
+    isEmailVerified?: SortOrder
+    verificationToken?: SortOrder
+    resetToken?: SortOrder
+    resetTokenExpiry?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7317,100 +8908,12 @@ export namespace Prisma {
     _max?: NestedEnumUserTypeFilter<$PrismaModel>
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type UserRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
-  }
-
-  export type JobListRelationFilter = {
-    every?: JobWhereInput
-    some?: JobWhereInput
-    none?: JobWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
-  }
-
-  export type JobOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CompanyCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    website?: SortOrder
-    industry?: SortOrder
-    location?: SortOrder
-    logo?: SortOrder
-    benefits?: SortOrder
-    companySize?: SortOrder
-    contactEmail?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CompanyMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    website?: SortOrder
-    industry?: SortOrder
-    location?: SortOrder
-    logo?: SortOrder
-    benefits?: SortOrder
-    companySize?: SortOrder
-    contactEmail?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type CompanyMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    website?: SortOrder
-    industry?: SortOrder
-    location?: SortOrder
-    logo?: SortOrder
-    benefits?: SortOrder
-    companySize?: SortOrder
-    contactEmail?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -7429,6 +8932,109 @@ export namespace Prisma {
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type UserRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type JobListRelationFilter = {
+    every?: JobWhereInput
+    some?: JobWhereInput
+    none?: JobWhereInput
+  }
+
+  export type JobOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CompanyCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    website?: SortOrder
+    industry?: SortOrder
+    location?: SortOrder
+    phone?: SortOrder
+    logo?: SortOrder
+    registrationDoc?: SortOrder
+    internIntake?: SortOrder
+    mapLocation?: SortOrder
+    benefits?: SortOrder
+    companySize?: SortOrder
+    contactEmail?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    website?: SortOrder
+    industry?: SortOrder
+    location?: SortOrder
+    phone?: SortOrder
+    logo?: SortOrder
+    registrationDoc?: SortOrder
+    internIntake?: SortOrder
+    mapLocation?: SortOrder
+    benefits?: SortOrder
+    companySize?: SortOrder
+    contactEmail?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CompanyMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    name?: SortOrder
+    description?: SortOrder
+    website?: SortOrder
+    industry?: SortOrder
+    location?: SortOrder
+    phone?: SortOrder
+    logo?: SortOrder
+    registrationDoc?: SortOrder
+    internIntake?: SortOrder
+    mapLocation?: SortOrder
+    benefits?: SortOrder
+    companySize?: SortOrder
+    contactEmail?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
   export type JsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
         Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -7437,6 +9043,28 @@ export namespace Prisma {
     | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
 
   export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
     equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
     path?: string
     string_contains?: string | StringFieldRefInput<$PrismaModel>
@@ -7465,11 +9093,18 @@ export namespace Prisma {
   export type InternCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    studentId?: SortOrder
+    dateOfBirth?: SortOrder
+    ghanaCardNumber?: SortOrder
+    ghanaCardDocument?: SortOrder
+    isVerified?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     bio?: SortOrder
+    phone?: SortOrder
     skills?: SortOrder
     education?: SortOrder
+    educationWebsite?: SortOrder
     experience?: SortOrder
     location?: SortOrder
     resume?: SortOrder
@@ -7481,11 +9116,17 @@ export namespace Prisma {
   export type InternMaxOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    studentId?: SortOrder
+    dateOfBirth?: SortOrder
+    ghanaCardNumber?: SortOrder
+    ghanaCardDocument?: SortOrder
+    isVerified?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     bio?: SortOrder
+    phone?: SortOrder
     education?: SortOrder
-    experience?: SortOrder
+    educationWebsite?: SortOrder
     location?: SortOrder
     resume?: SortOrder
     profilePic?: SortOrder
@@ -7496,11 +9137,17 @@ export namespace Prisma {
   export type InternMinOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+    studentId?: SortOrder
+    dateOfBirth?: SortOrder
+    ghanaCardNumber?: SortOrder
+    ghanaCardDocument?: SortOrder
+    isVerified?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
     bio?: SortOrder
+    phone?: SortOrder
     education?: SortOrder
-    experience?: SortOrder
+    educationWebsite?: SortOrder
     location?: SortOrder
     resume?: SortOrder
     profilePic?: SortOrder
@@ -7532,10 +9179,30 @@ export namespace Prisma {
     _min?: NestedJsonFilter<$PrismaModel>
     _max?: NestedJsonFilter<$PrismaModel>
   }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type CompanyRelationFilter = {
@@ -7586,30 +9253,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type EnumApplicationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ApplicationStatus | EnumApplicationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ApplicationStatus[]
     notIn?: $Enums.ApplicationStatus[]
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type JobRelationFilter = {
@@ -7670,18 +9318,31 @@ export namespace Prisma {
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  export type NotificationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type NotificationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    message?: SortOrder
+    type?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type CompanyCreateNestedOneWithoutUserInput = {
@@ -7696,6 +9357,13 @@ export namespace Prisma {
     connect?: InternWhereUniqueInput
   }
 
+  export type NotificationCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
   export type CompanyUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
@@ -7708,12 +9376,31 @@ export namespace Prisma {
     connect?: InternWhereUniqueInput
   }
 
+  export type NotificationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type EnumUserTypeFieldUpdateOperationsInput = {
     set?: $Enums.UserType
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -7740,6 +9427,20 @@ export namespace Prisma {
     update?: XOR<XOR<InternUpdateToOneWithWhereWithoutUserInput, InternUpdateWithoutUserInput>, InternUncheckedUpdateWithoutUserInput>
   }
 
+  export type NotificationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type CompanyUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<CompanyCreateWithoutUserInput, CompanyUncheckedCreateWithoutUserInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutUserInput
@@ -7760,6 +9461,20 @@ export namespace Prisma {
     update?: XOR<XOR<InternUpdateToOneWithWhereWithoutUserInput, InternUpdateWithoutUserInput>, InternUncheckedUpdateWithoutUserInput>
   }
 
+  export type NotificationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput> | NotificationCreateWithoutUserInput[] | NotificationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutUserInput | NotificationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: NotificationCreateManyUserInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCompanyInput = {
     create?: XOR<UserCreateWithoutCompanyInput, UserUncheckedCreateWithoutCompanyInput>
     connectOrCreate?: UserCreateOrConnectWithoutCompanyInput
@@ -7778,10 +9493,6 @@ export namespace Prisma {
     connectOrCreate?: JobCreateOrConnectWithoutCompanyInput | JobCreateOrConnectWithoutCompanyInput[]
     createMany?: JobCreateManyCompanyInputEnvelope
     connect?: JobWhereUniqueInput | JobWhereUniqueInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type UserUpdateOneRequiredWithoutCompanyNestedInput = {
@@ -7896,10 +9607,6 @@ export namespace Prisma {
     connect?: ApplicationWhereUniqueInput | ApplicationWhereUniqueInput[]
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
   export type CompanyUpdateOneRequiredWithoutJobsNestedInput = {
     create?: XOR<CompanyCreateWithoutJobsInput, CompanyUncheckedCreateWithoutJobsInput>
     connectOrCreate?: CompanyCreateOrConnectWithoutJobsInput
@@ -7952,10 +9659,6 @@ export namespace Prisma {
     set?: $Enums.ApplicationStatus
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
   export type JobUpdateOneRequiredWithoutApplicationsNestedInput = {
     create?: XOR<JobCreateWithoutApplicationsInput, JobUncheckedCreateWithoutApplicationsInput>
     connectOrCreate?: JobCreateOrConnectWithoutApplicationsInput
@@ -7970,6 +9673,20 @@ export namespace Prisma {
     upsert?: InternUpsertWithoutApplicationsInput
     connect?: InternWhereUniqueInput
     update?: XOR<XOR<InternUpdateToOneWithWhereWithoutApplicationsInput, InternUpdateWithoutApplicationsInput>, InternUncheckedUpdateWithoutApplicationsInput>
+  }
+
+  export type UserCreateNestedOneWithoutNotificationsInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsInput
+    upsert?: UserUpsertWithoutNotificationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7991,6 +9708,36 @@ export namespace Prisma {
     in?: $Enums.UserType[]
     notIn?: $Enums.UserType[]
     not?: NestedEnumUserTypeFilter<$PrismaModel> | $Enums.UserType
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | null
+    notIn?: string[] | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -8042,32 +9789,12 @@ export namespace Prisma {
     _max?: NestedEnumUserTypeFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[]
-    notIn?: Date[] | string[]
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | null
-    notIn?: string[] | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -8097,6 +9824,34 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | null
+    notIn?: Date[] | string[] | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[]
+    notIn?: Date[] | string[]
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
   export type NestedJsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
         Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -8119,18 +9874,27 @@ export namespace Prisma {
     gte?: InputJsonValue
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue
+    lte?: InputJsonValue
+    gt?: InputJsonValue
+    gte?: InputJsonValue
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumApplicationStatusFilter<$PrismaModel = never> = {
@@ -8138,17 +9902,6 @@ export namespace Prisma {
     in?: $Enums.ApplicationStatus[]
     notIn?: $Enums.ApplicationStatus[]
     not?: NestedEnumApplicationStatusFilter<$PrismaModel> | $Enums.ApplicationStatus
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedEnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -8161,20 +9914,6 @@ export namespace Prisma {
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | null
-    notIn?: Date[] | string[] | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type CompanyCreateWithoutUserInput = {
     id?: string
     name: string
@@ -8182,7 +9921,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -8198,7 +9941,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -8214,12 +9961,19 @@ export namespace Prisma {
 
   export type InternCreateWithoutUserInput = {
     id?: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -8230,12 +9984,19 @@ export namespace Prisma {
 
   export type InternUncheckedCreateWithoutUserInput = {
     id?: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -8247,6 +10008,32 @@ export namespace Prisma {
   export type InternCreateOrConnectWithoutUserInput = {
     where: InternWhereUniqueInput
     create: XOR<InternCreateWithoutUserInput, InternUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationCreateWithoutUserInput = {
+    id?: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUncheckedCreateWithoutUserInput = {
+    id?: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationCreateOrConnectWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationCreateManyUserInputEnvelope = {
+    data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type CompanyUpsertWithoutUserInput = {
@@ -8267,7 +10054,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8283,7 +10074,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8305,12 +10100,19 @@ export namespace Prisma {
 
   export type InternUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8321,12 +10123,19 @@ export namespace Prisma {
 
   export type InternUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8335,14 +10144,47 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutInternNestedInput
   }
 
+  export type NotificationUpsertWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+    create: XOR<NotificationCreateWithoutUserInput, NotificationUncheckedCreateWithoutUserInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutUserInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutUserInput, NotificationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutUserInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    userId?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    isRead?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+  }
+
   export type UserCreateWithoutCompanyInput = {
     id?: string
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     intern?: InternCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCompanyInput = {
@@ -8350,9 +10192,14 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     intern?: InternUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCompanyInput = {
@@ -8420,9 +10267,14 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     intern?: InternUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCompanyInput = {
@@ -8430,9 +10282,14 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     intern?: InternUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type JobUpsertWithWhereUniqueWithoutCompanyInput = {
@@ -8476,9 +10333,14 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInternInput = {
@@ -8486,9 +10348,14 @@ export namespace Prisma {
     email: string
     password: string
     userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInternInput = {
@@ -8542,9 +10409,14 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInternInput = {
@@ -8552,9 +10424,14 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
     userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ApplicationUpsertWithWhereUniqueWithoutInternInput = {
@@ -8594,7 +10471,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -8611,7 +10492,11 @@ export namespace Prisma {
     website?: string | null
     industry?: string | null
     location?: string | null
+    phone?: string | null
     logo?: string | null
+    registrationDoc?: string | null
+    internIntake?: string | null
+    mapLocation?: string | null
     benefits?: string | null
     companySize?: string | null
     contactEmail?: string | null
@@ -8672,7 +10557,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8689,7 +10578,11 @@ export namespace Prisma {
     website?: NullableStringFieldUpdateOperationsInput | string | null
     industry?: NullableStringFieldUpdateOperationsInput | string | null
     location?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     logo?: NullableStringFieldUpdateOperationsInput | string | null
+    registrationDoc?: NullableStringFieldUpdateOperationsInput | string | null
+    internIntake?: NullableStringFieldUpdateOperationsInput | string | null
+    mapLocation?: NullableStringFieldUpdateOperationsInput | string | null
     benefits?: NullableStringFieldUpdateOperationsInput | string | null
     companySize?: NullableStringFieldUpdateOperationsInput | string | null
     contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8754,12 +10647,19 @@ export namespace Prisma {
 
   export type InternCreateWithoutApplicationsInput = {
     id?: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -8771,12 +10671,19 @@ export namespace Prisma {
   export type InternUncheckedCreateWithoutApplicationsInput = {
     id?: string
     userId: string
+    studentId?: string | null
+    dateOfBirth?: Date | string | null
+    ghanaCardNumber?: string | null
+    ghanaCardDocument?: string | null
+    isVerified?: boolean
     firstName: string
     lastName: string
     bio?: string | null
+    phone?: string | null
     skills: JsonNullValueInput | InputJsonValue
     education?: string | null
-    experience?: string | null
+    educationWebsite?: string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: string | null
     resume?: string | null
     profilePic?: string | null
@@ -8847,12 +10754,19 @@ export namespace Prisma {
 
   export type InternUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
@@ -8864,17 +10778,132 @@ export namespace Prisma {
   export type InternUncheckedUpdateWithoutApplicationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    studentId?: NullableStringFieldUpdateOperationsInput | string | null
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     firstName?: StringFieldUpdateOperationsInput | string
     lastName?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
     skills?: JsonNullValueInput | InputJsonValue
     education?: NullableStringFieldUpdateOperationsInput | string | null
-    experience?: NullableStringFieldUpdateOperationsInput | string | null
+    educationWebsite?: NullableStringFieldUpdateOperationsInput | string | null
+    experience?: NullableJsonNullValueInput | InputJsonValue
     location?: NullableStringFieldUpdateOperationsInput | string | null
     resume?: NullableStringFieldUpdateOperationsInput | string | null
     profilePic?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutNotificationsInput = {
+    id?: string
+    email: string
+    password: string
+    userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company?: CompanyCreateNestedOneWithoutUserInput
+    intern?: InternCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsInput = {
+    id?: string
+    email: string
+    password: string
+    userType: $Enums.UserType
+    isEmailVerified?: boolean
+    verificationToken?: string | null
+    resetToken?: string | null
+    resetTokenExpiry?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    company?: CompanyUncheckedCreateNestedOneWithoutUserInput
+    intern?: InternUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+  }
+
+  export type UserUpsertWithoutNotificationsInput = {
+    update: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+    create: XOR<UserCreateWithoutNotificationsInput, UserUncheckedCreateWithoutNotificationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsInput, UserUncheckedUpdateWithoutNotificationsInput>
+  }
+
+  export type UserUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUpdateOneWithoutUserNestedInput
+    intern?: InternUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    userType?: EnumUserTypeFieldUpdateOperationsInput | $Enums.UserType
+    isEmailVerified?: BoolFieldUpdateOperationsInput | boolean
+    verificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    resetTokenExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
+    intern?: InternUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type NotificationCreateManyUserInput = {
+    id?: string
+    message: string
+    type?: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type NotificationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type JobCreateManyCompanyInput = {
@@ -9029,6 +11058,10 @@ export namespace Prisma {
    * Aliases for legacy arg types
    */
     /**
+     * @deprecated Use UserCountOutputTypeDefaultArgs instead
+     */
+    export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use CompanyCountOutputTypeDefaultArgs instead
      */
     export type CompanyCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CompanyCountOutputTypeDefaultArgs<ExtArgs>
@@ -9060,6 +11093,10 @@ export namespace Prisma {
      * @deprecated Use ApplicationDefaultArgs instead
      */
     export type ApplicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ApplicationDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use NotificationDefaultArgs instead
+     */
+    export type NotificationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = NotificationDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

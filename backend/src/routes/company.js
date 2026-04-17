@@ -38,7 +38,34 @@ router.get('/profile', authenticate, requireCompany, async (req, res) => {
 // Update company profile
 router.put('/profile', authenticate, requireCompany, async (req, res) => {
   try {
-    const { name, description, website, industry, location, logo, benefits, companySize, contactEmail, phone, registrationDoc, internIntake, mapLocation } = req.body;
+    const {
+      name,
+      description,
+      website,
+      industry,
+      location,
+      logo,
+      benefits,
+      hiringPriorities,
+      candidateRequirements,
+      hiringWorkflow,
+      companySize,
+      contactEmail,
+      phone,
+      companyTaxId,
+      registrationDoc,
+      internIntake,
+      mapLocation,
+    } = req.body;
+
+    if (!companySize || !String(companySize).trim()) {
+      return res.status(400).json({ error: 'Company size is required' });
+    }
+
+    const hasCompanyVerification = Boolean(
+      companyTaxId &&
+      registrationDoc
+    );
 
     const company = await prisma.company.update({
       where: { userId: req.userId },
@@ -50,12 +77,17 @@ router.put('/profile', authenticate, requireCompany, async (req, res) => {
         location,
         logo,
         benefits,
+        hiringPriorities,
+        candidateRequirements,
+        hiringWorkflow,
         companySize,
         contactEmail,
         phone,
+        companyTaxId,
         registrationDoc,
         internIntake,
         mapLocation,
+        isVerified: hasCompanyVerification,
       },
     });
 

@@ -8,6 +8,49 @@ import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
+// Admin Login (hidden route use)
+router.post('/admin-login', async (req, res) => {
+  try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
+    }
+    const { email, password } = req.body || {};
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+      return res.status(500).json({ error: 'Admin login is not configured on the server.' });
+    }
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    if (email !== adminEmail || password !== adminPassword) {
+      return res.status(401).json({ error: 'Invalid admin credentials' });
+    }
+
+    const token = jwt.sign(
+      { userId: 'admin', userType: 'ADMIN', isAdmin: true, email: adminEmail },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: 'admin',
+        email: adminEmail,
+        userType: 'ADMIN',
+        isAdmin: true,
+      },
+    });
+  } catch (error) {
+    console.error('Admin login error:', error);
+    res.status(500).json({ error: 'Admin login failed' });
+  }
+});
+
 // Register Company
 router.post('/register/company', async (req, res) => {
   try {
@@ -91,15 +134,23 @@ router.post('/register/intern', async (req, res) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
     }
-    const { email, password, firstName, lastName, bio, skills, education, location, phone } = req.body;
+    const { email, password, firstName, lastName, studentId, bio, skills, education, educationWebsite, location, phone, experience } = req.body;
 
-    if (!email || !password || !firstName || !lastName) {
-      return res.status(400).json({ error: 'Email, password, first name, and last name are required' });
+    if (!email || !password || !firstName || !lastName || !studentId) {
+      return res.status(400).json({ error: 'Email, password, first name, last name, and student ID are required' });
     }
 
     // Normalize skills to array of non-empty strings
     const skillsArray = Array.isArray(skills) ? skills : (typeof skills === 'string' ? skills.split(',').map(s => s.trim()) : []);
     const skillsClean = skillsArray.filter(Boolean);
+
+    if (educationWebsite) {
+      try {
+        new URL(educationWebsite);
+      } catch {
+        return res.status(400).json({ error: 'Please provide a valid education website URL' });
+      }
+    }
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -122,10 +173,13 @@ router.post('/register/intern', async (req, res) => {
           create: {
             firstName,
             lastName,
+            studentId,
             bio,
             phone,
+            experience: experience || null,
             skills: skillsClean,
             education: education || null,
+            educationWebsite: educationWebsite || null,
             location: location || null,
           },
         },
@@ -239,9 +293,103 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Forgot Password
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    // Always return success-like response to prevent email enumeration
+    if (!user) {
+      return res.json({ message: 'If an account exists for that email, a reset link has been sent.' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetToken,
+        resetTokenExpiry,
+      },
+    });
+
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    await sendEmail({
+      to: email,
+      subject: 'Reset your Easy Intern password',
+      html: `<h1>Password Reset Request</h1><p>Click the link below to reset your password. This link expires in 1 hour.</p><a href="${resetUrl}">${resetUrl}</a>`,
+    });
+
+    res.json({ message: 'If an account exists for that email, a reset link has been sent.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Failed to process forgot password request' });
+  }
+});
+
+// Reset Password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Token and new password are required' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        resetToken: token,
+        resetTokenExpiry: {
+          gt: new Date(),
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    res.json({ message: 'Password reset successful. You can now log in.' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+});
+
 // Get current user
 router.get('/me', authenticate, async (req, res) => {
   try {
+    if (req.isAdmin) {
+      return res.json({
+        id: 'admin',
+        email: req.adminEmail || process.env.ADMIN_EMAIL || 'admin',
+        userType: 'ADMIN',
+        isAdmin: true,
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
       include: { company: true, intern: true },

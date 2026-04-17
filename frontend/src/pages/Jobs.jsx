@@ -51,6 +51,27 @@ function Jobs() {
     fetchJobs()
   }
 
+  const handleClearFilters = () => {
+    setSearch('')
+    setLocation('')
+    setRemote('')
+    setIndustry('')
+    setTimeout(() => fetchJobs(), 0)
+  }
+
+  const applyQuickFilter = (type, value) => {
+    if (type === 'remote') {
+      setRemote(value ? 'true' : '')
+    }
+    if (type === 'industry') {
+      setIndustry(value)
+    }
+    if (type === 'location') {
+      setLocation(value)
+    }
+    setTimeout(() => fetchJobs(), 0)
+  }
+
   if (authLoading || (!authLoading && user?.userType === 'COMPANY')) {
     return <div className="loading">Loading...</div>
   }
@@ -61,48 +82,98 @@ function Jobs() {
 
   return (
     <div className="jobs-page">
-      <div className="container">
+      <div className="jobs-content">
         <h1>Browse Internship Opportunities</h1>
+        <p className="page-subtitle">Find internships that match your skills, location, and career goals.</p>
 
         <form onSubmit={handleSearch} className="search-filters">
-          <input
-            type="text"
-            placeholder="Search jobs..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="search-input"
-          />
-          <input
-            type="text"
-            placeholder="Exact Location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="search-input"
-          />
-          <select 
-            value={industry} 
-            onChange={(e) => setIndustry(e.target.value)}
-            className="search-input"
-          >
-            <option value="">By Industry</option>
-            <option value="Technology">Technology</option>
-            <option value="Banking">Banking</option>
-            <option value="Telecommunications">Telecommunications</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Education">Education</option>
-          </select>
-          <label className="remote-label">
+          <div className="search-fields">
             <input
-              type="checkbox"
-              checked={remote === 'true'}
-              onChange={(e) => setRemote(e.target.checked ? 'true' : '')}
+              type="text"
+              placeholder="Search by title, company, or skill..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="search-input"
             />
-            Remote
-          </label>
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+            <input
+              type="text"
+              placeholder="Location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="search-input"
+            />
+            <select 
+              value={industry} 
+              onChange={(e) => setIndustry(e.target.value)}
+              className="search-input"
+            >
+              <option value="">All industries</option>
+              <option value="Technology">Technology</option>
+              <option value="Banking">Banking</option>
+              <option value="Telecommunications">Telecommunications</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Education">Education</option>
+            </select>
+            <label className="remote-label">
+              <input
+                type="checkbox"
+                checked={remote === 'true'}
+                onChange={(e) => setRemote(e.target.checked ? 'true' : '')}
+              />
+              Remote only
+            </label>
+          </div>
+          <div className="search-actions">
+            <button type="submit" className="btn btn-primary">
+              Search
+            </button>
+            <button type="button" className="btn btn-secondary jobs-clear-btn" onClick={handleClearFilters}>
+              Clear
+            </button>
+          </div>
         </form>
+
+        <div className="jobs-quick-filters">
+          <button
+            type="button"
+            className={`quick-chip ${remote === 'true' ? 'active' : ''}`}
+            onClick={() => applyQuickFilter('remote', remote === 'true' ? false : true)}
+          >
+            Remote
+          </button>
+          <button
+            type="button"
+            className={`quick-chip ${industry === 'Technology' ? 'active' : ''}`}
+            onClick={() => applyQuickFilter('industry', industry === 'Technology' ? '' : 'Technology')}
+          >
+            Technology
+          </button>
+          <button
+            type="button"
+            className={`quick-chip ${industry === 'Banking' ? 'active' : ''}`}
+            onClick={() => applyQuickFilter('industry', industry === 'Banking' ? '' : 'Banking')}
+          >
+            Banking
+          </button>
+          <button
+            type="button"
+            className={`quick-chip ${industry === 'Healthcare' ? 'active' : ''}`}
+            onClick={() => applyQuickFilter('industry', industry === 'Healthcare' ? '' : 'Healthcare')}
+          >
+            Healthcare
+          </button>
+          <button
+            type="button"
+            className={`quick-chip ${location === 'Accra' ? 'active' : ''}`}
+            onClick={() => applyQuickFilter('location', location === 'Accra' ? '' : 'Accra')}
+          >
+            Accra
+          </button>
+        </div>
+
+        <div className="jobs-results-meta">
+          <span>{jobs.length} {jobs.length === 1 ? 'opportunity' : 'opportunities'} found</span>
+        </div>
 
         <div className="jobs-grid airbnb-grid">
           {jobs.length === 0 ? (

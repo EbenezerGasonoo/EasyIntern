@@ -84,6 +84,11 @@ router.post('/document', authenticate, async (req, res) => {
             where: { userId: req.userId },
             data: { resume: publicUrl }
         });
+    } else if (type === 'ghana-card') {
+        await prisma.intern.update({
+            where: { userId: req.userId },
+            data: { ghanaCardDocument: publicUrl }
+        });
     }
 
     res.json({ url: publicUrl });

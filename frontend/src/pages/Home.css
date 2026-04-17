@@ -6,12 +6,12 @@
 }
 
 .landing-api-banner {
-  background: #fff8e6;
-  color: #856404;
-  padding: 10px 24px;
+  background: #fff7ed;
+  color: #9a3412;
+  padding: 12px 24px;
   text-align: center;
   font-size: 14px;
-  border-bottom: 1px solid #ffe69c;
+  border-bottom: 1px solid #fed7aa;
 }
 
 .landing-api-banner p {
@@ -86,6 +86,35 @@
   opacity: 0.96;
 }
 
+.landing-stats {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.landing-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.landing-stat-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.landing-stat-label {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
 .landing-hero-ctas {
   display: flex;
   gap: 16px;
@@ -154,6 +183,64 @@
 
 .landing-hero-login a:hover {
   text-decoration: none;
+}
+
+.landing-trust {
+  padding: 20px 0;
+  background: #ffffff;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.landing-trust .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.landing-trust-lead {
+  margin: 0;
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
+.landing-trust-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.landing-trust-tags span {
+  font-size: 0.8rem;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+.landing-social-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.landing-social-links a {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  background: #eef5ff;
+  border: 1px solid #d5e4fb;
+  border-radius: 999px;
+  padding: 6px 11px;
+  text-decoration: none;
+}
+
+.landing-social-links a:hover {
+  background: #1e3a5f;
+  color: #fff;
+  border-color: #1e3a5f;
 }
 
 /* How it works – subtle background image */
@@ -492,8 +579,16 @@
     margin-right: auto;
   }
 
+  .landing-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .landing-cta {
     min-width: 0;
+  }
+
+  .landing-trust {
+    padding: 16px 0;
   }
 
   .landing-steps {

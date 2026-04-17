@@ -31,6 +31,8 @@ model User {
   userType          UserType
   isEmailVerified   Boolean  @default(false)
   verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -51,10 +53,15 @@ model Company {
   location         String?
   phone            String?
   logo             String?
+  companyTaxId     String?
+  isVerified       Boolean  @default(false)
   registrationDoc  String?  // URL to registration document
   internIntake     String?  // Intern intake per year
   mapLocation      String?  // Google Maps location URL/embed
   benefits         String?  // What we offer interns (e.g. mentorship, stipend)
+  hiringPriorities String?  // Roles/teams actively hiring for
+  candidateRequirements String? // Qualities/skills sought in candidates
+  hiringWorkflow   String?  // Hiring process overview
   companySize      String?  // e.g. "1-10", "11-50", "51-200", "200+"
   contactEmail     String?  // Enquiries from interns
   createdAt        DateTime @default(now())
@@ -69,12 +76,20 @@ model Company {
 model Intern {
   id         String   @id @default(cuid())
   userId     String   @unique
+  studentId  String?
+  dateOfBirth DateTime?
+  ghanaCardNumber String?
+  ghanaCardDocument String?
+  isVerified Boolean @default(false)
+  notifyIndustryJobs Boolean @default(false)
+  preferredIndustry String?
   firstName  String
   lastName   String
   bio        String?
   phone      String?
   skills     Json     // MySQL-compatible JSON array of skills
   education  String?
+  educationWebsite String?
   experience Json?    // Array of experience objects
   location   String?
   resume     String?  // URL to resume file

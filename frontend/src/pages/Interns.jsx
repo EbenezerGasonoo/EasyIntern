@@ -74,7 +74,7 @@ function Interns() {
 
   return (
     <div className="interns-page">
-      <div className="container">
+      <div className="interns-content">
         <h1>Browse Talented Interns</h1>
         <p className="page-subtitle">Discover skilled interns ready to join your team</p>
 
@@ -129,7 +129,10 @@ function Interns() {
                 </div>
                 <div className="card-content">
                   <div className="card-header">
-                    <h3 className="card-title">{intern.firstName} {intern.lastName}</h3>
+                    <h3 className="card-title">
+                      {intern.firstName} {intern.lastName}
+                      {intern.isVerified && <span className="intern-verified-badge" title="Verified Intern">✓</span>}
+                    </h3>
                     {intern.location && <div className="card-location">📍 {intern.location}</div>}
                   </div>
                   {intern.bio && (

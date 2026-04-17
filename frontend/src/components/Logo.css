@@ -26,6 +26,10 @@
   height: 100px;
 }
 
+.logo-xlarge .logo-image {
+  height: 130px;
+}
+
 .logo-fallback {
   display: none;
 }
@@ -51,6 +55,11 @@
   height: 56px;
 }
 
+.logo-xlarge .logo-icon {
+  width: 72px;
+  height: 72px;
+}
+
 .logo-text {
   font-size: 24px;
   font-weight: 600;
@@ -69,4 +78,8 @@
 
 .logo-large .logo-text {
   font-size: 32px;
+}
+
+.logo-xlarge .logo-text {
+  font-size: 40px;
 }

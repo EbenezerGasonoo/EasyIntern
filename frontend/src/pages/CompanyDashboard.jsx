@@ -23,6 +23,8 @@ function CompanyDashboard() {
   })
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState('')
+  const [statusFilter, setStatusFilter] = useState('ALL')
+  const [jobFilter, setJobFilter] = useState('ALL')
 
   const companyName = user?.company?.name || user?.email?.split('@')[0] || 'Company'
 
@@ -102,8 +104,8 @@ function CompanyDashboard() {
 
   if (loading) {
     return (
-      <div className="dashboard-page">
-        <div className="container">
+      <div className="dashboard-page company-dashboard-page">
+        <div className="company-dashboard-shell">
           <div className="dashboard-loading">
             <div className="loading-spinner" />
             <p>Loading your dashboard...</p>
@@ -115,10 +117,45 @@ function CompanyDashboard() {
 
   const jobs = company?.jobs ?? []
   const pendingCount = applications.filter((a) => a.status === 'PENDING').length
+  const reviewedCount = applications.filter((a) => a.status === 'REVIEWED').length
+  const acceptedCount = applications.filter((a) => a.status === 'ACCEPTED').length
+  const rejectedCount = applications.filter((a) => a.status === 'REJECTED').length
+  const decisionCount = acceptedCount + rejectedCount
+  const decisionRate = applications.length > 0 ? Math.round((decisionCount / applications.length) * 100) : 0
+  const decidedApplications = applications.filter((a) => a.status === 'ACCEPTED' || a.status === 'REJECTED')
+  const avgTimeToHireDays = decidedApplications.length > 0
+    ? Math.round(
+        decidedApplications.reduce((sum, app) => {
+          const appliedAt = app.appliedAt ? new Date(app.appliedAt) : null
+          const decidedAt = app.updatedAt ? new Date(app.updatedAt) : null
+          if (!appliedAt || !decidedAt || Number.isNaN(appliedAt.getTime()) || Number.isNaN(decidedAt.getTime())) {
+            return sum
+          }
+          const diffMs = Math.max(0, decidedAt.getTime() - appliedAt.getTime())
+          return sum + (diffMs / (1000 * 60 * 60 * 24))
+        }, 0) / decidedApplications.length
+      )
+    : null
+  const topJobs = [...jobs]
+    .sort((a, b) => (b._count?.applications ?? 0) - (a._count?.applications ?? 0))
+    .slice(0, 4)
+  const pendingApplications = applications.filter((a) => a.status === 'PENDING').slice(0, 5)
+  const uniqueJobOptions = [...new Set(applications.map((app) => app.job?.title).filter(Boolean))]
+  const filteredApplications = applications.filter((app) => {
+    const statusMatch = statusFilter === 'ALL' || app.status === statusFilter
+    const jobMatch = jobFilter === 'ALL' || app.job?.title === jobFilter
+    return statusMatch && jobMatch
+  })
+  const pipelineStages = [
+    { label: 'Applied', value: applications.length, tone: 'applied' },
+    { label: 'Shortlisted', value: reviewedCount, tone: 'shortlisted' },
+    { label: 'Offers', value: acceptedCount, tone: 'offers' },
+    { label: 'Rejected', value: rejectedCount, tone: 'rejected' },
+  ]
 
   return (
-    <div className="dashboard-page">
-      <div className="container">
+    <div className="dashboard-page company-dashboard-page">
+      <div className="company-dashboard-shell">
         <header className="dashboard-hero company-hero">
           <div className="dashboard-hero-content">
             <h1>Welcome, {companyName}</h1>
@@ -262,6 +299,86 @@ function CompanyDashboard() {
             <span className="stat-number">{pendingCount}</span>
             <p>Pending review</p>
           </div>
+          <div className="stat-card stat-card-info">
+            <span className="stat-number">{reviewedCount}</span>
+            <p>Shortlisted</p>
+          </div>
+          <div className="stat-card stat-card-success">
+            <span className="stat-number">{acceptedCount}</span>
+            <p>Offers made</p>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{decisionRate}%</span>
+            <p>Decision rate</p>
+          </div>
+          <div className="stat-card">
+            <span className="stat-number">{avgTimeToHireDays == null ? '—' : `${avgTimeToHireDays}d`}</span>
+            <p>Avg time-to-hire</p>
+          </div>
+        </section>
+
+        <section className="dashboard-section company-insights-grid">
+          <div className="card">
+            <h2>Top performing roles</h2>
+            {topJobs.length === 0 ? (
+              <p className="company-insight-empty">No job data yet. Post roles to see response trends.</p>
+            ) : (
+              <div className="company-top-jobs-list">
+                {topJobs.map((job) => (
+                  <div key={job.id} className="company-top-job-row">
+                    <div>
+                      <h3>{job.title}</h3>
+                      <p>{job.location || (job.remote ? 'Remote' : 'Location not set')}</p>
+                    </div>
+                    <span className="company-top-job-count">{job._count?.applications ?? 0}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="card">
+            <h2>Hiring queue (needs action)</h2>
+            {pendingApplications.length === 0 ? (
+              <p className="company-insight-empty">No pending applications right now.</p>
+            ) : (
+              <div className="company-hiring-queue">
+                {pendingApplications.map((app) => (
+                  <div key={app.id} className="company-queue-item">
+                    <div>
+                      <h3>{app.intern?.firstName} {app.intern?.lastName}</h3>
+                      <p>{app.job?.title}</p>
+                    </div>
+                    <div className="company-queue-actions">
+                      <button
+                        type="button"
+                        onClick={() => handleStatusUpdate(app.id, 'REVIEWED')}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        Shortlist
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="dashboard-section">
+          <div className="card">
+            <div className="dashboard-section-header">
+              <h2>Hiring pipeline overview</h2>
+            </div>
+            <div className="company-pipeline-grid">
+              {pipelineStages.map((stage) => (
+                <div key={stage.label} className={`company-pipeline-card ${stage.tone}`}>
+                  <span>{stage.label}</span>
+                  <strong>{stage.value}</strong>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section className="dashboard-section">
@@ -307,16 +424,33 @@ function CompanyDashboard() {
         </section>
 
         <section className="dashboard-section">
-          <h2>Recent applications</h2>
+          <div className="dashboard-section-header">
+            <h2>Recent applications</h2>
+            <div className="company-filters">
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <option value="ALL">All statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="REVIEWED">Shortlisted</option>
+                <option value="ACCEPTED">Accepted</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+              <select value={jobFilter} onChange={(e) => setJobFilter(e.target.value)}>
+                <option value="ALL">All jobs</option>
+                {uniqueJobOptions.map((title) => (
+                  <option key={title} value={title}>{title}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="card">
-            {applications.length === 0 ? (
+            {filteredApplications.length === 0 ? (
               <div className="dashboard-empty">
-                <p>No applications yet. Applications will appear here when interns apply to your jobs.</p>
+                <p>No applications match this filter yet.</p>
                 <Link to="/interns" className="btn btn-secondary">Browse interns</Link>
               </div>
             ) : (
               <div className="applications-list applications-list-company">
-                {applications.map((app) => (
+                {filteredApplications.map((app) => (
                   <div key={app.id} className="application-item application-item-company">
                     <div className="application-item-content">
                       <h3>
@@ -335,6 +469,13 @@ function CompanyDashboard() {
                     <div className="application-actions">
                       {app.status === 'PENDING' && (
                         <>
+                          <button
+                            type="button"
+                            onClick={() => handleStatusUpdate(app.id, 'REVIEWED')}
+                            className="btn btn-secondary"
+                          >
+                            Shortlist
+                          </button>
                           <button
                             type="button"
                             onClick={() => handleStatusUpdate(app.id, 'ACCEPTED')}

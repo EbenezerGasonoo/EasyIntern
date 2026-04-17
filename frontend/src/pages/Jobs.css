@@ -1,21 +1,27 @@
 .jobs-page {
-  padding: 40px 0 80px;
+  padding: 32px 0 80px;
   min-height: calc(100vh - 80px);
-  background: #ffffff;
+  background: #eef1f5;
+}
+
+.jobs-content {
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .jobs-page h1 {
   margin-bottom: 8px;
   color: #222;
   font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   padding: 0 24px;
 }
 
 .page-subtitle {
   color: #717171;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   font-size: 16px;
   padding: 0 24px;
   font-weight: 400;
@@ -23,25 +29,34 @@
 
 .search-filters {
   display: flex;
-  gap: 12px;
-  margin-bottom: 40px;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-end;
   background: white;
   padding: 16px 20px;
   border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e6eaf0;
   margin-left: 24px;
   margin-right: 24px;
 }
 
-.search-input {
+.search-fields {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.9fr auto;
+  gap: 12px;
+  align-items: center;
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
+}
+
+.search-input {
+  min-width: 120px;
   padding: 12px 16px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   transition: all 0.2s;
   background: white;
@@ -59,26 +74,87 @@
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
-.search-filters label {
+.remote-label {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
   color: #222;
   font-weight: 500;
+  white-space: nowrap;
+  padding: 0 6px;
+}
+
+.remote-label input {
+  width: 16px;
+  height: 16px;
+}
+
+.search-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .search-filters .btn {
-  padding: 12px 24px;
+  padding: 12px 18px;
   border-radius: 8px;
   font-weight: 600;
+  min-width: 90px;
+}
+
+.jobs-clear-btn {
+  background: #1E3A5F;
+  color: white;
+}
+
+.jobs-clear-btn:hover {
+  background: #152A47;
+}
+
+.jobs-results-meta {
+  margin: 0 24px 20px;
+  color: #717171;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.jobs-quick-filters {
+  margin: 0 24px 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.quick-chip {
+  border: 1px solid #ddd;
+  background: #fff;
+  color: #222;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.quick-chip:hover {
+  background: #f5f5f5;
+  border-color: #ddd;
+  transform: translateY(-1px);
+}
+
+.quick-chip.active {
+  background: #FF6B35;
+  border-color: #FF6B35;
+  color: #fff;
 }
 
 /* Airbnb-style Grid */
 .airbnb-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 40px 24px;
+  gap: 24px;
   padding: 0 24px;
 }
 
@@ -93,14 +169,14 @@
   text-decoration: none;
   color: inherit;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f0f0f0;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e6ebf2;
 }
 
 .airbnb-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-  border-color: #e0e0e0;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.14);
+  border-color: #d8e0ea;
 }
 
 .card-image-container {
@@ -125,7 +201,7 @@
   transform: scale(1.05);
 }
 
-.card-image-placeholder {
+.jobs-page .card-image-placeholder {
   position: absolute;
   top: 0;
   left: 0;
@@ -134,16 +210,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1E3A5F 0%, #2E5A8F 100%);
+  background: linear-gradient(135deg, #1f4675 0%, #2d5d97 100%) !important;
 }
 
-.job-image {
-  background: linear-gradient(135deg, #1E3A5F 0%, #2E5A8F 100%);
+.jobs-page .job-image {
+  background: linear-gradient(135deg, #1f4675 0%, #2d5d97 100%) !important;
 }
 
 .company-logo {
-  width: 100px;
-  height: 100px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.25);
   color: white;
@@ -151,7 +227,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 42px;
+  font-size: 32px;
   border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -178,7 +254,7 @@
 }
 
 .card-content {
-  padding: 16px;
+  padding: 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -190,8 +266,8 @@
 }
 
 .card-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1.08rem;
+  font-weight: 700;
   color: #222;
   margin: 0 0 4px 0;
   line-height: 1.3;
@@ -202,14 +278,14 @@
 }
 
 .card-location {
-  font-size: 14px;
+  font-size: 0.86rem;
   color: #717171;
   font-weight: 400;
   margin-top: 2px;
 }
 
 .card-description {
-  font-size: 14px;
+  font-size: 0.88rem;
   color: #717171;
   line-height: 1.5;
   margin-bottom: 12px;
@@ -257,20 +333,46 @@
   .jobs-page h1 {
     font-size: 28px;
   }
+
+  .page-subtitle {
+    margin-bottom: 18px;
+  }
   
   .airbnb-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
     padding: 0 16px;
   }
   
   .search-filters {
     flex-direction: column;
+    align-items: stretch;
     margin-left: 16px;
     margin-right: 16px;
+    margin-bottom: 12px;
+  }
+
+  .search-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .search-actions {
+    width: 100%;
   }
   
   .search-input {
     width: 100%;
+  }
+
+  .search-filters .btn {
+    flex: 1;
+  }
+
+  .jobs-results-meta {
+    margin: 0 16px 16px;
+  }
+
+  .jobs-quick-filters {
+    margin: 0 16px 12px;
   }
 }

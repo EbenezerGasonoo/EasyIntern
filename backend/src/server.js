@@ -10,6 +10,7 @@ import jobRoutes from './routes/job.js';
 import applicationRoutes from './routes/application.js';
 import uploadRoutes from './routes/upload.js';
 import notificationRoutes from './routes/notification.js';
+import adminRoutes from './routes/admin.js';
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

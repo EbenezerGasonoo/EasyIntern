@@ -25,33 +25,42 @@ enum ApplicationStatus {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  userType  UserType
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String    @id @default(cuid())
+  email             String    @unique
+  password          String
+  userType          UserType
+  isEmailVerified   Boolean   @default(false)
+  verificationToken String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  company Company?
-  intern  Intern?
+  company       Company?
+  intern        Intern?
+  notifications Notification[]
 
   @@map("users")
 }
 
 model Company {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  name         String
-  description  String?
-  website      String?
-  industry     String?
-  location     String?
-  logo         String?
-  benefits     String? // What we offer interns (e.g. mentorship, stipend)
-  companySize  String? // e.g. "1-10", "11-50", "51-200", "200+"
-  contactEmail String? // Enquiries from interns
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  name            String
+  description     String?
+  website         String?
+  industry        String?
+  location        String?
+  phone           String?
+  logo            String?
+  registrationDoc String? // URL to registration document
+  internIntake    String? // Intern intake per year
+  mapLocation     String? // Google Maps location URL/embed
+  benefits        String? // What we offer interns (e.g. mentorship, stipend)
+  companySize     String? // e.g. "1-10", "11-50", "51-200", "200+"
+  contactEmail    String? // Enquiries from interns
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   jobs Job[]
@@ -60,19 +69,26 @@ model Company {
 }
 
 model Intern {
-  id         String   @id @default(cuid())
-  userId     String   @unique
-  firstName  String
-  lastName   String
-  bio        String?
-  skills     Json // MySQL-compatible JSON array of skills
-  education  String?
-  experience String?
-  location   String?
-  resume     String? // URL to resume file
-  profilePic String? // URL to profile picture
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  studentId         String?
+  dateOfBirth       DateTime?
+  ghanaCardNumber   String?
+  ghanaCardDocument String?
+  isVerified        Boolean   @default(false)
+  firstName         String
+  lastName          String
+  bio               String?
+  phone             String?
+  skills            Json // MySQL-compatible JSON array of skills
+  education         String?
+  educationWebsite  String?
+  experience        Json? // Array of experience objects
+  location          String?
+  resume            String? // URL to resume file
+  profilePic        String? // URL to profile picture
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   applications Application[]
@@ -117,4 +133,18 @@ model Application {
 
   @@unique([jobId, internId])
   @@map("applications")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
 }

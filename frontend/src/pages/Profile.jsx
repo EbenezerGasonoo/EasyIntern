@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import { AptitudeChart } from '../components/AptitudeChart'
+import { getAptitudeScore } from '../utils/aptitudeScore'
 import './Profile.css'
 
 function Profile() {
@@ -16,9 +17,28 @@ function Profile() {
   const [saving, setSaving] = useState(false)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [photoError, setPhotoError] = useState('')
+  const [openFaqIndex, setOpenFaqIndex] = useState(0)
+  const [ticketStatus, setTicketStatus] = useState('')
+  const [ticketForm, setTicketForm] = useState({
+    category: '',
+    subject: '',
+    message: '',
+  })
 
   const isIntern = user?.userType === 'INTERN'
   const displayProfile = profile || (isIntern ? user?.intern : user?.company) || {}
+  const INTERN_INDUSTRIES = [
+    'Technology',
+    'Banking & Finance',
+    'Telecommunications',
+    'Healthcare',
+    'Education',
+    'Media & Communications',
+    'Retail & E-commerce',
+    'Manufacturing',
+    'Energy',
+    'Government & Public Sector',
+  ]
 
   useEffect(() => {
     fetchProfile()
@@ -39,6 +59,12 @@ function Profile() {
           lastName: demo.lastName ?? '',
           bio: demo.bio ?? '',
           phone: demo.phone ?? '',
+          dateOfBirth: demo.dateOfBirth ?? '',
+          ghanaCardNumber: demo.ghanaCardNumber ?? '',
+          ghanaCardDocument: demo.ghanaCardDocument ?? '',
+          isVerified: demo.isVerified ?? false,
+          notifyIndustryJobs: demo.notifyIndustryJobs ?? false,
+          preferredIndustry: demo.preferredIndustry ?? '',
           skills: Array.isArray(demo.skills) ? demo.skills : [],
           education: demo.education ?? '',
           experience: demo.experience ?? '',
@@ -58,10 +84,15 @@ function Profile() {
           location: demo.location ?? '',
           phone: demo.phone ?? '',
           logo: demo.logo ?? '',
+          companyTaxId: demo.companyTaxId ?? '',
+          isVerified: demo.isVerified ?? false,
           registrationDoc: demo.registrationDoc ?? '',
           internIntake: demo.internIntake ?? '',
           mapLocation: demo.mapLocation ?? '',
           benefits: demo.benefits ?? '',
+          hiringPriorities: demo.hiringPriorities ?? '',
+          candidateRequirements: demo.candidateRequirements ?? '',
+          hiringWorkflow: demo.hiringWorkflow ?? '',
           companySize: demo.companySize ?? '',
           contactEmail: demo.contactEmail ?? '',
         })
@@ -91,7 +122,15 @@ function Profile() {
           const endpoint = type === 'profilePic' || type === 'logo' ? '/upload/profile-pic' : '/upload/document'
           const payload = type === 'profilePic' || type === 'logo' 
             ? { image: dataUrl, fileName: file.name }
-            : { file: dataUrl, fileName: file.name, type: type === 'resume' ? 'resume' : 'registration' }
+            : {
+                file: dataUrl,
+                fileName: file.name,
+                type: type === 'resume'
+                  ? 'resume'
+                  : type === 'ghanaCardDocument'
+                    ? 'ghana-card'
+                    : 'registration',
+              }
 
           const { data } = await api.post(endpoint, payload)
           if (data?.url) {
@@ -153,6 +192,113 @@ function Profile() {
     }
   }
 
+  const faqItems = [
+    {
+      question: 'How long does verification take after submitting KYI details?',
+      answer: 'Verification is completed automatically once required details are filled in and the Ghana Card document is uploaded.',
+    },
+    {
+      question: 'How can I improve my chances of being contacted?',
+      answer: 'Add a clear bio, updated skills, education details, and a professional profile photo to increase visibility.',
+    },
+    {
+      question: 'Why can I not see recommended jobs?',
+      answer: 'Recommendations depend on profile completeness and available jobs. Complete your profile and refresh your dashboard.',
+    },
+    {
+      question: 'Can I edit my profile after getting verified?',
+      answer: 'Yes, you can update your profile anytime. If key KYI details are removed, verification status may change.',
+    },
+  ]
+
+  const handleTicketChange = (e) => {
+    const { name, value } = e.target
+    setTicketStatus('')
+    setTicketForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleTicketSubmit = (e) => {
+    e.preventDefault()
+    if (!ticketForm.category || !ticketForm.subject.trim() || !ticketForm.message.trim()) {
+      setTicketStatus('Please complete all ticket fields before submitting.')
+      return
+    }
+
+    const ticketId = `TKT-${Date.now().toString().slice(-6)}`
+    setTicketStatus(`Ticket ${ticketId} submitted successfully. Our team will follow up soon.`)
+    setTicketForm({ category: '', subject: '', message: '' })
+  }
+
+  const helpSection = (
+    <section className="card profile-section profile-help-section">
+      <div className="profile-help-header">
+        <h2>Help, FAQ & Ticketing</h2>
+        <p>Find quick answers or raise a support ticket.</p>
+      </div>
+
+      <div className="profile-help-grid">
+        <div className="profile-faq-list">
+          {faqItems.map((item, index) => (
+            <div key={item.question} className="profile-faq-item">
+              <button
+                type="button"
+                className={`profile-faq-question ${openFaqIndex === index ? 'active' : ''}`}
+                onClick={() => setOpenFaqIndex(openFaqIndex === index ? -1 : index)}
+              >
+                <span>{item.question}</span>
+                <span className="profile-faq-icon">{openFaqIndex === index ? '−' : '+'}</span>
+              </button>
+              {openFaqIndex === index && (
+                <p className="profile-faq-answer">{item.answer}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <form className="profile-ticket-form" onSubmit={handleTicketSubmit}>
+          <h3>Submit a ticket</h3>
+          <div className="form-group">
+            <label>Category</label>
+            <select name="category" value={ticketForm.category} onChange={handleTicketChange}>
+              <option value="">Select issue type</option>
+              <option value="account">Account</option>
+              <option value="verification">Verification</option>
+              <option value="applications">Applications</option>
+              <option value="technical">Technical issue</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Subject</label>
+            <input
+              type="text"
+              name="subject"
+              value={ticketForm.subject}
+              onChange={handleTicketChange}
+              placeholder="Short ticket title"
+            />
+          </div>
+          <div className="form-group">
+            <label>Message</label>
+            <textarea
+              name="message"
+              value={ticketForm.message}
+              onChange={handleTicketChange}
+              placeholder="Describe your issue in detail"
+              rows={4}
+            />
+          </div>
+          {ticketStatus && (
+            <p className={`profile-ticket-status ${ticketStatus.includes('successfully') ? 'success' : 'error'}`}>
+              {ticketStatus}
+            </p>
+          )}
+          <button type="submit" className="btn btn-primary">Submit ticket</button>
+        </form>
+      </div>
+    </section>
+  )
+
   if (loading) {
     return (
       <div className="profile-page">
@@ -169,6 +315,20 @@ function Profile() {
   if (isIntern) {
     const skillsArray = Array.isArray(formData.skills) ? formData.skills : (formData.skills || '').toString().split(',').map((s) => s.trim()).filter(Boolean)
     const initials = [formData.firstName, formData.lastName].filter(Boolean).map((n) => (n || '').charAt(0)).join('').toUpperCase() || '?'
+    const profileAptitude = getAptitudeScore({
+      bio: displayProfile.bio,
+      skills: skillsArray,
+      education: displayProfile.education,
+      experience: displayProfile.experience,
+      location: displayProfile.location,
+      profilePic: displayProfile.profilePic,
+      resume: displayProfile.resume,
+    })
+    const profileCompletion = profileAptitude.score
+    const applications = Array.isArray(displayProfile.applications) ? displayProfile.applications : []
+    const appliedCount = applications.length
+    const shortlistedCount = applications.filter((app) => app.status === 'REVIEWED').length
+    const interviewsCount = applications.filter((app) => app.status === 'ACCEPTED').length
 
     return (
       <div className="profile-page profile-page-intern">
@@ -186,6 +346,9 @@ function Profile() {
                 {formData.firstName || formData.lastName
                   ? [formData.firstName, formData.lastName].filter(Boolean).join(' ')
                   : 'Your profile'}
+                {(formData.isVerified || displayProfile.isVerified) && (
+                  <span className="verified-badge" title="Verified Intern">✓ Verified</span>
+                )}
               </h1>
               {formData.location && (
                 <p className="profile-hero-meta">📍 {formData.location}</p>
@@ -204,6 +367,33 @@ function Profile() {
               </button>
             </div>
           </header>
+
+          <section className="profile-summary-panel">
+            <div className="profile-completion-card">
+              <div className="profile-completion-header">
+                <span>Profile Completion</span>
+                <strong>{profileCompletion}%</strong>
+              </div>
+              <div className="profile-completion-track" aria-hidden="true">
+                <span className="profile-completion-fill" style={{ width: `${profileCompletion}%` }} />
+              </div>
+            </div>
+
+            <div className="profile-activity-stats">
+              <div className="profile-activity-card">
+                <strong>{appliedCount}</strong>
+                <span>Applied</span>
+              </div>
+              <div className="profile-activity-card">
+                <strong>{shortlistedCount}</strong>
+                <span>Shortlisted</span>
+              </div>
+              <div className="profile-activity-card">
+                <strong>{interviewsCount}</strong>
+                <span>Interviews</span>
+              </div>
+            </div>
+          </section>
 
           {success && <div className="profile-message profile-message-success">{success}</div>}
           {error && <div className="profile-message profile-message-error">{error}</div>}
@@ -282,15 +472,75 @@ function Profile() {
                     />
                   </div>
                 </div>
-                <div className="form-group">
-                  <label>Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone || ''}
-                    onChange={handleChange}
-                    placeholder="e.g. +233 24 123 4567"
-                  />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Preferred Industry</label>
+                    <select
+                      name="preferredIndustry"
+                      value={formData.preferredIndustry || ''}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select industry</option>
+                      {INTERN_INDUSTRIES.map((industry) => (
+                        <option key={industry} value={industry}>{industry}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone || ''}
+                      onChange={handleChange}
+                      placeholder="e.g. +233 24 123 4567"
+                    />
+                  </div>
+                </div>
+                <div className="card profile-card kyi-card">
+                  <h2>Know Your Intern (KYI)</h2>
+                  <p className="profile-field-hint">
+                    Submit your Ghana Card and identity details to get verified in the system.
+                  </p>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Date of Birth</label>
+                      <input
+                        type="date"
+                        name="dateOfBirth"
+                        value={formData.dateOfBirth ? String(formData.dateOfBirth).substring(0, 10) : ''}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Ghana Card Number</label>
+                      <input
+                        type="text"
+                        name="ghanaCardNumber"
+                        value={formData.ghanaCardNumber || ''}
+                        onChange={handleChange}
+                        placeholder="e.g. GHA-123456789-0"
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>Ghana Card Document</label>
+                    <div className="file-upload-wrapper">
+                      <input
+                        type="file"
+                        id="ghana-card-upload"
+                        onChange={(e) => handleFileUpload(e, 'ghanaCardDocument')}
+                        hidden
+                      />
+                      <label htmlFor="ghana-card-upload" className="btn btn-secondary">
+                        {saving ? 'Uploading...' : 'Upload Ghana Card'}
+                      </label>
+                      {formData.ghanaCardDocument && <span className="file-name">✅ Ghana Card uploaded</span>}
+                    </div>
+                  </div>
+                  <p className="kyi-status">
+                    Verification status: {(formData.isVerified || displayProfile.isVerified) ? 'Verified' : 'Not verified'}
+                  </p>
                 </div>
                 <div className="form-group">
                   <label>Experience</label>
@@ -301,6 +551,17 @@ function Profile() {
                     placeholder="Previous roles, projects, or relevant experience..."
                     rows={3}
                   />
+                </div>
+                <div className="form-group profile-checkbox-group">
+                  <label className="profile-checkbox-label">
+                    <input
+                      type="checkbox"
+                      name="notifyIndustryJobs"
+                      checked={Boolean(formData.notifyIndustryJobs)}
+                      onChange={handleChange}
+                    />
+                    <span>Notify me when jobs in my industry are posted</span>
+                  </label>
                 </div>
                 <div className="form-group">
                   <label>Resume</label>
@@ -373,32 +634,53 @@ function Profile() {
               </form>
             </div>
           ) : (
-            <div className="profile-view">
-              <section className="card profile-section profile-at-a-glance">
+            <div className="profile-view profile-view-intern">
+              <section className="card profile-section profile-at-a-glance profile-span-full">
                 <h2>How recruiters see you</h2>
                 <div className="profile-at-a-glance-row">
-                  <AptitudeChart
-                    intern={{
-                      bio: displayProfile.bio,
-                      skills: skillsArray,
-                      education: displayProfile.education,
-                      experience: displayProfile.experience,
-                      location: displayProfile.location,
-                      profilePic: displayProfile.profilePic,
-                      resume: displayProfile.resume,
-                    }}
-                    showPie={false}
-                    showBreakdown={true}
-                  />
-                  {displayProfile.location && (
+                  <div className="profile-at-a-glance-chart">
+                    <AptitudeChart
+                      intern={{
+                        bio: displayProfile.bio,
+                        skills: skillsArray,
+                        education: displayProfile.education,
+                        experience: displayProfile.experience,
+                        location: displayProfile.location,
+                        profilePic: displayProfile.profilePic,
+                        resume: displayProfile.resume,
+                      }}
+                      showPie={false}
+                      showBreakdown={true}
+                    />
+                  </div>
+                  <div className="profile-at-a-glance-meta">
                     <div className="profile-at-a-glance-location">
                       <span className="profile-location-label">Location</span>
-                      <p className="profile-location-value">📍 {displayProfile.location}</p>
+                      <p className="profile-location-value">
+                        {displayProfile.location ? `📍 ${displayProfile.location}` : '📍 Add your location'}
+                      </p>
                     </div>
-                  )}
+                    <div className="profile-at-a-glance-chips">
+                      <div className="profile-at-a-glance-chip">
+                        <span className="chip-label">Skills</span>
+                        <strong>{skillsArray.length}</strong>
+                      </div>
+                      <div className="profile-at-a-glance-chip">
+                        <span className="chip-label">Verified</span>
+                        <strong>{displayProfile.isVerified ? 'Yes' : 'No'}</strong>
+                      </div>
+                      <div className="profile-at-a-glance-chip">
+                        <span className="chip-label">Resume</span>
+                        <strong>{displayProfile.resume ? 'Added' : 'Missing'}</strong>
+                      </div>
+                    </div>
+                    <p className="profile-at-a-glance-hint">
+                      Keep your profile complete to rank higher in internship searches.
+                    </p>
+                  </div>
                 </div>
               </section>
-              <section className="card profile-section">
+              <section className="card profile-section profile-main-column">
                 <h2>About</h2>
                 {displayProfile.bio ? (
                   <p className="profile-bio">{displayProfile.bio}</p>
@@ -408,7 +690,7 @@ function Profile() {
               </section>
 
               {skillsArray.length > 0 && (
-                <section className="card profile-section">
+                <section className="card profile-section profile-main-column">
                   <h2>Skills</h2>
                   <div className="profile-skills">
                     {skillsArray.map((skill, i) => (
@@ -418,8 +700,8 @@ function Profile() {
                 </section>
               )}
 
-              {(displayProfile.education || displayProfile.experience || displayProfile.location) && (
-                <section className="card profile-section">
+              {(displayProfile.education || displayProfile.experience || displayProfile.location || displayProfile.preferredIndustry) && (
+                <section className="card profile-section profile-side-column">
                   <h2>Details</h2>
                   {displayProfile.education && (
                     <div className="profile-detail-row">
@@ -433,31 +715,54 @@ function Profile() {
                       <span>📍 {displayProfile.location}</span>
                     </div>
                   )}
+                  {displayProfile.preferredIndustry && (
+                    <div className="profile-detail-row">
+                      <span className="profile-detail-label">Preferred Industry</span>
+                      <span>{displayProfile.preferredIndustry}</span>
+                    </div>
+                  )}
                   {displayProfile.experience && (
                     <div className="profile-detail-row profile-detail-block">
                       <span className="profile-detail-label">Experience</span>
                       <p>{displayProfile.experience}</p>
                     </div>
                   )}
+                  <div className="profile-detail-row">
+                    <span className="profile-detail-label">Verification</span>
+                    <span>{displayProfile.isVerified ? '✅ Verified Intern' : 'Not verified yet'}</span>
+                  </div>
+                  <div className="profile-detail-row">
+                    <span className="profile-detail-label">Industry Job Alerts</span>
+                    <span>{displayProfile.notifyIndustryJobs ? 'Enabled' : 'Disabled'}</span>
+                  </div>
                 </section>
               )}
 
-              {displayProfile.resume && (
-                <section className="card profile-section">
-                  <h2>Resume</h2>
+              <section className="card profile-section profile-side-column profile-resume-section">
+                <h2>Resume</h2>
+                <p className="profile-resume-text">
+                  {displayProfile.resume
+                    ? 'Your resume is available to recruiters. Open it using the button below.'
+                    : 'No resume uploaded yet. Add one from Edit profile to boost your visibility.'}
+                </p>
+                {displayProfile.resume ? (
                   <a
                     href={displayProfile.resume}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-secondary"
+                    className="btn btn-primary profile-resume-btn"
                   >
-                    View resume
+                    See My Resume
                   </a>
-                </section>
-              )}
+                ) : (
+                  <button type="button" onClick={() => setEditing(true)} className="btn btn-secondary profile-resume-btn">
+                    Add Resume
+                  </button>
+                )}
+              </section>
 
               {!displayProfile.bio && skillsArray.length === 0 && !displayProfile.education && !displayProfile.experience && (
-                <section className="card profile-section profile-section-empty">
+                <section className="card profile-section profile-section-empty profile-span-full">
                   <p>Your profile is empty. Click <strong>Edit profile</strong> to add your bio, skills, and experience.</p>
                   <button type="button" onClick={() => setEditing(true)} className="btn btn-primary">
                     Edit profile
@@ -466,6 +771,8 @@ function Profile() {
               )}
             </div>
           )}
+
+          {helpSection}
 
           <div className="profile-back">
             <Link to={isIntern ? '/intern/dashboard' : '/company/dashboard'} className="profile-back-link">
@@ -481,6 +788,18 @@ function Profile() {
   const companyName = displayProfile.name || 'Your company'
   const companyInitial = (companyName || 'C').charAt(0).toUpperCase()
   const jobsCount = displayProfile.jobs?.length ?? 0
+  const companyProfileCompleteness = Math.round(([
+    displayProfile.description,
+    displayProfile.website,
+    displayProfile.industry,
+    displayProfile.location,
+    displayProfile.companySize,
+    displayProfile.benefits,
+    displayProfile.contactEmail || user?.email,
+    displayProfile.logo,
+    displayProfile.companyTaxId,
+    displayProfile.registrationDoc,
+  ].filter(Boolean).length / 10) * 100)
   const COMPANY_SIZES = [
     { value: '', label: 'Select size (optional)' },
     { value: '1-10', label: '1–10 employees' },
@@ -503,6 +822,9 @@ function Profile() {
           </div>
           <div className="profile-hero-company-info">
             <h1>{companyName}</h1>
+            {displayProfile.isVerified && (
+              <span className="company-verified-badge" title="Verified Company">✓ Verified Company</span>
+            )}
             {(displayProfile.industry || displayProfile.companySize) && (
               <div className="profile-hero-badges">
                 {displayProfile.industry && <span className="profile-badge">{displayProfile.industry}</span>}
@@ -523,6 +845,57 @@ function Profile() {
             </button>
           </div>
         </header>
+
+        <section className="profile-modern-stats profile-modern-stats-company">
+          <div className="profile-modern-stat">
+            <span className="profile-modern-stat-label">Active jobs</span>
+            <strong>{jobsCount}</strong>
+          </div>
+          <div className="profile-modern-stat">
+            <span className="profile-modern-stat-label">Company size</span>
+            <strong>{displayProfile.companySize || 'Not set'}</strong>
+          </div>
+          <div className="profile-modern-stat">
+            <span className="profile-modern-stat-label">Industry</span>
+            <strong>{displayProfile.industry || 'Not set'}</strong>
+          </div>
+          <div className="profile-modern-stat">
+            <span className="profile-modern-stat-label">Contact email</span>
+            <strong>{displayProfile.contactEmail || user?.email || 'Not set'}</strong>
+          </div>
+        </section>
+
+        <section className="company-profile-summary">
+          <div className="company-profile-summary-card">
+            <span className="company-profile-summary-label">Profile readiness</span>
+            <strong>{companyProfileCompleteness}%</strong>
+            <p>How complete your employer profile is for attracting quality intern applicants.</p>
+            <div className="company-profile-progress" aria-hidden="true">
+              <span style={{ width: `${companyProfileCompleteness}%` }} />
+            </div>
+          </div>
+          <div className="company-profile-summary-card">
+            <span className="company-profile-summary-label">Hiring spotlight</span>
+            <strong>{displayProfile.hiringPriorities ? 'Configured' : 'Needs setup'}</strong>
+            <p>
+              {displayProfile.hiringPriorities
+                ? 'Your role priorities are visible to candidates.'
+                : 'Add role priorities so the right interns apply faster.'}
+            </p>
+            <Link to="/company/dashboard" className="btn btn-secondary btn-sm">
+              Go to hiring dashboard
+            </Link>
+          </div>
+          <div className="company-profile-summary-card">
+            <span className="company-profile-summary-label">Verification</span>
+            <strong>{displayProfile.isVerified ? 'Verified' : 'Pending verification'}</strong>
+            <p>
+              {displayProfile.isVerified
+                ? 'Your company has completed verification checks.'
+                : 'Submit registration document and Company Tax ID to get verified. Adding logo and website is optional, but strongly boosts trust and applicant quality.'}
+            </p>
+          </div>
+        </section>
 
         {success && <div className="profile-message profile-message-success">{success}</div>}
         {error && <div className="profile-message profile-message-error">{error}</div>}
@@ -688,6 +1061,28 @@ function Profile() {
                       {formData.registrationDoc && <span className="file-name">✅ Document uploaded</span>}
                    </div>
                 </div>
+                <div className="card profile-card kyi-card">
+                  <h2>Company Verification</h2>
+                  <p className="profile-field-hint">
+                    Verify your company by submitting your registration document and Company Tax ID.
+                  </p>
+                  <p className="profile-field-hint">
+                    Optional but highly recommended: add your company logo and website. Verified companies with complete branding usually attract stronger and more applications.
+                  </p>
+                  <div className="form-group">
+                    <label>Company Tax ID</label>
+                    <input
+                      type="text"
+                      name="companyTaxId"
+                      value={formData.companyTaxId || ''}
+                      onChange={handleChange}
+                      placeholder="e.g. C0001234567"
+                    />
+                  </div>
+                  <p className="kyi-status">
+                    Verification status: {(formData.isVerified || displayProfile.isVerified) ? 'Verified' : 'Not verified'}
+                  </p>
+                </div>
               </div>
 
               <div className="card profile-card">
@@ -700,6 +1095,41 @@ function Profile() {
                     value={formData.benefits || ''}
                     onChange={handleChange}
                     placeholder="e.g. Mentorship from senior staff, monthly stipend, flexible hours, hands-on projects, possibility of full-time offer..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="card profile-card">
+                <h2>Hiring preferences</h2>
+                <p className="profile-field-hint">Set expectations so stronger candidates apply and your screening becomes faster.</p>
+                <div className="form-group">
+                  <label>Priority roles / teams</label>
+                  <textarea
+                    name="hiringPriorities"
+                    value={formData.hiringPriorities || ''}
+                    onChange={handleChange}
+                    placeholder="e.g. Software Engineering Interns, Product Design Interns, Marketing Operations Interns"
+                    rows={3}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>What you look for in candidates</label>
+                  <textarea
+                    name="candidateRequirements"
+                    value={formData.candidateRequirements || ''}
+                    onChange={handleChange}
+                    placeholder="e.g. problem solving, communication, portfolio quality, project experience"
+                    rows={3}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hiring workflow</label>
+                  <textarea
+                    name="hiringWorkflow"
+                    value={formData.hiringWorkflow || ''}
+                    onChange={handleChange}
+                    placeholder="e.g. CV review -> shortlist -> interview -> offer"
                     rows={3}
                   />
                 </div>
@@ -725,23 +1155,47 @@ function Profile() {
             </form>
           </div>
         ) : (
-          <div className="profile-view">
+          <div className="profile-view profile-view-company">
             {displayProfile.description && (
-              <section className="card profile-section">
+              <section className="card profile-section profile-company-main">
                 <h2>About</h2>
                 <p className="profile-bio">{displayProfile.description}</p>
               </section>
             )}
 
             {displayProfile.benefits && (
-              <section className="card profile-section">
+              <section className="card profile-section profile-company-main">
                 <h2>What we offer interns</h2>
                 <p className="profile-bio">{displayProfile.benefits}</p>
               </section>
             )}
 
+            {(displayProfile.hiringPriorities || displayProfile.candidateRequirements || displayProfile.hiringWorkflow) && (
+              <section className="card profile-section profile-company-main">
+                <h2>Hiring Preferences</h2>
+                {displayProfile.hiringPriorities && (
+                  <div className="profile-detail-row profile-detail-block">
+                    <span className="profile-detail-label">Priority Roles</span>
+                    <p>{displayProfile.hiringPriorities}</p>
+                  </div>
+                )}
+                {displayProfile.candidateRequirements && (
+                  <div className="profile-detail-row profile-detail-block">
+                    <span className="profile-detail-label">Candidate Expectations</span>
+                    <p>{displayProfile.candidateRequirements}</p>
+                  </div>
+                )}
+                {displayProfile.hiringWorkflow && (
+                  <div className="profile-detail-row profile-detail-block">
+                    <span className="profile-detail-label">Hiring Workflow</span>
+                    <p>{displayProfile.hiringWorkflow}</p>
+                  </div>
+                )}
+              </section>
+            )}
+
             {(displayProfile.website || displayProfile.industry || displayProfile.location || displayProfile.companySize) && (
-              <section className="card profile-section">
+              <section className="card profile-section profile-company-side">
                 <h2>Details</h2>
                 {displayProfile.website && (
                   <div className="profile-detail-row">
@@ -775,12 +1229,22 @@ function Profile() {
                     <span>{displayProfile.phone}</span>
                   </div>
                 )}
+                {displayProfile.companyTaxId && (
+                  <div className="profile-detail-row">
+                    <span className="profile-detail-label">Company Tax ID</span>
+                    <span>{displayProfile.companyTaxId}</span>
+                  </div>
+                )}
                 {displayProfile.internIntake && (
                   <div className="profile-detail-row">
                     <span className="profile-detail-label">Intern Intake</span>
                     <span>{displayProfile.internIntake} per year</span>
                   </div>
                 )}
+                <div className="profile-detail-row">
+                  <span className="profile-detail-label">Verification</span>
+                  <span>{displayProfile.isVerified ? '✅ Verified Company' : 'Not verified yet'}</span>
+                </div>
                 {displayProfile.mapLocation && (
                    <div className="profile-map-container mt-4">
                       <h3>Find us on Google Maps</h3>
@@ -797,7 +1261,7 @@ function Profile() {
             )}
 
             {(displayProfile.contactEmail || user?.email) && (
-              <section className="card profile-section">
+              <section className="card profile-section profile-company-side">
                 <h2>Contact</h2>
                 <div className="profile-detail-row">
                   <span className="profile-detail-label">Enquiries</span>
@@ -809,7 +1273,7 @@ function Profile() {
             )}
 
             {displayProfile.registrationDoc && (
-              <section className="card profile-section">
+              <section className="card profile-section profile-company-side">
                 <h2>Verified Documents</h2>
                 <div className="profile-detail-row">
                   <span className="profile-detail-label">Registration</span>
@@ -837,6 +1301,8 @@ function Profile() {
             )}
           </div>
         )}
+
+        {helpSection}
 
         <div className="profile-back">
           <Link to="/company/dashboard" className="profile-back-link">← Back to dashboard</Link>

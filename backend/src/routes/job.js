@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
     }
 
     if (location) {
-      // Requirement 7: The location search must be exact
-      where.location = location;
+      // Internship location search must be exact (case-insensitive)
+      where.location = { equals: String(location).trim(), mode: 'insensitive' };
     }
 
     if (remote !== undefined) {

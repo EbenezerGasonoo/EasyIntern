@@ -127,6 +127,10 @@ exports.Prisma.UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   userType: 'userType',
+  isEmailVerified: 'isEmailVerified',
+  verificationToken: 'verificationToken',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -139,7 +143,11 @@ exports.Prisma.CompanyScalarFieldEnum = {
   website: 'website',
   industry: 'industry',
   location: 'location',
+  phone: 'phone',
   logo: 'logo',
+  registrationDoc: 'registrationDoc',
+  internIntake: 'internIntake',
+  mapLocation: 'mapLocation',
   benefits: 'benefits',
   companySize: 'companySize',
   contactEmail: 'contactEmail',
@@ -150,11 +158,18 @@ exports.Prisma.CompanyScalarFieldEnum = {
 exports.Prisma.InternScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  studentId: 'studentId',
+  dateOfBirth: 'dateOfBirth',
+  ghanaCardNumber: 'ghanaCardNumber',
+  ghanaCardDocument: 'ghanaCardDocument',
+  isVerified: 'isVerified',
   firstName: 'firstName',
   lastName: 'lastName',
   bio: 'bio',
+  phone: 'phone',
   skills: 'skills',
   education: 'education',
+  educationWebsite: 'educationWebsite',
   experience: 'experience',
   location: 'location',
   resume: 'resume',
@@ -191,12 +206,26 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  message: 'message',
+  type: 'type',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
 
 exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
 };
 
@@ -227,7 +256,8 @@ exports.Prisma.ModelName = {
   Company: 'Company',
   Intern: 'Intern',
   Job: 'Job',
-  Application: 'Application'
+  Application: 'Application',
+  Notification: 'Notification'
 };
 
 /**

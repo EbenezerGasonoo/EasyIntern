@@ -30,7 +30,7 @@ A full-stack web application that connects companies with interns. EasyIntern pr
 
 ### Backend
 - **Node.js** with Express.js
-- **PostgreSQL** database
+- **MySQL** database
 - **Prisma** ORM for database management
 - **JWT** for authentication
 - **bcryptjs** for password hashing
@@ -45,7 +45,7 @@ A full-stack web application that connects companies with interns. EasyIntern pr
 
 Before you begin, ensure you have the following installed:
 - **Node.js** (v18 or higher)
-- **PostgreSQL** (v12 or higher)
+- **MySQL** (v8.0 or higher)
 - **npm** or **yarn**
 
 ## Installation & Setup
@@ -72,13 +72,13 @@ cp .env.example .env
 Edit the `.env` file with your database credentials:
 
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/easyintern?schema=public"
+DATABASE_URL="mysql://username:password@localhost:3306/easyintern"
 JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
 PORT=5001
 NODE_ENV=development
 ```
 
-**Important:** Replace `username`, `password`, and `easyintern` with your actual PostgreSQL credentials and database name.
+**Important:** Replace `username`, `password`, and `easyintern` with your actual MySQL credentials and database name.
 
 ### 3. Set Up the Database
 
@@ -230,9 +230,9 @@ The application uses the following main models:
 ## Troubleshooting
 
 ### Database Connection Issues
-- Ensure PostgreSQL is running
+- Ensure MySQL is running
 - Verify DATABASE_URL in `.env` is correct
-- Check that the database exists: `createdb easyintern` (if needed)
+- Check that the database exists: `mysql -u root -p -e "CREATE DATABASE easyintern;"` (if needed)
 
 ### Port Already in Use
 - Backend: Change `PORT` in `.env` file
@@ -247,7 +247,7 @@ The application uses the following main models:
 ### Backend
 1. Set `NODE_ENV=production` in `.env`
 2. Use a strong `JWT_SECRET`
-3. Use a production PostgreSQL database
+3. Use a production MySQL database
 4. Run `npm run prisma:generate` and `npm run prisma:migrate deploy`
 5. Start with `npm start`
 

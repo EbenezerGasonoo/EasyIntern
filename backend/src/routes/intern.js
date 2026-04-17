@@ -87,6 +87,7 @@ router.get('/browse', async (req, res) => {
         bio: true,
         skills: true,
         education: true,
+        isVerified: true,
         location: true,
         profilePic: true,
         createdAt: true,
@@ -179,7 +180,32 @@ router.get('/profile', authenticate, requireIntern, async (req, res) => {
 // Update intern profile
 router.put('/profile', authenticate, requireIntern, async (req, res) => {
   try {
-    const { firstName, lastName, bio, skills, education, experience, location, resume, profilePic, phone } = req.body;
+    const {
+      firstName,
+      lastName,
+      bio,
+      skills,
+      education,
+      experience,
+      location,
+      resume,
+      profilePic,
+      phone,
+      dateOfBirth,
+      ghanaCardNumber,
+      ghanaCardDocument,
+      notifyIndustryJobs,
+      preferredIndustry,
+    } = req.body;
+
+    const hasKyiDetails = Boolean(
+      firstName &&
+      lastName &&
+      phone &&
+      dateOfBirth &&
+      ghanaCardNumber &&
+      ghanaCardDocument
+    );
 
     const intern = await prisma.intern.update({
       where: { userId: req.userId },
@@ -194,6 +220,12 @@ router.put('/profile', authenticate, requireIntern, async (req, res) => {
         location,
         resume,
         profilePic,
+        dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+        ghanaCardNumber,
+        ghanaCardDocument,
+        notifyIndustryJobs: Boolean(notifyIndustryJobs),
+        preferredIndustry,
+        isVerified: hasKyiDetails,
       },
     });
 
@@ -233,18 +265,29 @@ router.get('/recommended-jobs', authenticate, requireIntern, async (req, res) =>
       orderBy: { createdAt: 'desc' },
     });
 
-    // Simple matching: score jobs based on skill overlap
+    // Simple matching: score jobs based on skill overlap + preferred industry boost
     const scoredJobs = allJobs.map(job => {
       const internSkills = intern.skills || [];
       const jobSkills = job.skills || [];
       const matchingSkills = internSkills.filter(skill =>
         jobSkills.some(js => js.toLowerCase().includes(skill.toLowerCase()) || skill.toLowerCase().includes(js.toLowerCase()))
       );
-      const score = (matchingSkills.length / Math.max(jobSkills.length, 1)) * 100;
+      const baseScore = (matchingSkills.length / Math.max(jobSkills.length, 1)) * 100;
+      const preferredIndustry = intern.preferredIndustry?.toLowerCase().trim();
+      const companyIndustry = job.company?.industry?.toLowerCase().trim();
+      const industryMatch = Boolean(
+        preferredIndustry &&
+        companyIndustry &&
+        (companyIndustry.includes(preferredIndustry) || preferredIndustry.includes(companyIndustry))
+      );
+
+      // Keep score bounded at 100 while favoring jobs in the intern's selected industry.
+      const score = Math.min(100, baseScore + (industryMatch ? 20 : 0));
 
       return {
         ...job,
         matchScore: Math.round(score),
+        industryMatch,
       };
     });
 

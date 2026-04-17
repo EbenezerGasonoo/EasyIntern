@@ -1,11 +1,14 @@
 import logoImage from '../assets/logo.svg?url'
+import logoLightImage from '../assets/logo-light.svg?url'
 import './Logo.css'
 
-function Logo({ size = 'medium' }) {
+function Logo({ size = 'medium', theme = 'dark' }) {
+  const src = theme === 'light' ? logoLightImage : logoImage
+
   return (
-    <div className={`logo logo-${size}`}>
+    <div className={`logo logo-${size} logo-${theme}`}>
       <img 
-        src={logoImage} 
+        src={src}
         alt="EasyIntern Logo" 
         className="logo-image"
         onError={(e) => {
