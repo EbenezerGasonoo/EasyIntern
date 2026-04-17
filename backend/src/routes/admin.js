@@ -566,4 +566,43 @@ router.patch('/admin-users/:id', authenticate, requireSuperAdmin, async (req, re
   }
 });
 
+router.patch('/admin-users/:id/reset-password', authenticate, requireSuperAdmin, async (req, res) => {
+  try {
+    const { newPassword } = req.body || {};
+    if (!newPassword || String(newPassword).length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long' });
+    }
+
+    const hashedPassword = await bcrypt.hash(String(newPassword), 10);
+    const updated = await prisma.user.update({
+      where: { id: req.params.id },
+      data: {
+        password: hashedPassword,
+        updatedAt: new Date(),
+      },
+      select: {
+        id: true,
+        email: true,
+        adminRole: true,
+        updatedAt: true,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        actorUserId: req.userId !== 'admin' ? req.userId : null,
+        actorEmail: req.adminEmail || null,
+        action: 'ADMIN_USER_PASSWORD_RESET',
+        entityType: 'USER',
+        entityId: updated.id,
+      },
+    }).catch(() => null);
+
+    res.json({ message: 'Admin password reset successfully', user: updated });
+  } catch (error) {
+    console.error('Reset admin password error:', error);
+    res.status(500).json({ error: 'Failed to reset admin password' });
+  }
+});
+
 export default router;

@@ -60,6 +60,7 @@ function AdminSettings() {
     role: 'SUPPORT_ADMIN',
   })
   const [updatingAdminId, setUpdatingAdminId] = useState(null)
+  const [passwordDrafts, setPasswordDrafts] = useState({})
 
   const canCreateAdmin = useMemo(() => newAdmin.email && newAdmin.password && newAdmin.role, [newAdmin])
 
@@ -226,6 +227,26 @@ function AdminSettings() {
     }
   }
 
+  const resetAdminPassword = async (adminId) => {
+    const newPassword = passwordDrafts[adminId]
+    if (!newPassword || newPassword.length < 8) {
+      setAdminMessage('New password must be at least 8 characters.')
+      return
+    }
+
+    setUpdatingAdminId(adminId)
+    setAdminMessage('')
+    try {
+      await api.patch(`/admin/admin-users/${adminId}/reset-password`, { newPassword })
+      setPasswordDrafts((prev) => ({ ...prev, [adminId]: '' }))
+      setAdminMessage('Admin password reset successfully.')
+    } catch (error) {
+      setAdminMessage(error?.response?.data?.error || 'Failed to reset admin password.')
+    } finally {
+      setUpdatingAdminId(null)
+    }
+  }
+
   return (
     <div className="admin-settings-page">
       <div className="admin-settings-shell">
@@ -336,6 +357,23 @@ function AdminSettings() {
                       disabled={updatingAdminId === admin.id}
                     >
                       {admin.isSuspended ? 'Reactivate' : 'Suspend'}
+                    </button>
+                  </div>
+                  <div className="admin-user-password-reset">
+                    <input
+                      type="password"
+                      placeholder="New password (8+ chars)"
+                      value={passwordDrafts[admin.id] || ''}
+                      onChange={(e) => setPasswordDrafts((prev) => ({ ...prev, [admin.id]: e.target.value }))}
+                      disabled={updatingAdminId === admin.id}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => resetAdminPassword(admin.id)}
+                      disabled={updatingAdminId === admin.id}
+                    >
+                      Reset Password
                     </button>
                   </div>
                 </article>
