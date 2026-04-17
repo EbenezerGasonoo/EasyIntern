@@ -40,7 +40,7 @@ fi
 
 echo ""
 echo "=== Next steps ==="
-echo "1. Backend: Deploy the 'backend' folder to Vercel (see DO_FIRST.md)."
-echo "2. Frontend: Deploy the 'frontend' folder to Vercel, or use GitHub Pages (see DO_FIRST.md)."
-echo "3. Set VITE_API_URL to your backend URL + /api (e.g. https://your-api.vercel.app/api)."
+echo "1. Backend: Deploy/update the 'backend' folder on your hosting server."
+echo "2. Frontend: Upload 'frontend/dist' to your web root (easyintern.app)."
+echo "3. Set VITE_API_URL to your backend URL + /api (e.g. https://api.easyintern.app/api)."
 echo ""
