@@ -380,11 +380,12 @@
     display: none;
   }
 
+  /* Must sit above .navbar-top (130) or the drawer paints *behind* the header (split-screen bug) */
   .navbar-backdrop {
     display: none;
     position: fixed;
     inset: 0;
-    z-index: 118;
+    z-index: 140;
     background: rgba(15, 23, 42, 0.45);
     backdrop-filter: blur(2px);
   }
@@ -404,16 +405,32 @@
     max-height: 100dvh;
     padding: 72px 18px 28px;
     background: #fff;
-    z-index: 119;
+    z-index: 141;
     box-shadow: -12px 0 40px rgba(15, 23, 42, 0.14);
     transform: translateX(100%);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s linear 0.28s;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    /* Off-screen: no hits; visibility hidden after slide-out so close animation still runs */
+    pointer-events: none;
+    visibility: hidden;
   }
 
   .navbar--drawer-open .navbar-drawer {
     transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+    transition:
+      transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0s;
+  }
+
+  /* Keep the morphing burger/close control above backdrop + drawer */
+  .navbar--drawer-open .navbar-burger {
+    position: relative;
+    z-index: 200;
   }
 
   .navbar-drawer-inner {
