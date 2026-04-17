@@ -30,7 +30,7 @@
   min-width: 0;
 }
 
-/* Hamburger — visible only < 1024px */
+/* Hamburger — visible below xl (1280px); tablets in landscape use drawer */
 .navbar-burger {
   display: none;
   flex-direction: column;
@@ -367,7 +367,7 @@
   display: none;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
   .navbar {
     padding: 8px 0;
   }
@@ -515,7 +515,7 @@
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .navbar-burger {
     display: none !important;
   }
@@ -534,7 +534,7 @@
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1200px) {
+@media (min-width: 1280px) and (max-width: 1400px) {
   .nav-user-name {
     max-width: 100px;
   }
