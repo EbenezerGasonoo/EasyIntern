@@ -3,6 +3,9 @@ import prisma from '../src/utils/db.js';
 
 const DEMO_PASSWORD = 'DemoEasy2026!';
 
+const COMPANY_COUNT = 20;
+const INTERN_COUNT = 30;
+
 const demoResponsibilities = (title) => [
   `Support delivery and team goals for ${title} as assigned.`,
   'Attend weekly team syncs and document learnings.',
@@ -14,6 +17,146 @@ const demoBenefits = () => [
   'Feedback on deliverables',
   'Certificate of completion (where applicable)',
 ];
+
+const INDUSTRIES = [
+  { key: 'Technology', roles: ['Software Engineering Intern', 'QA / Test Intern', 'DevOps Intern'] },
+  { key: 'Banking & Finance', roles: ['Finance & Reporting Intern', 'Risk Analyst Intern'] },
+  { key: 'Healthcare', roles: ['Healthcare Operations Intern', 'Community Health Intern'] },
+  { key: 'Food & Beverage', roles: ['Supply Chain Intern', 'Quality Assurance Intern'] },
+  { key: 'Education', roles: ['STEM Outreach Intern', 'Learning Content Intern'] },
+  { key: 'Media & Marketing', roles: ['Content Marketing Intern', 'Social Media Intern'] },
+  { key: 'Energy', roles: ['Field Operations Intern', 'Sustainability Intern'] },
+  { key: 'Retail', roles: ['Merchandising Intern', 'Customer Experience Intern'] },
+];
+
+const LOCATIONS = [
+  'Accra, Greater Accra',
+  'Kumasi, Ashanti Region',
+  'Tema, Greater Accra',
+  'Cape Coast, Central Region',
+  'Takoradi, Western Region',
+];
+
+const COMPANY_SIZES = ['1–10', '11–50', '51–200', '200+'];
+
+const FIRST_NAMES = [
+  'Ama', 'Kofi', 'Akosua', 'Yaw', 'Efua', 'Kwame', 'Abena', 'Kwabena', 'Adwoa', 'Kojo',
+  'Afi', 'Fiifi', 'Maame', 'Nana', 'Esi', 'Kwesi', 'Aba', 'Yaw', 'Akosua', 'Kweku',
+  'Afua', 'Paa', 'Esi', 'Ato', 'Yaa', 'Kweku', 'Aba', 'Efua', 'Nii', 'Ama',
+];
+
+const LAST_NAMES = [
+  'Serwaa', 'Asante', 'Owusu', 'Boateng', 'Mensah', 'Antwi', 'Darko', 'Agyeman', 'Osei', 'Appiah',
+  'Quaye', 'Ntiamoah', 'Adjei', 'Ofori', 'Tetteh', 'Sarpong', 'Amponsah', 'Bonsu', 'Frimpong', 'Annan',
+  'Yeboah', 'Koomson', 'Acheampong', 'Danquah', 'Adu', 'Boadi', 'Owusu', 'Kwarteng', 'Mensah', 'Agyei',
+];
+
+const SKILL_POOLS = [
+  ['JavaScript', 'React', 'Git', 'Node.js'],
+  ['Python', 'SQL', 'Excel', 'Data Analysis'],
+  ['Marketing', 'Social Media', 'Content Creation', 'Copywriting'],
+  ['Excel', 'Financial Analysis', 'Accounting'],
+  ['Operations', 'Microsoft Office', 'Customer Service'],
+  ['STEM', 'Teaching', 'Communication'],
+  ['Figma', 'UX Research', 'Prototyping'],
+  ['Supply Chain', 'Logistics', 'Inventory'],
+];
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+function buildJobForCompany(index1Based) {
+  const i = index1Based - 1;
+  const ind = INDUSTRIES[i % INDUSTRIES.length];
+  const title = ind.roles[i % ind.roles.length];
+  const location = LOCATIONS[i % LOCATIONS.length];
+  const remote = i % 3 === 0;
+  const stipends = ['GHS 900/month', 'GHS 1,200/month', 'GHS 1,500/month', 'GHS 1,800/month'];
+  const durations = ['3 months', '4 months', '6 months'];
+
+  return {
+    title: `${title} (${pad2(index1Based)})`,
+    description: `Hands-on internship with our ${ind.key} team. You will learn processes, tools, and contribute to real deliverables with mentor support.`,
+    requirements: ['Strong communication', 'Reliability', 'Willingness to learn', 'Team collaboration'],
+    responsibilities: demoResponsibilities(title),
+    benefits: demoBenefits(),
+    location,
+    remote,
+    duration: durations[i % durations.length],
+    stipend: stipends[i % stipends.length],
+    skills: SKILL_POOLS[i % SKILL_POOLS.length],
+  };
+}
+
+function buildCompanies() {
+  const list = [];
+  const namePrefixes = [
+    'Northstar', 'Greenfield', 'Summit', 'Harbor', 'Cedar', 'Bluewave', 'Atlas', 'Vertex', 'Lumen', 'Stride',
+    'Keystone', 'Meridian', 'Pioneer', 'Horizon', 'Catalyst', 'Nimbus', 'Apex', 'Granite', 'Solstice', 'Echo',
+  ];
+  const nameSuffixes = [
+    'Labs', 'Partners', 'Holdings', 'Solutions', 'Group', 'Ventures', 'Works', 'Systems', 'Services', 'Industries',
+  ];
+
+  for (let n = 1; n <= COMPANY_COUNT; n += 1) {
+    const i = n - 1;
+    const email = `demo-company-${pad2(n)}@easyintern.app`;
+    const name = `${namePrefixes[i % namePrefixes.length]} ${nameSuffixes[i % nameSuffixes.length]}`;
+    const ind = INDUSTRIES[i % INDUSTRIES.length];
+    const jobs = [buildJobForCompany(n)];
+    if (n % 2 === 0) {
+      const secondTitle = ind.roles[(i + 1) % ind.roles.length];
+      jobs.push({
+        title: `${secondTitle} (${pad2(n)}b)`,
+        description: `Additional internship track for ${name} — shadow senior staff and own small projects end-to-end.`,
+        requirements: ['Organized', 'Curious', 'Professional writing', 'Basic tooling'],
+        responsibilities: demoResponsibilities(secondTitle),
+        benefits: demoBenefits(),
+        location: LOCATIONS[(i + 1) % LOCATIONS.length],
+        remote: i % 2 === 1,
+        duration: '4 months',
+        stipend: 'GHS 1,300/month',
+        skills: SKILL_POOLS[(i + 3) % SKILL_POOLS.length],
+      });
+    }
+
+    list.push({
+      email,
+      name,
+      description: `${name} operates in ${ind.key.toLowerCase()} with a focus on quality, learning culture, and intern development.`,
+      website: 'https://easyintern.app',
+      industry: ind.key,
+      location: LOCATIONS[i % LOCATIONS.length],
+      companySize: COMPANY_SIZES[i % COMPANY_SIZES.length],
+      jobs,
+    });
+  }
+  return list;
+}
+
+function buildInterns() {
+  const list = [];
+  for (let n = 1; n <= INTERN_COUNT; n += 1) {
+    const i = n - 1;
+    const email = `demo-intern-${pad2(n)}@easyintern.app`;
+    const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
+    const lastName = LAST_NAMES[(i + 3) % LAST_NAMES.length];
+    const ind = INDUSTRIES[i % INDUSTRIES.length];
+    list.push({
+      email,
+      firstName,
+      lastName,
+      studentId: `EI-DEMO-${pad2(n)}`,
+      bio: `${ind.key}-focused student eager to learn on the job. Strong work ethic, teamwork, and communication.`,
+      skills: SKILL_POOLS[i % SKILL_POOLS.length],
+      education: 'BSc — related field',
+      location: LOCATIONS[i % LOCATIONS.length],
+      preferredIndustry: ind.key,
+    });
+  }
+  return list;
+}
 
 async function ensureUserCompany({
   email,
@@ -124,252 +267,59 @@ async function ensureIntern({
   console.log(`✅ Demo intern: ${firstName} ${lastName}`);
 }
 
+async function seedDemoApplications() {
+  const jobs = await prisma.job.findMany({
+    where: {
+      company: {
+        user: { email: { startsWith: 'demo-company-' } },
+      },
+    },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  const internRecords = await prisma.intern.findMany({
+    where: { user: { email: { startsWith: 'demo-intern-' } } },
+    include: { user: true },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  if (jobs.length === 0 || internRecords.length === 0) {
+    console.log('⏭️  Skip applications (no demo jobs or interns)');
+    return;
+  }
+
+  let created = 0;
+  const maxApps = 30;
+
+  outer: for (let i = 0; i < internRecords.length; i += 1) {
+    for (let j = 0; j < jobs.length; j += 1) {
+      if (created >= maxApps) break outer;
+      const intern = internRecords[i];
+      const job = jobs[(i + j) % jobs.length];
+      try {
+        await prisma.application.create({
+          data: {
+            jobId: job.id,
+            internId: intern.id,
+            status: created % 6 === 0 ? 'REVIEWED' : 'PENDING',
+            coverLetter: 'Demo application generated for EasyIntern showcase.',
+          },
+        });
+        created += 1;
+      } catch {
+        // duplicate [jobId, internId]
+      }
+    }
+  }
+
+  console.log(`✅ Demo applications created (new pairs): ${created}`);
+}
+
 async function main() {
-  console.log('🌱 Seeding demo data (idempotent by email @easyintern.app)...');
+  console.log(`🌱 Seeding demo data: ${COMPANY_COUNT} companies, ${INTERN_COUNT} interns (idempotent by email)...`);
 
-  const companies = [
-    {
-      email: 'demo-company-tech@easyintern.app',
-      name: 'TechBridge Ghana',
-      description: 'Product and engineering studio building tools for SMEs across West Africa.',
-      website: 'https://easyintern.app',
-      industry: 'Technology',
-      location: 'Accra, Greater Accra',
-      companySize: '11–50',
-      jobs: [
-        {
-          title: 'Frontend Engineering Intern',
-          description: 'Ship UI components in React, work with design handoffs, and improve accessibility.',
-          requirements: ['React basics', 'HTML/CSS', 'Git', 'Good communication'],
-          responsibilities: demoResponsibilities('Frontend Engineering Intern'),
-          benefits: demoBenefits(),
-          location: 'Accra, Greater Accra',
-          remote: true,
-          duration: '6 months',
-          stipend: 'GHS 1,500/month',
-          skills: ['JavaScript', 'React', 'CSS', 'Git'],
-        },
-        {
-          title: 'Product Design Intern',
-          description: 'Support UX research, wireframes, and prototype testing with product stakeholders.',
-          requirements: ['Figma basics', 'User empathy', 'Documentation'],
-          responsibilities: demoResponsibilities('Product Design Intern'),
-          benefits: demoBenefits(),
-          location: 'Accra, Greater Accra',
-          remote: false,
-          duration: '4 months',
-          stipend: 'GHS 1,200/month',
-          skills: ['Figma', 'UX Research', 'Prototyping'],
-        },
-      ],
-    },
-    {
-      email: 'demo-company-finance@easyintern.app',
-      name: 'Summit Capital',
-      description: 'Financial services advisory firm focused on SMEs and startups.',
-      website: 'https://easyintern.app',
-      industry: 'Banking & Finance',
-      location: 'Accra, Greater Accra',
-      companySize: '51–200',
-      jobs: [
-        {
-          title: 'Finance & Reporting Intern',
-          description: 'Assist with monthly reporting, variance analysis, and spreadsheet hygiene.',
-          requirements: ['Excel', 'Attention to detail', 'Finance coursework'],
-          responsibilities: demoResponsibilities('Finance & Reporting Intern'),
-          benefits: demoBenefits(),
-          location: 'Accra, Greater Accra',
-          remote: false,
-          duration: '6 months',
-          stipend: 'GHS 1,600/month',
-          skills: ['Excel', 'Financial Analysis', 'Accounting'],
-        },
-      ],
-    },
-    {
-      email: 'demo-company-health@easyintern.app',
-      name: 'WellCare Clinics',
-      description: 'Community health network providing clinics and outreach programs.',
-      website: 'https://easyintern.app',
-      industry: 'Healthcare',
-      location: 'Kumasi, Ashanti Region',
-      companySize: '51–200',
-      jobs: [
-        {
-          title: 'Healthcare Operations Intern',
-          description: 'Support scheduling, patient flow, and inventory coordination for clinics.',
-          requirements: ['Organization', 'Communication', 'Basic computer skills'],
-          responsibilities: demoResponsibilities('Healthcare Operations Intern'),
-          benefits: demoBenefits(),
-          location: 'Kumasi, Ashanti Region',
-          remote: false,
-          duration: '3 months',
-          stipend: 'GHS 1,000/month',
-          skills: ['Operations', 'Microsoft Office', 'Customer Service'],
-        },
-      ],
-    },
-    {
-      email: 'demo-company-fmcg@easyintern.app',
-      name: 'FreshLine Foods',
-      description: 'Food distribution and cold-chain logistics partner for retail brands.',
-      website: 'https://easyintern.app',
-      industry: 'Food & Beverage',
-      location: 'Tema, Greater Accra',
-      companySize: '11–50',
-      jobs: [
-        {
-          title: 'Supply Chain Intern',
-          description: 'Track inventory, routes, and vendor KPIs with the operations team.',
-          requirements: ['Logistics interest', 'Excel', 'Problem solving'],
-          responsibilities: demoResponsibilities('Supply Chain Intern'),
-          benefits: demoBenefits(),
-          location: 'Tema, Greater Accra',
-          remote: false,
-          duration: '4 months',
-          stipend: 'GHS 1,100/month',
-          skills: ['Supply Chain', 'Logistics', 'Excel'],
-        },
-      ],
-    },
-    {
-      email: 'demo-company-edu@easyintern.app',
-      name: 'BrightPath Academy',
-      description: 'Education nonprofit supporting STEM programs and career readiness.',
-      website: 'https://easyintern.app',
-      industry: 'Education',
-      location: 'Cape Coast, Central Region',
-      companySize: '1–10',
-      jobs: [
-        {
-          title: 'STEM Outreach Intern',
-          description: 'Coordinate workshops, materials, and student engagement for STEM programs.',
-          requirements: ['STEM background', 'Presentation skills', 'Reliability'],
-          responsibilities: demoResponsibilities('STEM Outreach Intern'),
-          benefits: demoBenefits(),
-          location: 'Cape Coast, Central Region',
-          remote: false,
-          duration: '3 months',
-          stipend: 'GHS 800/month',
-          skills: ['STEM', 'Teaching', 'Communication'],
-        },
-      ],
-    },
-    {
-      email: 'demo-company-media@easyintern.app',
-      name: 'Pulse Media Studio',
-      description: 'Content studio producing short-form video and digital campaigns.',
-      website: 'https://easyintern.app',
-      industry: 'Media & Marketing',
-      location: 'Accra, Greater Accra',
-      companySize: '11–50',
-      jobs: [
-        {
-          title: 'Content Marketing Intern',
-          description: 'Draft scripts, edit captions, and support campaign analytics.',
-          requirements: ['Writing', 'Social media basics', 'Creativity'],
-          responsibilities: demoResponsibilities('Content Marketing Intern'),
-          benefits: demoBenefits(),
-          location: 'Accra, Greater Accra',
-          remote: true,
-          duration: '4 months',
-          stipend: 'GHS 1,400/month',
-          skills: ['Marketing', 'Content Writing', 'Copywriting'],
-        },
-      ],
-    },
-  ];
-
-  const interns = [
-    {
-      email: 'demo-intern-01@easyintern.app',
-      firstName: 'Ama',
-      lastName: 'Serwaa',
-      studentId: 'EI-DEMO-0001',
-      bio: 'Computer Science student focused on web and mobile. Loves clean UI and strong documentation.',
-      skills: ['JavaScript', 'React', 'Node.js', 'Git'],
-      education: 'BSc Computer Science',
-      location: 'Kumasi, Ashanti Region',
-      preferredIndustry: 'Technology',
-    },
-    {
-      email: 'demo-intern-02@easyintern.app',
-      firstName: 'Kofi',
-      lastName: 'Asante',
-      studentId: 'EI-DEMO-0002',
-      bio: 'Finance and analytics enthusiast with strong Excel skills and attention to detail.',
-      skills: ['Excel', 'Financial Analysis', 'Accounting'],
-      education: 'BSc Finance',
-      location: 'Accra, Greater Accra',
-      preferredIndustry: 'Banking & Finance',
-    },
-    {
-      email: 'demo-intern-03@easyintern.app',
-      firstName: 'Akosua',
-      lastName: 'Owusu',
-      studentId: 'EI-DEMO-0003',
-      bio: 'Marketing student with experience in social media and campaign storytelling.',
-      skills: ['Marketing', 'Social Media', 'Content Creation'],
-      education: 'BSc Marketing',
-      location: 'Accra, Greater Accra',
-      preferredIndustry: 'Media & Marketing',
-    },
-    {
-      email: 'demo-intern-04@easyintern.app',
-      firstName: 'Yaw',
-      lastName: 'Boateng',
-      studentId: 'EI-DEMO-0004',
-      bio: 'Full-stack developer building APIs and small business tools.',
-      skills: ['JavaScript', 'React', 'Node.js', 'Python'],
-      education: 'BSc Software Engineering',
-      location: 'Accra, Greater Accra',
-      preferredIndustry: 'Technology',
-    },
-    {
-      email: 'demo-intern-05@easyintern.app',
-      firstName: 'Efua',
-      lastName: 'Mensah',
-      studentId: 'EI-DEMO-0005',
-      bio: 'Operations and logistics student interested in supply chain optimization.',
-      skills: ['Operations', 'Microsoft Office', 'Customer Service'],
-      education: 'BSc Business Administration',
-      location: 'Tema, Greater Accra',
-      preferredIndustry: 'Food & Beverage',
-    },
-    {
-      email: 'demo-intern-06@easyintern.app',
-      firstName: 'Kwame',
-      lastName: 'Antwi',
-      studentId: 'EI-DEMO-0006',
-      bio: 'Passionate about STEM education and workshop facilitation.',
-      skills: ['STEM', 'Teaching', 'Communication'],
-      education: 'BSc Mathematics',
-      location: 'Cape Coast, Central Region',
-      preferredIndustry: 'Education',
-    },
-    {
-      email: 'demo-intern-07@easyintern.app',
-      firstName: 'Ama',
-      lastName: 'Darko',
-      studentId: 'EI-DEMO-0007',
-      bio: 'Data-focused student with strong SQL and Python fundamentals.',
-      skills: ['Python', 'SQL', 'Machine Learning', 'Statistics'],
-      education: 'BSc Statistics',
-      location: 'Kumasi, Ashanti Region',
-      preferredIndustry: 'Technology',
-    },
-    {
-      email: 'demo-intern-08@easyintern.app',
-      firstName: 'Nana',
-      lastName: 'Agyeman',
-      studentId: 'EI-DEMO-0008',
-      bio: 'Healthcare administration student interested in clinic operations.',
-      skills: ['Operations', 'Microsoft Office', 'Customer Service'],
-      education: 'BSc Health Administration',
-      location: 'Kumasi, Ashanti Region',
-      preferredIndustry: 'Healthcare',
-    },
-  ];
+  const companies = buildCompanies();
+  const interns = buildInterns();
 
   for (const c of companies) {
     await ensureUserCompany(c);
@@ -379,50 +329,12 @@ async function main() {
     await ensureIntern(i);
   }
 
-  const jobs = await prisma.job.findMany();
-
-  const internRecords = await prisma.intern.findMany({
-    where: { user: { email: { startsWith: 'demo-intern-' } } },
-    include: { user: true },
-  });
-
-  const pickJob = (title) => jobs.find((j) => j.title === title);
-
-  const applicationPairs = [
-    { internEmail: 'demo-intern-01@easyintern.app', jobTitle: 'Frontend Engineering Intern' },
-    { internEmail: 'demo-intern-04@easyintern.app', jobTitle: 'Frontend Engineering Intern' },
-    { internEmail: 'demo-intern-02@easyintern.app', jobTitle: 'Finance & Reporting Intern' },
-    { internEmail: 'demo-intern-03@easyintern.app', jobTitle: 'Content Marketing Intern' },
-    { internEmail: 'demo-intern-05@easyintern.app', jobTitle: 'Supply Chain Intern' },
-    { internEmail: 'demo-intern-06@easyintern.app', jobTitle: 'STEM Outreach Intern' },
-  ];
-
-  for (const pair of applicationPairs) {
-    const intern = internRecords.find((x) => x.user.email === pair.internEmail);
-    const job = pickJob(pair.jobTitle);
-    if (!intern || !job) {
-      console.log(`⏭️  Skip application (missing intern/job): ${pair.internEmail} + ${pair.jobTitle}`);
-      continue;
-    }
-    try {
-      await prisma.application.create({
-        data: {
-          jobId: job.id,
-          internId: intern.id,
-          status: 'PENDING',
-          coverLetter: 'Demo application generated for EasyIntern showcase.',
-        },
-      });
-      console.log(`✅ Demo application: ${pair.internEmail} → ${pair.jobTitle}`);
-    } catch {
-      console.log(`⏭️  Skip application (duplicate): ${pair.internEmail} → ${pair.jobTitle}`);
-    }
-  }
+  await seedDemoApplications();
 
   console.log('\n🎉 Demo seed done.');
   console.log(`\n🔑 Login for demo accounts (password for all): ${DEMO_PASSWORD}`);
-  console.log('   Companies: demo-company-*@easyintern.app');
-  console.log('   Interns: demo-intern-*@easyintern.app');
+  console.log(`   Companies: demo-company-01 … demo-company-${pad2(COMPANY_COUNT)}@easyintern.app`);
+  console.log(`   Interns: demo-intern-01 … demo-intern-${pad2(INTERN_COUNT)}@easyintern.app`);
 }
 
 main()
