@@ -5,12 +5,29 @@ let cachedConfig = null;
 let cachedAt = 0;
 const CACHE_TTL_MS = 60 * 1000;
 
+/** cPanel mail: outgoing server is the domain, not mail.<domain> (TLS cert matches domain / web-hosting host). */
+const CANONICAL_SMTP_HOST = 'easyintern.app';
+
+const normalizeSmtpHost = (host) => {
+  const h = String(host || '').trim();
+  if (h.toLowerCase() === 'mail.easyintern.app') {
+    return CANONICAL_SMTP_HOST;
+  }
+  return h;
+};
+
+const normalizeSmtpConfig = (config) => {
+  if (!config) return null;
+  const host = normalizeSmtpHost(config.host);
+  return host === config.host ? config : { ...config, host };
+};
+
 const getEnvSmtpConfig = () => {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     return null;
   }
   return {
-    host: process.env.SMTP_HOST,
+    host: normalizeSmtpHost(process.env.SMTP_HOST),
     port: parseInt(process.env.SMTP_PORT || '587', 10),
     secure: process.env.SMTP_SECURE === 'true',
     username: process.env.SMTP_USER,
@@ -42,8 +59,8 @@ const getDbSmtpConfig = async () => {
 
 const getActiveSmtpConfig = async () => {
   const dbConfig = await getDbSmtpConfig();
-  if (dbConfig) return dbConfig;
-  return getEnvSmtpConfig();
+  if (dbConfig) return normalizeSmtpConfig(dbConfig);
+  return normalizeSmtpConfig(getEnvSmtpConfig());
 };
 
 export const sendEmail = async ({ to, subject, html, text }) => {

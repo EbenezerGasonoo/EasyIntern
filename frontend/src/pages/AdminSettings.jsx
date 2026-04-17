@@ -39,13 +39,13 @@ function AdminSettings() {
   const [smtpTesting, setSmtpTesting] = useState(false)
   const [smtpMessage, setSmtpMessage] = useState('')
   const [smtpForm, setSmtpForm] = useState({
-    host: '',
-    port: 587,
-    secure: false,
+    host: 'easyintern.app',
+    port: 465,
+    secure: true,
     username: '',
     password: '',
     fromName: 'Easy Intern',
-    fromEmail: '',
+    fromEmail: 'support@easyintern.app',
     isActive: true,
     testRecipient: '',
   })
@@ -93,13 +93,13 @@ function AdminSettings() {
         if (cfg.configured) {
           setSmtpForm((prev) => ({
             ...prev,
-            host: cfg.host || '',
-            port: cfg.port || 587,
-            secure: Boolean(cfg.secure),
+            host: cfg.host === 'mail.easyintern.app' ? 'easyintern.app' : (cfg.host || 'easyintern.app'),
+            port: cfg.port || 465,
+            secure: cfg.secure !== undefined ? Boolean(cfg.secure) : true,
             username: cfg.username || '',
             password: '',
             fromName: cfg.fromName || 'Easy Intern',
-            fromEmail: cfg.fromEmail || '',
+            fromEmail: cfg.fromEmail || 'support@easyintern.app',
             isActive: cfg.isActive !== false,
           }))
         }
@@ -304,7 +304,7 @@ function AdminSettings() {
           {smtpLoading ? <p>Loading SMTP settings...</p> : (
             <>
               <div className="admin-settings-grid">
-                <label><span>Host</span><input name="host" value={smtpForm.host} onChange={handleSmtpChange} required /></label>
+                <label><span>Host</span><input name="host" placeholder="easyintern.app" autoComplete="off" value={smtpForm.host} onChange={handleSmtpChange} required /></label>
                 <label><span>Port</span><input name="port" type="number" min="1" value={smtpForm.port} onChange={handleSmtpChange} required /></label>
                 <label><span>Username</span><input name="username" value={smtpForm.username} onChange={handleSmtpChange} required /></label>
                 <label><span>Password (blank keeps current)</span><input name="password" type="password" value={smtpForm.password} onChange={handleSmtpChange} /></label>

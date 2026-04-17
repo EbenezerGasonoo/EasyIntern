@@ -276,6 +276,10 @@ router.put('/smtp-config', authenticate, requireAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Host, username, and from email are required' });
     }
 
+    const hostNormalized = String(host).trim().toLowerCase() === 'mail.easyintern.app'
+      ? 'easyintern.app'
+      : String(host).trim();
+
     const previous = await prisma.smtpConfiguration.findFirst({
       orderBy: { updatedAt: 'desc' },
     });
@@ -290,7 +294,7 @@ router.put('/smtp-config', authenticate, requireAdmin, async (req, res) => {
 
     const saved = await prisma.smtpConfiguration.create({
       data: {
-        host: String(host).trim(),
+        host: hostNormalized,
         port: Number(port) || 587,
         secure: Boolean(secure),
         username: String(username).trim(),
