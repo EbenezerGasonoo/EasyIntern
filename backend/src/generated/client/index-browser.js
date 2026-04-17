@@ -128,9 +128,15 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   userType: 'userType',
   isEmailVerified: 'isEmailVerified',
+  isAdmin: 'isAdmin',
+  adminRole: 'adminRole',
   verificationToken: 'verificationToken',
   resetToken: 'resetToken',
   resetTokenExpiry: 'resetTokenExpiry',
+  isSuspended: 'isSuspended',
+  suspensionReason: 'suspensionReason',
+  suspendedAt: 'suspendedAt',
+  softBannedAt: 'softBannedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -145,10 +151,15 @@ exports.Prisma.CompanyScalarFieldEnum = {
   location: 'location',
   phone: 'phone',
   logo: 'logo',
+  companyTaxId: 'companyTaxId',
+  isVerified: 'isVerified',
   registrationDoc: 'registrationDoc',
   internIntake: 'internIntake',
   mapLocation: 'mapLocation',
   benefits: 'benefits',
+  hiringPriorities: 'hiringPriorities',
+  candidateRequirements: 'candidateRequirements',
+  hiringWorkflow: 'hiringWorkflow',
   companySize: 'companySize',
   contactEmail: 'contactEmail',
   createdAt: 'createdAt',
@@ -163,6 +174,8 @@ exports.Prisma.InternScalarFieldEnum = {
   ghanaCardNumber: 'ghanaCardNumber',
   ghanaCardDocument: 'ghanaCardDocument',
   isVerified: 'isVerified',
+  notifyIndustryJobs: 'notifyIndustryJobs',
+  preferredIndustry: 'preferredIndustry',
   firstName: 'firstName',
   lastName: 'lastName',
   bio: 'bio',
@@ -215,6 +228,62 @@ exports.Prisma.NotificationScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SupportTicketScalarFieldEnum = {
+  id: 'id',
+  requesterUserId: 'requesterUserId',
+  requesterEmail: 'requesterEmail',
+  subject: 'subject',
+  description: 'description',
+  category: 'category',
+  priority: 'priority',
+  status: 'status',
+  ownerAdminEmail: 'ownerAdminEmail',
+  dueAt: 'dueAt',
+  internalNotes: 'internalNotes',
+  slaBreached: 'slaBreached',
+  firstResponseAt: 'firstResponseAt',
+  resolvedAt: 'resolvedAt',
+  lastActivityAt: 'lastActivityAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  actorUserId: 'actorUserId',
+  actorEmail: 'actorEmail',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  reason: 'reason',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SmtpConfigurationScalarFieldEnum = {
+  id: 'id',
+  host: 'host',
+  port: 'port',
+  secure: 'secure',
+  username: 'username',
+  password: 'password',
+  fromName: 'fromName',
+  fromEmail: 'fromEmail',
+  isActive: 'isActive',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdminSettingScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -241,7 +310,14 @@ exports.Prisma.JsonNullValueFilter = {
 };
 exports.UserType = exports.$Enums.UserType = {
   COMPANY: 'COMPANY',
-  INTERN: 'INTERN'
+  INTERN: 'INTERN',
+  ADMIN: 'ADMIN'
+};
+
+exports.AdminRole = exports.$Enums.AdminRole = {
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  OPS_ADMIN: 'OPS_ADMIN',
+  SUPPORT_ADMIN: 'SUPPORT_ADMIN'
 };
 
 exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
@@ -251,13 +327,40 @@ exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.TicketCategory = exports.$Enums.TicketCategory = {
+  ACCOUNT: 'ACCOUNT',
+  BILLING: 'BILLING',
+  APPLICATION: 'APPLICATION',
+  JOB_POST: 'JOB_POST',
+  VERIFICATION: 'VERIFICATION',
+  TECHNICAL: 'TECHNICAL',
+  OTHER: 'OTHER'
+};
+
+exports.TicketPriority = exports.$Enums.TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+};
+
+exports.TicketStatus = exports.$Enums.TicketStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Company: 'Company',
   Intern: 'Intern',
   Job: 'Job',
   Application: 'Application',
-  Notification: 'Notification'
+  Notification: 'Notification',
+  SupportTicket: 'SupportTicket',
+  AuditLog: 'AuditLog',
+  SmtpConfiguration: 'SmtpConfiguration',
+  AdminSetting: 'AdminSetting'
 };
 
 /**

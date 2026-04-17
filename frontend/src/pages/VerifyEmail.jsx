@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../utils/api';
-import './Auth.css';
+import './VerifyEmailNotice.css';
 
 function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -29,21 +29,40 @@ function VerifyEmail() {
   }, [token]);
 
   return (
-    <div className="auth-page">
-      <div className="auth-container" style={{ textAlign: 'center' }}>
-        {status === 'verifying' && <h2>Verifying your email...</h2>}
+    <div className="verify-shell">
+      <div className="verify-card">
+        {status === 'verifying' && (
+          <>
+            <div className="verify-icon-wrap" aria-hidden="true">
+              <span className="verify-icon verify-icon-pulse">...</span>
+            </div>
+            <h1>Verifying Your Email</h1>
+            <p className="verify-lead">Please wait while we confirm your verification link.</p>
+          </>
+        )}
         {status === 'success' && (
           <>
-            <h2>Email Verified!</h2>
-            <p>Your email has been successfully verified. You can now login.</p>
-            <Link to="/login" className="btn btn-primary">Login</Link>
+            <div className="verify-icon-wrap verify-success" aria-hidden="true">
+              <span className="verify-icon">✓</span>
+            </div>
+            <h1>Email Verified</h1>
+            <p className="verify-lead">Your account is now active. Continue to login and start using EasyIntern.</p>
+            <div className="verify-actions">
+              <Link to="/login" className="btn btn-primary">Continue to Login</Link>
+            </div>
           </>
         )}
         {status === 'error' && (
           <>
-            <h2 style={{ color: 'red' }}>Verification Failed</h2>
-            <p>{error}</p>
-            <Link to="/register">Register again</Link>
+            <div className="verify-icon-wrap verify-error" aria-hidden="true">
+              <span className="verify-icon">!</span>
+            </div>
+            <h1>Verification Failed</h1>
+            <p className="verify-lead">{error}</p>
+            <div className="verify-actions">
+              <Link to="/register" className="btn btn-primary">Register Again</Link>
+              <Link to="/verify-email-notice" className="verify-secondary-link">Back to verification help</Link>
+            </div>
           </>
         )}
       </div>

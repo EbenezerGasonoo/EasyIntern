@@ -1,0 +1,117 @@
+.verify-shell {
+  min-height: calc(100vh - 80px);
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(37, 99, 235, 0.12), transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(2, 132, 199, 0.12), transparent 35%),
+    #f8fafc;
+}
+
+.verify-card {
+  width: min(680px, 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid #dbeafe;
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.verify-icon-wrap {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.verify-icon {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.verify-icon-pulse {
+  animation: verifyPulse 1.1s ease-in-out infinite;
+}
+
+.verify-card h1 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: clamp(1.45rem, 2.2vw, 1.95rem);
+}
+
+.verify-lead {
+  margin: 0 auto;
+  max-width: 56ch;
+  color: #334155;
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.verify-tips {
+  margin: 18px auto 0;
+  max-width: 60ch;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.verify-tips p {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 0.9rem;
+}
+
+.verify-tips p + p {
+  margin-top: 6px;
+}
+
+.verify-actions {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.verify-secondary-link {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.verify-secondary-link:hover {
+  text-decoration: underline;
+}
+
+.verify-success {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-color: #86efac;
+  color: #166534;
+}
+
+.verify-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-color: #fca5a5;
+  color: #991b1b;
+}
+
+@keyframes verifyPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 640px) {
+  .verify-card {
+    padding: 24px 18px;
+    border-radius: 14px;
+  }
+}
