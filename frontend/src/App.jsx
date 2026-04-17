@@ -111,8 +111,9 @@ function AppRoutes() {
 
 function AppLayout() {
   const location = useLocation()
-  const hideNavbar = ['/login', '/register', '/forgot-password', '/reset-password', '/admin/login'].includes(location.pathname)
-  const hideFooter = location.pathname.startsWith('/admin')
+  const authLikeRoutes = ['/login', '/register', '/forgot-password', '/reset-password', '/admin/login']
+  const hideNavbar = authLikeRoutes.includes(location.pathname)
+  const hideFooter = location.pathname.startsWith('/admin') || authLikeRoutes.includes(location.pathname)
   const SEO_DEFAULT = {
     title: 'EasyIntern - Find Internship Opportunities in Ghana',
     description: 'EasyIntern connects talented interns with companies in Ghana. Discover internship opportunities and hire quality interns.',
