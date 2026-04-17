@@ -62,7 +62,7 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'EasyIntern API is running' });
 });
 
-// Root – so backend URL doesn’t 404 on Vercel
+// Root convenience routes
 app.get('/', (req, res) => {
   res.redirect(302, '/api/health');
 });
@@ -70,11 +70,8 @@ app.get('/api', (req, res) => {
   res.json({ status: 'ok', message: 'EasyIntern API', docs: '/api/health' });
 });
 
-// Only listen when running locally (not on Vercel)
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 export default app;
