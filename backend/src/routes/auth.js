@@ -15,23 +15,56 @@ router.post('/admin-login', async (req, res) => {
       return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
     }
     const { email, password } = req.body || {};
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    if (!adminEmail || !adminPassword) {
-      return res.status(500).json({ error: 'Admin login is not configured on the server.' });
-    }
-
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
+    // Production path: DB-backed admin account
+    const adminUser = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, email: true, password: true, isAdmin: true, isSuspended: true, adminRole: true },
+    });
+
+    if (adminUser?.isAdmin) {
+      if (adminUser.isSuspended) {
+        return res.status(403).json({ error: 'Admin account is suspended' });
+      }
+
+      const dbPasswordValid = await bcrypt.compare(password, adminUser.password);
+      if (!dbPasswordValid) {
+        return res.status(401).json({ error: 'Invalid admin credentials' });
+      }
+
+      const token = jwt.sign(
+        { userId: adminUser.id, userType: 'ADMIN', isAdmin: true, email: adminUser.email, adminRole: adminUser.adminRole || 'SUPER_ADMIN' },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      return res.json({
+        token,
+        user: {
+          id: adminUser.id,
+          email: adminUser.email,
+          userType: 'ADMIN',
+          isAdmin: true,
+          adminRole: adminUser.adminRole || 'SUPER_ADMIN',
+        },
+      });
+    }
+
+    // Fallback path: ENV-based admin (backward compatibility)
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminEmail || !adminPassword) {
+      return res.status(500).json({ error: 'Admin login is not configured on the server.' });
+    }
     if (email !== adminEmail || password !== adminPassword) {
       return res.status(401).json({ error: 'Invalid admin credentials' });
     }
 
     const token = jwt.sign(
-      { userId: 'admin', userType: 'ADMIN', isAdmin: true, email: adminEmail },
+      { userId: 'admin', userType: 'ADMIN', isAdmin: true, email: adminEmail, adminRole: 'SUPER_ADMIN' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -43,6 +76,7 @@ router.post('/admin-login', async (req, res) => {
         email: adminEmail,
         userType: 'ADMIN',
         isAdmin: true,
+        adminRole: 'SUPER_ADMIN',
       },
     });
   } catch (error) {
@@ -382,11 +416,19 @@ router.post('/reset-password', async (req, res) => {
 router.get('/me', authenticate, async (req, res) => {
   try {
     if (req.isAdmin) {
+      const dbAdmin = req.userId && req.userId !== 'admin'
+        ? await prisma.user.findUnique({
+          where: { id: req.userId },
+          select: { id: true, email: true, isAdmin: true },
+        }).catch(() => null)
+        : null;
+
       return res.json({
-        id: 'admin',
-        email: req.adminEmail || process.env.ADMIN_EMAIL || 'admin',
+        id: dbAdmin?.id || 'admin',
+        email: dbAdmin?.email || req.adminEmail || process.env.ADMIN_EMAIL || 'admin',
         userType: 'ADMIN',
         isAdmin: true,
+        adminRole: dbAdmin?.adminRole || req.adminRole || 'SUPER_ADMIN',
       });
     }
 

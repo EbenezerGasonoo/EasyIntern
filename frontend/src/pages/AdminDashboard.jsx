@@ -29,6 +29,8 @@ function AdminDashboard() {
   const internIndustryData = overview?.internIndustryBreakdown || []
   const recentJobs = overview?.recentJobs || []
   const recentUsers = overview?.recentUsers || []
+  const ticketSummary = overview?.ticketSummary || {}
+  const recentTickets = overview?.recentTickets || []
   const pieColors = ['#1d4ed8', '#2563eb', '#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#64748b']
 
   const companyIndustryChart = useMemo(() => {
@@ -60,7 +62,7 @@ function AdminDashboard() {
           <div>
             <p className="admin-eyebrow">Platform control center</p>
             <h1>Admin Dashboard</h1>
-            <p>Monitor marketplace activity, job volume, and verification signals.</p>
+            <p>Operations-first view for tickets, platform health, and growth signals.</p>
           </div>
           <span className="admin-user-pill">{user?.email || 'User'}</span>
         </header>
@@ -81,6 +83,24 @@ function AdminDashboard() {
               {option.label}
             </button>
           ))}
+        </section>
+
+        <section className="admin-ticket-kpis">
+          <div className="admin-ticket-kpi">
+            <span>Open tickets</span>
+            <strong>{ticketSummary.open || 0}</strong>
+          </div>
+          <div className="admin-ticket-kpi">
+            <span>High priority</span>
+            <strong>{ticketSummary.highPriority || 0}</strong>
+          </div>
+          <div className="admin-ticket-kpi">
+            <span>Total ticket feed</span>
+            <strong>{ticketSummary.total || 0}</strong>
+          </div>
+          <Link to="/notifications" className="admin-ticket-kpi admin-ticket-kpi-link">
+            Open ticket center →
+          </Link>
         </section>
 
         <section className="admin-metrics">
@@ -111,6 +131,25 @@ function AdminDashboard() {
         </section>
 
         <section className="admin-grid">
+          <article className="admin-card">
+            <h2>Priority ticket queue</h2>
+            {recentTickets.length === 0 ? (
+              <p className="admin-empty">No active tickets.</p>
+            ) : (
+              <div className="admin-list">
+                {recentTickets.slice(0, 8).map((ticket) => (
+                  <div key={ticket.id} className={`admin-list-row admin-ticket-row ticket-${String(ticket.priority || '').toLowerCase()}`}>
+                    <div>
+                      <span>{ticket.title}</span>
+                      <p>{ticket.message}</p>
+                    </div>
+                    <strong>{ticket.priority || 'LOW'}</strong>
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
+
           <article className="admin-card">
             <h2>Company signups by industry</h2>
             {companyIndustryData.length === 0 ? (
@@ -187,6 +226,9 @@ function AdminDashboard() {
             )}
           </article>
         </section>
+        <div className="admin-settings-link-wrap">
+          <Link to="/admin/settings" className="admin-settings-link-btn">Open Settings Page →</Link>
+        </div>
       </div>
     </div>
   )

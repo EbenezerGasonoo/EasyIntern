@@ -64,7 +64,7 @@ function Navbar() {
     ? `${user.intern.firstName || ''} ${user.intern.lastName || ''}`.trim()
     : (user?.company?.name || user?.email || 'Account')
 
-  const roleLabel = user?.userType === 'COMPANY' ? 'Company' : 'Intern'
+  const roleLabel = user?.isAdmin ? 'Admin' : (user?.userType === 'COMPANY' ? 'Company' : 'Intern')
 
   useEffect(() => {
     const closeOnOutside = (event) => {
@@ -87,10 +87,10 @@ function Navbar() {
             <Logo size="large" />
           </Link>
           <div className="navbar-links">
-            {user?.userType !== 'INTERN' && (
+            {!user?.isAdmin && user?.userType !== 'INTERN' && (
               <NavLink to="/interns" className={getNavClassName}>Browse Interns</NavLink>
             )}
-            {user?.userType !== 'COMPANY' && (
+            {!user?.isAdmin && user?.userType !== 'COMPANY' && (
               <NavLink to="/jobs" className={getNavClassName}>Browse Jobs</NavLink>
             )}
             {user ? (
@@ -103,7 +103,7 @@ function Navbar() {
                     aria-expanded={menuOpen}
                     aria-haspopup="menu"
                   >
-                    {user.intern?.profilePic || user.company?.logo ? (
+                    {!user.isAdmin && (user.intern?.profilePic || user.company?.logo) ? (
                       <img
                         src={user.userType === 'INTERN' ? user.intern.profilePic : user.company.logo}
                         alt="Profile"
@@ -123,17 +123,33 @@ function Navbar() {
 
                   {menuOpen && (
                     <div className="nav-user-dropdown" role="menu">
-                      <NavLink to="/profile" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
-                        Profile
-                      </NavLink>
-                      {user.userType === 'COMPANY' ? (
+                      {user.isAdmin ? (
+                        <>
+                          <NavLink to="/admin" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
+                            Admin Dashboard
+                          </NavLink>
+                          <NavLink to="/admin/settings" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
+                            Settings
+                          </NavLink>
+                        </>
+                      ) : user.userType === 'COMPANY' ? (
+                        <>
+                          <NavLink to="/profile" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
+                            Profile
+                          </NavLink>
                         <NavLink to="/company/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
                           Dashboard
                         </NavLink>
+                        </>
                       ) : (
+                        <>
+                          <NavLink to="/profile" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
+                            Profile
+                          </NavLink>
                         <NavLink to="/intern/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setMenuOpen(false)}>
                           Dashboard
                         </NavLink>
+                        </>
                       )}
                       <button type="button" className="nav-user-dropdown-logout" onClick={handleLogout}>
                         Logout
@@ -168,7 +184,7 @@ function Navbar() {
                   {notifOpen && (
                     <div className="nav-notifications-dropdown" role="menu">
                       <div className="nav-notifications-header">
-                        <h4>Notifications</h4>
+                        <h4>{user?.isAdmin ? 'Ticket Alerts' : 'Notifications'}</h4>
                       </div>
                       <div className="nav-notifications-list">
                         {notifLoading ? (

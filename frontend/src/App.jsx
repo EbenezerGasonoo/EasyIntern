@@ -21,6 +21,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import Notifications from './pages/Notifications'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminLogin from './pages/AdminLogin'
+import AdminSettings from './pages/AdminSettings'
 import './App.css'
 
 function PrivateRoute({ children, requireType, requireAdmin }) {
@@ -47,6 +48,14 @@ function PrivateRoute({ children, requireType, requireAdmin }) {
   }
 
   return children
+}
+
+function ProfileAccessGuard() {
+  const { user } = useAuth()
+  if (user?.isAdmin) {
+    return <Navigate to="/admin" replace />
+  }
+  return <Profile />
 }
 
 function AppRoutes() {
@@ -93,7 +102,7 @@ function AppRoutes() {
         path="/profile"
         element={
           <PrivateRoute>
-            <Profile />
+            <ProfileAccessGuard />
           </PrivateRoute>
         }
       />
@@ -102,6 +111,14 @@ function AppRoutes() {
         element={
           <PrivateRoute requireAdmin>
             <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/settings"
+        element={
+          <PrivateRoute requireAdmin>
+            <AdminSettings />
           </PrivateRoute>
         }
       />

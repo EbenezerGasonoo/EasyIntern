@@ -1,12 +1,27 @@
 import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate } from '../middleware/auth.js';
+import { buildAdminTicketFeed } from '../utils/adminTickets.js';
 
 const router = express.Router();
 
 // Get all notifications for current user
 router.get('/', authenticate, async (req, res) => {
   try {
+    if (req.isAdmin) {
+      const ticketFeed = await buildAdminTicketFeed(prisma);
+      const adminNotifications = ticketFeed.tickets.map((ticket) => ({
+        id: ticket.id,
+        message: `${ticket.title}: ${ticket.message}`,
+        type: `TICKET_${ticket.category}`,
+        isRead: ticket.status !== 'OPEN',
+        createdAt: ticket.createdAt,
+        link: ticket.link,
+        priority: ticket.priority,
+      }));
+      return res.json(adminNotifications);
+    }
+
     const notifications = await prisma.notification.findMany({
       where: { userId: req.userId },
       orderBy: { createdAt: 'desc' },

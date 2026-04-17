@@ -15,6 +15,7 @@ datasource db {
 enum UserType {
   COMPANY
   INTERN
+  ADMIN
 }
 
 enum ApplicationStatus {
@@ -24,21 +25,58 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketCategory {
+  ACCOUNT
+  BILLING
+  APPLICATION
+  JOB_POST
+  VERIFICATION
+  TECHNICAL
+  OTHER
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  OPS_ADMIN
+  SUPPORT_ADMIN
+}
+
 model User {
   id                String   @id @default(cuid())
   email             String   @unique
   password          String
   userType          UserType
   isEmailVerified   Boolean  @default(false)
+  isAdmin           Boolean  @default(false)
+  adminRole         AdminRole?
   verificationToken String?
   resetToken        String?
   resetTokenExpiry  DateTime?
+  isSuspended       Boolean  @default(false)
+  suspensionReason  String?
+  suspendedAt       DateTime?
+  softBannedAt      DateTime?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   company Company?
   intern  Intern?
   notifications Notification[]
+  supportTickets SupportTicket[]
+  auditLogs AuditLog[] @relation("AuditActor")
 
   @@map("users")
 }
@@ -154,4 +192,78 @@ model Notification {
 
   @@index([userId])
   @@map("notifications")
+}
+
+model SupportTicket {
+  id             String         @id @default(cuid())
+  requesterUserId String?
+  requesterEmail String?
+  subject        String
+  description    String
+  category       TicketCategory @default(OTHER)
+  priority       TicketPriority @default(MEDIUM)
+  status         TicketStatus   @default(OPEN)
+  ownerAdminEmail String?
+  dueAt          DateTime?
+  internalNotes  String?
+  slaBreached    Boolean        @default(false)
+  firstResponseAt DateTime?
+  resolvedAt     DateTime?
+  lastActivityAt DateTime       @default(now())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  requester User? @relation(fields: [requesterUserId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([priority])
+  @@index([ownerAdminEmail])
+  @@index([createdAt])
+  @@map("support_tickets")
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String?
+  actorEmail  String?
+  action      String
+  entityType  String
+  entityId    String?
+  reason      String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  actor User? @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model SmtpConfiguration {
+  id          String   @id @default(cuid())
+  host        String
+  port        Int      @default(587)
+  secure      Boolean  @default(false)
+  username    String
+  password    String
+  fromName    String   @default("Easy Intern")
+  fromEmail   String
+  isActive    Boolean  @default(true)
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("smtp_configurations")
+}
+
+model AdminSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_settings")
 }

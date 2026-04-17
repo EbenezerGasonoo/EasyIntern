@@ -11,6 +11,7 @@ import applicationRoutes from './routes/application.js';
 import uploadRoutes from './routes/upload.js';
 import notificationRoutes from './routes/notification.js';
 import adminRoutes from './routes/admin.js';
+import supportRoutes from './routes/support.js';
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/support', supportRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
