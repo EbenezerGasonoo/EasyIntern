@@ -3,8 +3,8 @@ import prisma from '../src/utils/db.js';
 
 const DEMO_PASSWORD = 'DemoEasy2026!';
 
-const COMPANY_COUNT = 20;
-const INTERN_COUNT = 30;
+const COMPANY_COUNT = 50;
+const INTERN_COUNT = 50;
 
 const demoResponsibilities = (title) => [
   `Support delivery and team goals for ${title} as assigned.`,
@@ -41,14 +41,18 @@ const COMPANY_SIZES = ['1–10', '11–50', '51–200', '200+'];
 
 const FIRST_NAMES = [
   'Ama', 'Kofi', 'Akosua', 'Yaw', 'Efua', 'Kwame', 'Abena', 'Kwabena', 'Adwoa', 'Kojo',
-  'Afi', 'Fiifi', 'Maame', 'Nana', 'Esi', 'Kwesi', 'Aba', 'Yaw', 'Akosua', 'Kweku',
-  'Afua', 'Paa', 'Esi', 'Ato', 'Yaa', 'Kweku', 'Aba', 'Efua', 'Nii', 'Ama',
+  'Afi', 'Fiifi', 'Maame', 'Nana', 'Esi', 'Kwesi', 'Aba', 'Kweku', 'Afua', 'Paa',
+  'Ato', 'Yaa', 'Nii', 'Akua', 'Aba', 'Esi', 'Kojo', 'Ama', 'Yaw', 'Akosua',
+  'Efua', 'Kwesi', 'Adwoa', 'Kofi', 'Ama', 'Kwame', 'Abena', 'Fiifi', 'Maame', 'Nana',
+  'Afi', 'Kweku', 'Akua', 'Yaw', 'Esi', 'Kojo', 'Akosua', 'Efua', 'Kwabena', 'Adwoa',
 ];
 
 const LAST_NAMES = [
   'Serwaa', 'Asante', 'Owusu', 'Boateng', 'Mensah', 'Antwi', 'Darko', 'Agyeman', 'Osei', 'Appiah',
   'Quaye', 'Ntiamoah', 'Adjei', 'Ofori', 'Tetteh', 'Sarpong', 'Amponsah', 'Bonsu', 'Frimpong', 'Annan',
-  'Yeboah', 'Koomson', 'Acheampong', 'Danquah', 'Adu', 'Boadi', 'Owusu', 'Kwarteng', 'Mensah', 'Agyei',
+  'Yeboah', 'Koomson', 'Acheampong', 'Danquah', 'Adu', 'Boadi', 'Kwarteng', 'Agyei', 'Sarpong', 'Osei',
+  'Mensah', 'Owusu', 'Boateng', 'Antwi', 'Darko', 'Quaye', 'Adjei', 'Tetteh', 'Frimpong', 'Yeboah',
+  'Koomson', 'Danquah', 'Adu', 'Boadi', 'Agyei', 'Ntiamoah', 'Ofori', 'Amponsah', 'Bonsu', 'Annan',
 ];
 
 const SKILL_POOLS = [
@@ -94,6 +98,7 @@ function buildCompanies() {
   const namePrefixes = [
     'Northstar', 'Greenfield', 'Summit', 'Harbor', 'Cedar', 'Bluewave', 'Atlas', 'Vertex', 'Lumen', 'Stride',
     'Keystone', 'Meridian', 'Pioneer', 'Horizon', 'Catalyst', 'Nimbus', 'Apex', 'Granite', 'Solstice', 'Echo',
+    'Silverline', 'Redwood', 'Ironwood', 'Clearwater', 'Highland', 'Fairview', 'Oakridge', 'Sundial', 'Moonrise', 'Daybreak',
   ];
   const nameSuffixes = [
     'Labs', 'Partners', 'Holdings', 'Solutions', 'Group', 'Ventures', 'Works', 'Systems', 'Services', 'Industries',
@@ -102,7 +107,7 @@ function buildCompanies() {
   for (let n = 1; n <= COMPANY_COUNT; n += 1) {
     const i = n - 1;
     const email = `demo-company-${pad2(n)}@easyintern.app`;
-    const name = `${namePrefixes[i % namePrefixes.length]} ${nameSuffixes[i % nameSuffixes.length]}`;
+    const name = `${namePrefixes[i % namePrefixes.length]} ${nameSuffixes[(i * 3) % nameSuffixes.length]} #${pad2(n)}`;
     const ind = INDUSTRIES[i % INDUSTRIES.length];
     const jobs = [buildJobForCompany(n)];
     if (n % 2 === 0) {
@@ -141,7 +146,7 @@ function buildInterns() {
     const i = n - 1;
     const email = `demo-intern-${pad2(n)}@easyintern.app`;
     const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
-    const lastName = LAST_NAMES[(i + 3) % LAST_NAMES.length];
+    const lastName = LAST_NAMES[(i * 5 + 7) % LAST_NAMES.length];
     const ind = INDUSTRIES[i % INDUSTRIES.length];
     list.push({
       email,
@@ -289,26 +294,27 @@ async function seedDemoApplications() {
   }
 
   let created = 0;
-  const maxApps = 30;
+  const maxApps = 80;
 
   outer: for (let i = 0; i < internRecords.length; i += 1) {
     for (let j = 0; j < jobs.length; j += 1) {
       if (created >= maxApps) break outer;
       const intern = internRecords[i];
       const job = jobs[(i + j) % jobs.length];
-      try {
-        await prisma.application.create({
-          data: {
-            jobId: job.id,
-            internId: intern.id,
-            status: created % 6 === 0 ? 'REVIEWED' : 'PENDING',
-            coverLetter: 'Demo application generated for EasyIntern showcase.',
-          },
-        });
-        created += 1;
-      } catch {
-        // duplicate [jobId, internId]
-      }
+      const already = await prisma.application.findFirst({
+        where: { jobId: job.id, internId: intern.id },
+      });
+      if (already) continue;
+
+      await prisma.application.create({
+        data: {
+          jobId: job.id,
+          internId: intern.id,
+          status: created % 6 === 0 ? 'REVIEWED' : 'PENDING',
+          coverLetter: 'Demo application generated for EasyIntern showcase.',
+        },
+      });
+      created += 1;
     }
   }
 
