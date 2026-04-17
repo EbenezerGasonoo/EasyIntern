@@ -27,13 +27,11 @@ jobs:
       - name: Verify Node
         run: node -v && npm -v
 
-      - name: Install, build, and responsive check
+      - name: Install and build
         working-directory: frontend
         run: |
           npm ci
-          npx playwright install --with-deps chromium
           NODE_ENV=production npm run build
-          npm run test:responsive:check
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 

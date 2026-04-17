@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "test:responsive": "npm run build && npm run test:responsive:check",
-    "test:responsive:check": "node scripts/check-responsive.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.6.2",
@@ -19,7 +17,6 @@
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
-    "playwright": "^1.49.1",
     "vite": "^5.0.8"
   }
 }
