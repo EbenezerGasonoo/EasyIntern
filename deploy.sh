@@ -40,7 +40,9 @@ fi
 
 echo ""
 echo "=== Next steps ==="
-echo "1. Backend: Deploy/update the 'backend' folder on your hosting server."
-echo "2. Frontend: Upload 'frontend/dist' to your web root (easyintern.app)."
-echo "3. Set VITE_API_URL to your backend URL + /api (e.g. https://api.easyintern.app/api)."
+echo "1. Windows bundle: run PowerShell scripts/build-production-zip.ps1"
+echo "   (creates easyintern-production-*.zip with backend/ + frontend-dist/ + DEPLOY.txt)"
+echo "2. Backend: Deploy/update the 'backend' folder on your hosting server."
+echo "3. Frontend: Upload 'frontend/dist' (or frontend-dist from the zip) to your web root."
+echo "4. Set VITE_API_URL to your backend URL + /api (e.g. https://api.easyintern.app/api) before vite build."
 echo ""
