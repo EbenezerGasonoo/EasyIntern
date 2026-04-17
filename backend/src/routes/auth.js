@@ -131,13 +131,19 @@ router.post('/register/company', async (req, res) => {
       include: { company: true },
     });
 
-    // Send verification email
+    // Send verification email (do not fail signup if SMTP is misconfigured)
     const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
-    await sendEmail({
-      to: email,
-      subject: 'Verify your Easy Intern account',
-      html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`
-    });
+    let emailSent = true;
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Verify your Easy Intern account',
+        html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`,
+      });
+    } catch (emailErr) {
+      console.error('Company verification email failed:', emailErr);
+      emailSent = false;
+    }
 
     // Generate token
     const token = jwt.sign(
@@ -148,6 +154,8 @@ router.post('/register/company', async (req, res) => {
 
     res.status(201).json({
       token,
+      emailSent,
+      emailWarning: emailSent ? undefined : 'Verification email could not be sent. Check SMTP settings; you can still log in.',
       user: {
         id: user.id,
         email: user.email,
@@ -221,13 +229,19 @@ router.post('/register/intern', async (req, res) => {
       include: { intern: true },
     });
 
-    // Send verification email
+    // Send verification email (do not fail signup if SMTP is misconfigured)
     const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
-    await sendEmail({
-      to: email,
-      subject: 'Verify your Easy Intern account',
-      html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`
-    });
+    let emailSent = true;
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Verify your Easy Intern account',
+        html: `<h1>Welcome to Easy Intern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`,
+      });
+    } catch (emailErr) {
+      console.error('Intern verification email failed:', emailErr);
+      emailSent = false;
+    }
 
     // Generate token
     const token = jwt.sign(
@@ -238,6 +252,8 @@ router.post('/register/intern', async (req, res) => {
 
     res.status(201).json({
       token,
+      emailSent,
+      emailWarning: emailSent ? undefined : 'Verification email could not be sent. Check SMTP settings; you can still log in.',
       user: {
         id: user.id,
         email: user.email,
