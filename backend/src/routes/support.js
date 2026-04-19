@@ -1,10 +1,10 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireEmailVerified } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/tickets', authenticate, async (req, res) => {
+router.post('/tickets', authenticate, requireEmailVerified, async (req, res) => {
   try {
     const { subject, description, category, priority } = req.body || {};
 

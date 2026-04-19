@@ -1,12 +1,12 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireEmailVerified } from '../middleware/auth.js';
 import { buildAdminTicketFeed } from '../utils/adminTickets.js';
 
 const router = express.Router();
 
 // Get all notifications for current user
-router.get('/', authenticate, async (req, res) => {
+router.get('/', authenticate, requireEmailVerified, async (req, res) => {
   try {
     if (req.isAdmin) {
       const ticketFeed = await buildAdminTicketFeed(prisma);
@@ -34,7 +34,7 @@ router.get('/', authenticate, async (req, res) => {
 });
 
 // Mark notification as read
-router.patch('/:id/read', authenticate, async (req, res) => {
+router.patch('/:id/read', authenticate, requireEmailVerified, async (req, res) => {
   try {
     const notification = await prisma.notification.update({
       where: { id: req.params.id, userId: req.userId },
@@ -48,7 +48,7 @@ router.patch('/:id/read', authenticate, async (req, res) => {
 });
 
 // Mark all as read
-router.patch('/read-all', authenticate, async (req, res) => {
+router.patch('/read-all', authenticate, requireEmailVerified, async (req, res) => {
   try {
     await prisma.notification.updateMany({
       where: { userId: req.userId, isRead: false },
@@ -62,7 +62,7 @@ router.patch('/read-all', authenticate, async (req, res) => {
 });
 
 // Delete notification
-router.delete('/:id', authenticate, async (req, res) => {
+router.delete('/:id', authenticate, requireEmailVerified, async (req, res) => {
   try {
     await prisma.notification.delete({
       where: { id: req.params.id, userId: req.userId },

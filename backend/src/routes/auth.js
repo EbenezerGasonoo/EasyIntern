@@ -168,6 +168,7 @@ router.post('/register/company', async (req, res) => {
         id: user.id,
         email: user.email,
         userType: user.userType,
+        isEmailVerified: user.isEmailVerified,
         company: user.company,
       },
     });
@@ -266,6 +267,7 @@ router.post('/register/intern', async (req, res) => {
         id: user.id,
         email: user.email,
         userType: user.userType,
+        isEmailVerified: user.isEmailVerified,
         intern: user.intern,
       },
     });
@@ -341,6 +343,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         email: user.email,
         userType: user.userType,
+        isEmailVerified: user.isEmailVerified,
         company: user.company,
         intern: user.intern,
       },
@@ -452,6 +455,7 @@ router.get('/me', authenticate, async (req, res) => {
         email: dbAdmin?.email || req.adminEmail || process.env.ADMIN_EMAIL || 'admin',
         userType: 'ADMIN',
         isAdmin: true,
+        isEmailVerified: true,
         adminRole: dbAdmin?.adminRole || req.adminRole || 'SUPER_ADMIN',
       });
     }
@@ -469,6 +473,7 @@ router.get('/me', authenticate, async (req, res) => {
       id: user.id,
       email: user.email,
       userType: user.userType,
+      isEmailVerified: user.isEmailVerified,
       company: user.company,
       intern: user.intern,
     });

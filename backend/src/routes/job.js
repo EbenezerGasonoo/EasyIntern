@@ -1,6 +1,6 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate, requireCompany } from '../middleware/auth.js';
+import { authenticate, requireCompany, requireEmailVerified } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -110,7 +110,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create job (company only)
-router.post('/', authenticate, requireCompany, async (req, res) => {
+router.post('/', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const { title, description, requirements, responsibilities, benefits, location, remote, duration, stipend, skills } = req.body;
 
@@ -158,7 +158,7 @@ router.post('/', authenticate, requireCompany, async (req, res) => {
 });
 
 // Update job (company only)
-router.put('/:id', authenticate, requireCompany, async (req, res) => {
+router.put('/:id', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const { title, description, requirements, responsibilities, benefits, location, remote, duration, stipend, skills } = req.body;
 
@@ -211,7 +211,7 @@ router.put('/:id', authenticate, requireCompany, async (req, res) => {
 });
 
 // Delete job (company only)
-router.delete('/:id', authenticate, requireCompany, async (req, res) => {
+router.delete('/:id', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const company = await prisma.company.findUnique({
       where: { userId: req.userId },

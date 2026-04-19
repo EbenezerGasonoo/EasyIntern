@@ -42,6 +42,7 @@ function Login() {
         id: 'demo-intern-1',
         email: 'you@easyintern.demo',
         userType: 'INTERN',
+        isEmailVerified: true,
         intern: {
           id: 'demo-intern-profile',
           firstName: 'You',
@@ -60,6 +61,7 @@ function Login() {
         id: 'demo-company-1',
         email: 'company@easyintern.demo',
         userType: 'COMPANY',
+        isEmailVerified: true,
         company: {
           id: 'demo-company-profile',
           name: 'Demo Company',

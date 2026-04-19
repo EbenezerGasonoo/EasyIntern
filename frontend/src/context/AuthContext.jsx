@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import api from '../utils/api'
 
 const AuthContext = createContext()
@@ -11,26 +11,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    const demoUser = localStorage.getItem('demoUser')
-    if (token && (token === 'demo-intern' || token === 'demo-company')) {
-      if (demoUser) {
-        try {
-          setUser(JSON.parse(demoUser))
-        } catch (_) {
-          setUser(null)
-        }
-      }
-      setLoading(false)
-    } else if (token) {
-      fetchUser()
-    } else {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const response = await api.get('/auth/me')
       setUser(response.data)
@@ -41,7 +22,27 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const demoUser = localStorage.getItem('demoUser')
+    if (token && (token === 'demo-intern' || token === 'demo-company')) {
+      if (demoUser) {
+        try {
+          const parsed = JSON.parse(demoUser)
+          setUser({ ...parsed, isEmailVerified: true })
+        } catch (_) {
+          setUser(null)
+        }
+      }
+      setLoading(false)
+    } else if (token) {
+      fetchUser()
+    } else {
+      setLoading(false)
+    }
+  }, [fetchUser])
 
   const login = (token, userData) => {
     localStorage.setItem('token', token)

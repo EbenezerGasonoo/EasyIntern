@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import { sampleJobs } from '../data/sampleData'
@@ -47,6 +47,9 @@ function JobDetail() {
     }
   }
 
+  const canApplyAsIntern =
+    user?.userType === 'INTERN' && (user?.isAdmin || user?.isEmailVerified === true)
+
   const handleApply = async (e) => {
     e.preventDefault()
     if (!user) {
@@ -56,6 +59,11 @@ function JobDetail() {
 
     if (user.userType !== 'INTERN') {
       setError('Only interns can apply to jobs')
+      return
+    }
+
+    if (!canApplyAsIntern) {
+      setError('Please verify your email before applying.')
       return
     }
 
@@ -293,7 +301,7 @@ function JobDetail() {
               )}
             </div>
 
-            {user?.userType === 'INTERN' && (
+            {user?.userType === 'INTERN' && canApplyAsIntern && (
               <aside className="job-sidebar">
                 <div className="card job-apply-card">
                   <h2>Apply for this position</h2>
@@ -317,6 +325,18 @@ function JobDetail() {
                       {applying ? 'Applying...' : 'Apply now'}
                     </button>
                   </form>
+                </div>
+              </aside>
+            )}
+
+            {user?.userType === 'INTERN' && !canApplyAsIntern && (
+              <aside className="job-sidebar">
+                <div className="card job-apply-card job-apply-cta">
+                  <h2>Verify your email to apply</h2>
+                  <p>Open the link we sent you, then come back here to submit your application.</p>
+                  <Link to="/verify-email-notice" className="btn btn-primary job-apply-btn">
+                    Email verification help
+                  </Link>
                 </div>
               </aside>
             )}

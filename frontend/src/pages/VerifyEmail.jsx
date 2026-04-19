@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import './VerifyEmailNotice.css';
 
 function VerifyEmail() {
@@ -8,25 +9,34 @@ function VerifyEmail() {
   const token = searchParams.get('token');
   const [status, setStatus] = useState('verifying');
   const [error, setError] = useState('');
+  const { fetchUser } = useAuth();
+  const verifyStarted = useRef(false);
 
   useEffect(() => {
+    if (!token) {
+      setStatus('error');
+      setError('Invalid token');
+      return;
+    }
+    if (verifyStarted.current) return;
+    verifyStarted.current = true;
+
     const verifyToken = async () => {
       try {
-        await api.get(`/auth/verify-email?token=${token}`);
+        await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
         setStatus('success');
+        const t = localStorage.getItem('token');
+        if (t && t !== 'demo-intern' && t !== 'demo-company') {
+          await fetchUser();
+        }
       } catch (err) {
         setError(err.response?.data?.error || 'Verification failed');
         setStatus('error');
       }
     };
 
-    if (token) {
-      verifyToken();
-    } else {
-      setStatus('error');
-      setError('Invalid token');
-    }
-  }, [token]);
+    verifyToken();
+  }, [token, fetchUser]);
 
   return (
     <div className="verify-shell">

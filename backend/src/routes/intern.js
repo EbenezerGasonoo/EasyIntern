@@ -1,6 +1,6 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate, requireIntern } from '../middleware/auth.js';
+import { authenticate, requireIntern, requireEmailVerified } from '../middleware/auth.js';
 import { getSupabase, PROFILE_BUCKET } from '../utils/supabase.js';
 
 const router = express.Router();
@@ -9,7 +9,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 // Upload profile picture (intern only)
-router.post('/upload-profile-picture', authenticate, requireIntern, async (req, res) => {
+router.post('/upload-profile-picture', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const { image: dataUrl } = req.body || {};
     if (!dataUrl || typeof dataUrl !== 'string') {
@@ -140,7 +140,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Get own intern profile (authenticated)
-router.get('/profile', authenticate, requireIntern, async (req, res) => {
+router.get('/profile', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const intern = await prisma.intern.findUnique({
       where: { userId: req.userId },
@@ -178,7 +178,7 @@ router.get('/profile', authenticate, requireIntern, async (req, res) => {
 });
 
 // Update intern profile
-router.put('/profile', authenticate, requireIntern, async (req, res) => {
+router.put('/profile', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const {
       firstName,
@@ -237,7 +237,7 @@ router.put('/profile', authenticate, requireIntern, async (req, res) => {
 });
 
 // Get recommended jobs for intern
-router.get('/recommended-jobs', authenticate, requireIntern, async (req, res) => {
+router.get('/recommended-jobs', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const intern = await prisma.intern.findUnique({
       where: { userId: req.userId },

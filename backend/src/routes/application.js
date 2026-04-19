@@ -1,12 +1,12 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate, requireIntern, requireCompany } from '../middleware/auth.js';
+import { authenticate, requireIntern, requireCompany, requireEmailVerified } from '../middleware/auth.js';
 import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
 // Apply to job (intern only)
-router.post('/', authenticate, requireIntern, async (req, res) => {
+router.post('/', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const { jobId, coverLetter } = req.body;
 
@@ -91,7 +91,7 @@ router.post('/', authenticate, requireIntern, async (req, res) => {
 });
 
 // Get intern's applications
-router.get('/my-applications', authenticate, requireIntern, async (req, res) => {
+router.get('/my-applications', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
     const intern = await prisma.intern.findUnique({
       where: { userId: req.userId },
@@ -127,7 +127,7 @@ router.get('/my-applications', authenticate, requireIntern, async (req, res) => 
 });
 
 // Update application status (company only)
-router.patch('/:id/status', authenticate, requireCompany, async (req, res) => {
+router.patch('/:id/status', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const { status } = req.body;
 

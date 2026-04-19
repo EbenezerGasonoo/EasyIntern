@@ -24,7 +24,7 @@ import AdminLogin from './pages/AdminLogin'
 import AdminSettings from './pages/AdminSettings'
 import './App.css'
 
-function PrivateRoute({ children, requireType, requireAdmin }) {
+function PrivateRoute({ children, requireType, requireAdmin, requireEmailVerified = true }) {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -41,6 +41,10 @@ function PrivateRoute({ children, requireType, requireAdmin }) {
 
   if (requireAdmin && !user.isAdmin) {
     return <Navigate to="/admin/login" />
+  }
+
+  if (!requireAdmin && requireEmailVerified && !user.isAdmin && user.isEmailVerified !== true) {
+    return <Navigate to="/verify-email-notice" replace />
   }
 
   if (requireType && user.userType !== requireType) {

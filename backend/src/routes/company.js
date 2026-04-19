@@ -1,11 +1,11 @@
 import express from 'express';
 import prisma from '../utils/db.js';
-import { authenticate, requireCompany } from '../middleware/auth.js';
+import { authenticate, requireCompany, requireEmailVerified } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // Get company profile
-router.get('/profile', authenticate, requireCompany, async (req, res) => {
+router.get('/profile', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const company = await prisma.company.findUnique({
       where: { userId: req.userId },
@@ -36,7 +36,7 @@ router.get('/profile', authenticate, requireCompany, async (req, res) => {
 });
 
 // Update company profile
-router.put('/profile', authenticate, requireCompany, async (req, res) => {
+router.put('/profile', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const {
       name,
@@ -99,7 +99,7 @@ router.put('/profile', authenticate, requireCompany, async (req, res) => {
 });
 
 // Get company's applications
-router.get('/applications', authenticate, requireCompany, async (req, res) => {
+router.get('/applications', authenticate, requireCompany, requireEmailVerified, async (req, res) => {
   try {
     const company = await prisma.company.findUnique({
       where: { userId: req.userId },

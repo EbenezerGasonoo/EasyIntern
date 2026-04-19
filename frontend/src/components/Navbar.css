@@ -9,6 +9,35 @@
   border-bottom: 1px solid #eef2f7;
 }
 
+.email-verify-banner {
+  background: linear-gradient(90deg, #fff7ed 0%, #ffedd5 100%);
+  border-bottom: 1px solid #fdba74;
+  color: #9a3412;
+  font-size: 0.9rem;
+  padding: 10px 0;
+  width: 100%;
+}
+
+.email-verify-banner-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  text-align: center;
+}
+
+.email-verify-banner-link {
+  font-weight: 600;
+  color: #c2410c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.email-verify-banner-link:hover {
+  color: #9a3412;
+}
+
 .navbar-shell {
   position: relative;
 }

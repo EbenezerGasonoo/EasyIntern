@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import prisma from '../utils/db.js';
 
 export const authenticate = (req, res, next) => {
   try {
@@ -46,4 +47,26 @@ export const requireSuperAdmin = (req, res, next) => {
     return res.status(403).json({ error: 'Super admin access required' });
   }
   next();
+};
+
+/** Must run after authenticate. Admins skip; regular users must have verified email. */
+export const requireEmailVerified = async (req, res, next) => {
+  try {
+    if (req.isAdmin) return next();
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: { isEmailVerified: true },
+    });
+
+    if (!user?.isEmailVerified) {
+      return res.status(403).json({
+        error: 'Please verify your email address to continue.',
+        code: 'EMAIL_NOT_VERIFIED',
+      });
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
 };

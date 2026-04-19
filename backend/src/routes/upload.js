@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireEmailVerified } from '../middleware/auth.js';
 import prisma from '../utils/db.js';
 import fs from 'fs';
 import path from 'path';
@@ -31,7 +31,7 @@ const saveLocalFile = (base64Data, originalName, userId) => {
     return fileName;
 };
 
-router.post('/profile-pic', authenticate, async (req, res) => {
+router.post('/profile-pic', authenticate, requireEmailVerified, async (req, res) => {
   try {
     const { image, fileName } = req.body;
     if (!image) return res.status(400).json({ error: 'No image provided' });
@@ -65,7 +65,7 @@ router.post('/profile-pic', authenticate, async (req, res) => {
   }
 });
 
-router.post('/document', authenticate, async (req, res) => {
+router.post('/document', authenticate, requireEmailVerified, async (req, res) => {
   try {
     const { file, fileName, type } = req.body;
     if (!file) return res.status(400).json({ error: 'No file provided' });
