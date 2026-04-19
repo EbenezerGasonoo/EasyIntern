@@ -8,6 +8,14 @@ import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
+/** Links in emails (verify email, password reset). Set `FRONTEND_URL` on the API; production falls back to easyintern.app. */
+function frontendBaseUrl() {
+  const raw = process.env.FRONTEND_URL?.trim();
+  if (raw) return raw.replace(/\/$/, '');
+  if (process.env.NODE_ENV === 'production') return 'https://easyintern.app';
+  return 'http://localhost:3000';
+}
+
 // Admin Login (hidden route use)
 router.post('/admin-login', async (req, res) => {
   try {
@@ -132,7 +140,7 @@ router.post('/register/company', async (req, res) => {
     });
 
     // Send verification email (do not fail signup if SMTP is misconfigured)
-    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
     let emailSent = true;
     try {
       await sendEmail({
@@ -230,7 +238,7 @@ router.post('/register/intern', async (req, res) => {
     });
 
     // Send verification email (do not fail signup if SMTP is misconfigured)
-    const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
     let emailSent = true;
     try {
       await sendEmail({
@@ -370,7 +378,7 @@ router.post('/forgot-password', async (req, res) => {
       },
     });
 
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const resetUrl = `${frontendBaseUrl()}/reset-password?token=${resetToken}`;
     await sendEmail({
       to: email,
       subject: 'Reset your Easy Intern password',
