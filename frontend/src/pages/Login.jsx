@@ -86,7 +86,7 @@ function Login() {
             <Logo size="xlarge" theme="light" />
           </Link>
           <div className="login-visual-copy">
-            <h2>Edit smarter. Export faster. Create anywhere.</h2>
+            <h2>Your journey to the top starts here.</h2>
             <p>
               Discover internships that match your skills and help companies find
               the right talent.

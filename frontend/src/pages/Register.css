@@ -53,7 +53,13 @@
 }
 
 .register-visual-intern {
-  background-image: url('../assets/register-hero.png');
+  background-image: url('../assets/register-intern-hero.png');
+  background-position: center 20%;
+}
+
+/* Slightly lighter overlay so the portrait reads clearly on large screens */
+.register-visual-intern::after {
+  background: rgba(8, 16, 34, 0.38);
 }
 
 .register-visual-company {
