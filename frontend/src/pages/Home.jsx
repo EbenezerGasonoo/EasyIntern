@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import { sampleInterns, sampleJobs } from '../data/sampleData'
+import heroSupportImage from '../assets/home-support-professional.png'
+import teamShowcaseImage from '../assets/home-team-partnership.png'
 import './Home.css'
 
 function Home() {
@@ -63,7 +65,10 @@ function Home() {
 
   return (
     <div className="landing">
-      <section className="landing-hero">
+      <section
+        className="landing-hero"
+        style={{ '--landing-hero-bg': `url(${heroSupportImage})` }}
+      >
         <div className="landing-hero-inner container">
           <p className="landing-hero-badge">Where talent meets opportunity</p>
           <h1 className="landing-hero-title">
@@ -95,6 +100,36 @@ function Home() {
                 <span className="landing-stat-label">{stat.label}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-showcase-support" aria-labelledby="landing-showcase-heading">
+        <div className="container landing-showcase-support-inner">
+          <div className="landing-showcase-support-img-wrap">
+            <img
+              src={teamShowcaseImage}
+              alt="EasyIntern professionals networking and shaking hands in a modern office"
+              width={640}
+              height={800}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div className="landing-showcase-support-copy">
+            <h2 id="landing-showcase-heading">Where internships and hiring meet</h2>
+            <p>
+              EasyIntern brings together ambitious students and forward-thinking companies. Build your profile, explore
+              roles, and start real conversations—whether you are launching a career or growing your team.
+            </p>
+            <div className="landing-showcase-support-actions">
+              <Link to="/register" className="btn btn-primary">
+                Get started
+              </Link>
+              <Link to="/login" className="btn btn-secondary">
+                Log in
+              </Link>
+            </div>
           </div>
         </div>
       </section>
