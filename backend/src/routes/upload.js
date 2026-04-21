@@ -89,6 +89,11 @@ router.post('/document', authenticate, requireEmailVerified, async (req, res) =>
             where: { userId: req.userId },
             data: { ghanaCardDocument: publicUrl }
         });
+    } else if (type === 'school-affiliation') {
+        await prisma.intern.update({
+            where: { userId: req.userId },
+            data: { schoolAffiliationDocument: publicUrl }
+        });
     }
 
     res.json({ url: publicUrl });

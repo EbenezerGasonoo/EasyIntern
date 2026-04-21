@@ -12,6 +12,7 @@ import uploadRoutes from './routes/upload.js';
 import notificationRoutes from './routes/notification.js';
 import adminRoutes from './routes/admin.js';
 import supportRoutes from './routes/support.js';
+import { processScheduledAccountDeletions } from './utils/accountDeletion.js';
 
 dotenv.config();
 
@@ -70,8 +71,17 @@ app.get('/api', (req, res) => {
   res.json({ status: 'ok', message: 'EasyIntern API', docs: '/api/health' });
 });
 
+const ACCOUNT_DELETION_INTERVAL_MS = 60 * 60 * 1000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  const runDeletionJob = () => {
+    processScheduledAccountDeletions().catch((err) => {
+      console.error('[account-deletion] job error:', err);
+    });
+  };
+  setTimeout(runDeletionJob, 15_000);
+  setInterval(runDeletionJob, ACCOUNT_DELETION_INTERVAL_MS);
 });
 
 export default app;

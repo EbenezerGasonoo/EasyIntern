@@ -137,6 +137,7 @@ exports.Prisma.UserScalarFieldEnum = {
   suspensionReason: 'suspensionReason',
   suspendedAt: 'suspendedAt',
   softBannedAt: 'softBannedAt',
+  scheduledAccountDeletionAt: 'scheduledAccountDeletionAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -173,6 +174,7 @@ exports.Prisma.InternScalarFieldEnum = {
   dateOfBirth: 'dateOfBirth',
   ghanaCardNumber: 'ghanaCardNumber',
   ghanaCardDocument: 'ghanaCardDocument',
+  schoolAffiliationDocument: 'schoolAffiliationDocument',
   isVerified: 'isVerified',
   notifyIndustryJobs: 'notifyIndustryJobs',
   preferredIndustry: 'preferredIndustry',

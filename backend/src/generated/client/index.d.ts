@@ -1832,6 +1832,7 @@ export namespace Prisma {
     suspensionReason: string | null
     suspendedAt: Date | null
     softBannedAt: Date | null
+    scheduledAccountDeletionAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1851,6 +1852,7 @@ export namespace Prisma {
     suspensionReason: string | null
     suspendedAt: Date | null
     softBannedAt: Date | null
+    scheduledAccountDeletionAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1870,6 +1872,7 @@ export namespace Prisma {
     suspensionReason: number
     suspendedAt: number
     softBannedAt: number
+    scheduledAccountDeletionAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1891,6 +1894,7 @@ export namespace Prisma {
     suspensionReason?: true
     suspendedAt?: true
     softBannedAt?: true
+    scheduledAccountDeletionAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1910,6 +1914,7 @@ export namespace Prisma {
     suspensionReason?: true
     suspendedAt?: true
     softBannedAt?: true
+    scheduledAccountDeletionAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1929,6 +1934,7 @@ export namespace Prisma {
     suspensionReason?: true
     suspendedAt?: true
     softBannedAt?: true
+    scheduledAccountDeletionAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2021,6 +2027,7 @@ export namespace Prisma {
     suspensionReason: string | null
     suspendedAt: Date | null
     softBannedAt: Date | null
+    scheduledAccountDeletionAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2057,6 +2064,7 @@ export namespace Prisma {
     suspensionReason?: boolean
     suspendedAt?: boolean
     softBannedAt?: boolean
+    scheduledAccountDeletionAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     company?: boolean | User$companyArgs<ExtArgs>
@@ -2083,6 +2091,7 @@ export namespace Prisma {
     suspensionReason?: boolean
     suspendedAt?: boolean
     softBannedAt?: boolean
+    scheduledAccountDeletionAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -2120,6 +2129,10 @@ export namespace Prisma {
       suspensionReason: string | null
       suspendedAt: Date | null
       softBannedAt: Date | null
+      /**
+       * When set, the account is permanently deleted after this time (3-day grace from request).
+       */
+      scheduledAccountDeletionAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2510,6 +2523,7 @@ export namespace Prisma {
     readonly suspensionReason: FieldRef<"User", 'String'>
     readonly suspendedAt: FieldRef<"User", 'DateTime'>
     readonly softBannedAt: FieldRef<"User", 'DateTime'>
+    readonly scheduledAccountDeletionAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -4024,6 +4038,7 @@ export namespace Prisma {
     dateOfBirth: Date | null
     ghanaCardNumber: string | null
     ghanaCardDocument: string | null
+    schoolAffiliationDocument: string | null
     isVerified: boolean | null
     notifyIndustryJobs: boolean | null
     preferredIndustry: string | null
@@ -4047,6 +4062,7 @@ export namespace Prisma {
     dateOfBirth: Date | null
     ghanaCardNumber: string | null
     ghanaCardDocument: string | null
+    schoolAffiliationDocument: string | null
     isVerified: boolean | null
     notifyIndustryJobs: boolean | null
     preferredIndustry: string | null
@@ -4070,6 +4086,7 @@ export namespace Prisma {
     dateOfBirth: number
     ghanaCardNumber: number
     ghanaCardDocument: number
+    schoolAffiliationDocument: number
     isVerified: number
     notifyIndustryJobs: number
     preferredIndustry: number
@@ -4097,6 +4114,7 @@ export namespace Prisma {
     dateOfBirth?: true
     ghanaCardNumber?: true
     ghanaCardDocument?: true
+    schoolAffiliationDocument?: true
     isVerified?: true
     notifyIndustryJobs?: true
     preferredIndustry?: true
@@ -4120,6 +4138,7 @@ export namespace Prisma {
     dateOfBirth?: true
     ghanaCardNumber?: true
     ghanaCardDocument?: true
+    schoolAffiliationDocument?: true
     isVerified?: true
     notifyIndustryJobs?: true
     preferredIndustry?: true
@@ -4143,6 +4162,7 @@ export namespace Prisma {
     dateOfBirth?: true
     ghanaCardNumber?: true
     ghanaCardDocument?: true
+    schoolAffiliationDocument?: true
     isVerified?: true
     notifyIndustryJobs?: true
     preferredIndustry?: true
@@ -4241,6 +4261,7 @@ export namespace Prisma {
     dateOfBirth: Date | null
     ghanaCardNumber: string | null
     ghanaCardDocument: string | null
+    schoolAffiliationDocument: string | null
     isVerified: boolean
     notifyIndustryJobs: boolean
     preferredIndustry: string | null
@@ -4283,6 +4304,7 @@ export namespace Prisma {
     dateOfBirth?: boolean
     ghanaCardNumber?: boolean
     ghanaCardDocument?: boolean
+    schoolAffiliationDocument?: boolean
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: boolean
@@ -4312,6 +4334,7 @@ export namespace Prisma {
     dateOfBirth?: boolean
     ghanaCardNumber?: boolean
     ghanaCardDocument?: boolean
+    schoolAffiliationDocument?: boolean
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: boolean
@@ -4349,6 +4372,10 @@ export namespace Prisma {
       dateOfBirth: Date | null
       ghanaCardNumber: string | null
       ghanaCardDocument: string | null
+      /**
+       * Enrollment letter, official student ID, or similar proof from the school listed under Education (KYI).
+       */
+      schoolAffiliationDocument: string | null
       isVerified: boolean
       notifyIndustryJobs: boolean
       preferredIndustry: string | null
@@ -4742,6 +4769,7 @@ export namespace Prisma {
     readonly dateOfBirth: FieldRef<"Intern", 'DateTime'>
     readonly ghanaCardNumber: FieldRef<"Intern", 'String'>
     readonly ghanaCardDocument: FieldRef<"Intern", 'String'>
+    readonly schoolAffiliationDocument: FieldRef<"Intern", 'String'>
     readonly isVerified: FieldRef<"Intern", 'Boolean'>
     readonly notifyIndustryJobs: FieldRef<"Intern", 'Boolean'>
     readonly preferredIndustry: FieldRef<"Intern", 'String'>
@@ -11656,6 +11684,7 @@ export namespace Prisma {
     suspensionReason: 'suspensionReason',
     suspendedAt: 'suspendedAt',
     softBannedAt: 'softBannedAt',
+    scheduledAccountDeletionAt: 'scheduledAccountDeletionAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -11698,6 +11727,7 @@ export namespace Prisma {
     dateOfBirth: 'dateOfBirth',
     ghanaCardNumber: 'ghanaCardNumber',
     ghanaCardDocument: 'ghanaCardDocument',
+    schoolAffiliationDocument: 'schoolAffiliationDocument',
     isVerified: 'isVerified',
     notifyIndustryJobs: 'notifyIndustryJobs',
     preferredIndustry: 'preferredIndustry',
@@ -11983,6 +12013,7 @@ export namespace Prisma {
     suspensionReason?: StringNullableFilter<"User"> | string | null
     suspendedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     softBannedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    scheduledAccountDeletionAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     company?: XOR<CompanyNullableRelationFilter, CompanyWhereInput> | null
@@ -12007,6 +12038,7 @@ export namespace Prisma {
     suspensionReason?: SortOrderInput | SortOrder
     suspendedAt?: SortOrderInput | SortOrder
     softBannedAt?: SortOrderInput | SortOrder
+    scheduledAccountDeletionAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     company?: CompanyOrderByWithRelationInput
@@ -12034,6 +12066,7 @@ export namespace Prisma {
     suspensionReason?: StringNullableFilter<"User"> | string | null
     suspendedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     softBannedAt?: DateTimeNullableFilter<"User"> | Date | string | null
+    scheduledAccountDeletionAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     company?: XOR<CompanyNullableRelationFilter, CompanyWhereInput> | null
@@ -12058,6 +12091,7 @@ export namespace Prisma {
     suspensionReason?: SortOrderInput | SortOrder
     suspendedAt?: SortOrderInput | SortOrder
     softBannedAt?: SortOrderInput | SortOrder
+    scheduledAccountDeletionAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -12083,6 +12117,7 @@ export namespace Prisma {
     suspensionReason?: StringNullableWithAggregatesFilter<"User"> | string | null
     suspendedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     softBannedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    scheduledAccountDeletionAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -12240,6 +12275,7 @@ export namespace Prisma {
     dateOfBirth?: DateTimeNullableFilter<"Intern"> | Date | string | null
     ghanaCardNumber?: StringNullableFilter<"Intern"> | string | null
     ghanaCardDocument?: StringNullableFilter<"Intern"> | string | null
+    schoolAffiliationDocument?: StringNullableFilter<"Intern"> | string | null
     isVerified?: BoolFilter<"Intern"> | boolean
     notifyIndustryJobs?: BoolFilter<"Intern"> | boolean
     preferredIndustry?: StringNullableFilter<"Intern"> | string | null
@@ -12267,6 +12303,7 @@ export namespace Prisma {
     dateOfBirth?: SortOrderInput | SortOrder
     ghanaCardNumber?: SortOrderInput | SortOrder
     ghanaCardDocument?: SortOrderInput | SortOrder
+    schoolAffiliationDocument?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     notifyIndustryJobs?: SortOrder
     preferredIndustry?: SortOrderInput | SortOrder
@@ -12297,6 +12334,7 @@ export namespace Prisma {
     dateOfBirth?: DateTimeNullableFilter<"Intern"> | Date | string | null
     ghanaCardNumber?: StringNullableFilter<"Intern"> | string | null
     ghanaCardDocument?: StringNullableFilter<"Intern"> | string | null
+    schoolAffiliationDocument?: StringNullableFilter<"Intern"> | string | null
     isVerified?: BoolFilter<"Intern"> | boolean
     notifyIndustryJobs?: BoolFilter<"Intern"> | boolean
     preferredIndustry?: StringNullableFilter<"Intern"> | string | null
@@ -12324,6 +12362,7 @@ export namespace Prisma {
     dateOfBirth?: SortOrderInput | SortOrder
     ghanaCardNumber?: SortOrderInput | SortOrder
     ghanaCardDocument?: SortOrderInput | SortOrder
+    schoolAffiliationDocument?: SortOrderInput | SortOrder
     isVerified?: SortOrder
     notifyIndustryJobs?: SortOrder
     preferredIndustry?: SortOrderInput | SortOrder
@@ -12355,6 +12394,7 @@ export namespace Prisma {
     dateOfBirth?: DateTimeNullableWithAggregatesFilter<"Intern"> | Date | string | null
     ghanaCardNumber?: StringNullableWithAggregatesFilter<"Intern"> | string | null
     ghanaCardDocument?: StringNullableWithAggregatesFilter<"Intern"> | string | null
+    schoolAffiliationDocument?: StringNullableWithAggregatesFilter<"Intern"> | string | null
     isVerified?: BoolWithAggregatesFilter<"Intern"> | boolean
     notifyIndustryJobs?: BoolWithAggregatesFilter<"Intern"> | boolean
     preferredIndustry?: StringNullableWithAggregatesFilter<"Intern"> | string | null
@@ -12961,6 +13001,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
@@ -12985,6 +13026,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
@@ -13009,6 +13051,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
@@ -13033,6 +13076,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
@@ -13057,6 +13101,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -13076,6 +13121,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13095,6 +13141,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13283,6 +13330,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -13310,6 +13358,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -13335,6 +13384,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13362,6 +13412,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13388,6 +13439,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -13412,6 +13464,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13437,6 +13490,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14233,6 +14287,7 @@ export namespace Prisma {
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
     softBannedAt?: SortOrder
+    scheduledAccountDeletionAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14252,6 +14307,7 @@ export namespace Prisma {
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
     softBannedAt?: SortOrder
+    scheduledAccountDeletionAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14271,6 +14327,7 @@ export namespace Prisma {
     suspensionReason?: SortOrder
     suspendedAt?: SortOrder
     softBannedAt?: SortOrder
+    scheduledAccountDeletionAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -14516,6 +14573,7 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     ghanaCardNumber?: SortOrder
     ghanaCardDocument?: SortOrder
+    schoolAffiliationDocument?: SortOrder
     isVerified?: SortOrder
     notifyIndustryJobs?: SortOrder
     preferredIndustry?: SortOrder
@@ -14541,6 +14599,7 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     ghanaCardNumber?: SortOrder
     ghanaCardDocument?: SortOrder
+    schoolAffiliationDocument?: SortOrder
     isVerified?: SortOrder
     notifyIndustryJobs?: SortOrder
     preferredIndustry?: SortOrder
@@ -14564,6 +14623,7 @@ export namespace Prisma {
     dateOfBirth?: SortOrder
     ghanaCardNumber?: SortOrder
     ghanaCardDocument?: SortOrder
+    schoolAffiliationDocument?: SortOrder
     isVerified?: SortOrder
     notifyIndustryJobs?: SortOrder
     preferredIndustry?: SortOrder
@@ -15890,6 +15950,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -15915,6 +15976,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -16123,6 +16185,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16148,6 +16211,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16280,6 +16344,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     intern?: InternCreateNestedOneWithoutUserInput
@@ -16303,6 +16368,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     intern?: InternUncheckedCreateNestedOneWithoutUserInput
@@ -16386,6 +16452,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     intern?: InternUpdateOneWithoutUserNestedInput
@@ -16409,6 +16476,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     intern?: InternUncheckedUpdateOneWithoutUserNestedInput
@@ -16468,6 +16536,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
@@ -16491,6 +16560,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
@@ -16560,6 +16630,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
@@ -16583,6 +16654,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
@@ -16828,6 +16900,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -16854,6 +16927,7 @@ export namespace Prisma {
     dateOfBirth?: Date | string | null
     ghanaCardNumber?: string | null
     ghanaCardDocument?: string | null
+    schoolAffiliationDocument?: string | null
     isVerified?: boolean
     notifyIndustryJobs?: boolean
     preferredIndustry?: string | null
@@ -16939,6 +17013,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16965,6 +17040,7 @@ export namespace Prisma {
     dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     ghanaCardNumber?: NullableStringFieldUpdateOperationsInput | string | null
     ghanaCardDocument?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolAffiliationDocument?: NullableStringFieldUpdateOperationsInput | string | null
     isVerified?: BoolFieldUpdateOperationsInput | boolean
     notifyIndustryJobs?: BoolFieldUpdateOperationsInput | boolean
     preferredIndustry?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16998,6 +17074,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
@@ -17021,6 +17098,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
@@ -17060,6 +17138,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
@@ -17083,6 +17162,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
@@ -17106,6 +17186,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
@@ -17129,6 +17210,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
@@ -17168,6 +17250,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
@@ -17191,6 +17274,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput
@@ -17214,6 +17298,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyCreateNestedOneWithoutUserInput
@@ -17237,6 +17322,7 @@ export namespace Prisma {
     suspensionReason?: string | null
     suspendedAt?: Date | string | null
     softBannedAt?: Date | string | null
+    scheduledAccountDeletionAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     company?: CompanyUncheckedCreateNestedOneWithoutUserInput
@@ -17276,6 +17362,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUpdateOneWithoutUserNestedInput
@@ -17299,6 +17386,7 @@ export namespace Prisma {
     suspensionReason?: NullableStringFieldUpdateOperationsInput | string | null
     suspendedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     softBannedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledAccountDeletionAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     company?: CompanyUncheckedUpdateOneWithoutUserNestedInput

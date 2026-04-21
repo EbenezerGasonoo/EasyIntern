@@ -47,6 +47,7 @@ CREATE TABLE `interns` (
     `dateOfBirth` DATETIME(3) NULL,
     `ghanaCardNumber` VARCHAR(191) NULL,
     `ghanaCardDocument` VARCHAR(191) NULL,
+    `school_affiliation_document` VARCHAR(191) NULL,
     `isVerified` BOOLEAN NOT NULL DEFAULT false,
     `firstName` VARCHAR(191) NOT NULL,
     `lastName` VARCHAR(191) NOT NULL,

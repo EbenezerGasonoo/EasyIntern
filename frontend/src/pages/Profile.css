@@ -381,6 +381,10 @@
   line-height: 1.4;
 }
 
+.kyi-school-doc-hint {
+  margin-top: 0;
+}
+
 .profile-page select {
   width: 100%;
   padding: 12px 16px;

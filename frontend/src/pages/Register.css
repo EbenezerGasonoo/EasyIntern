@@ -47,6 +47,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: clamp(20px, 2.4vw, 30px) clamp(20px, 2.4vw, 30px) clamp(24px, 3.2vw, 40px);
+  background-color: #0a1f44;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -54,7 +55,8 @@
 
 .register-visual-intern {
   background-image: url('../assets/register-intern-hero.png');
-  background-position: center 20%;
+  /* Portrait: anchor above center so cover’s vertical crop keeps the face in frame */
+  background-position: center 22%;
 }
 
 /* Slightly lighter overlay so the portrait reads clearly on large screens */
@@ -64,6 +66,7 @@
 
 .register-visual-company {
   background-image: url('../assets/register-company-hero.png');
+  background-position: center center;
 }
 
 .register-visual::after {
@@ -416,6 +419,11 @@
   .register-visual {
     min-height: 240px;
     padding: 24px 24px 28px;
+  }
+
+  .register-visual-intern {
+    /* Short wide banner: keep the top of the artwork (face) visible */
+    background-position: center top;
   }
 
   .register-visual-copy h2 {

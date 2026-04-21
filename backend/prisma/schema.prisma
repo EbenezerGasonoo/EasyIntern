@@ -69,6 +69,8 @@ model User {
   suspensionReason  String?
   suspendedAt       DateTime?
   softBannedAt      DateTime?
+  /// When set, the account is permanently deleted after this time (3-day grace from request).
+  scheduledAccountDeletionAt DateTime? @map("scheduled_account_deletion_at")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -118,6 +120,8 @@ model Intern {
   dateOfBirth DateTime?
   ghanaCardNumber String?
   ghanaCardDocument String?
+  /// Enrollment letter, official student ID, or similar proof from the school listed under Education (KYI).
+  schoolAffiliationDocument String? @map("school_affiliation_document")
   isVerified Boolean @default(false)
   notifyIndustryJobs Boolean @default(false)
   preferredIndustry String?
@@ -247,7 +251,7 @@ model SmtpConfiguration {
   secure      Boolean  @default(false)
   username    String
   password    String
-  fromName    String   @default("Easy Intern")
+  fromName    String   @default("EasyIntern")
   fromEmail   String
   isActive    Boolean  @default(true)
   updatedBy   String?

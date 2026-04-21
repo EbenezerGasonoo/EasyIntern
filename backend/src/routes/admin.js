@@ -299,7 +299,7 @@ router.put('/smtp-config', authenticate, requireAdmin, async (req, res) => {
         secure: Boolean(secure),
         username: String(username).trim(),
         password: nextPassword,
-        fromName: fromName ? String(fromName).trim() : 'Easy Intern',
+        fromName: fromName ? String(fromName).trim() : 'EasyIntern',
         fromEmail: String(fromEmail).trim(),
         isActive: isActive !== false,
         updatedBy: req.adminEmail || 'admin',

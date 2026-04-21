@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
+import AccountDeletionPanel from '../components/AccountDeletionPanel'
 import './Dashboard.css'
 
 function InternDashboard() {
@@ -79,7 +80,8 @@ function InternDashboard() {
   const faqItems = [
     {
       question: 'How do I improve my profile visibility?',
-      answer: 'Complete your profile, add strong skills, and upload your resume/Ghana Card to boost trust.',
+      answer:
+        'Complete your profile, add strong skills, resume, and KYI verification (Ghana Card plus school proof) to boost trust.',
     },
     {
       question: 'When will my application move to review?',
@@ -87,7 +89,8 @@ function InternDashboard() {
     },
     {
       question: 'How do I become verified?',
-      answer: 'Go to Profile, complete KYI details, and upload your Ghana Card document.',
+      answer:
+        'Go to Profile, complete KYI (Ghana Card and identity), add your Education, and upload school proof (enrollment letter or student ID from your institution).',
     },
   ]
 
@@ -248,6 +251,8 @@ function InternDashboard() {
               <p>You're viewing in demo mode. Sign up or connect the backend to see real data.</p>
             </div>
           )}
+
+          <AccountDeletionPanel backendUnavailable={apiFailed} />
 
           <section className="dashboard-stats intern-stats-grid">
             <div className="stat-card">

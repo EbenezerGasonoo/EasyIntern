@@ -15,6 +15,7 @@ export async function buildAdminTicketFeed(prisma) {
     staleUnverifiedUsers,
     activeJobs,
     supportTickets,
+    pendingScheduledDeletions,
   ] = await Promise.all([
     prisma.company.findMany({
       where: {
@@ -81,6 +82,24 @@ export async function buildAdminTicketFeed(prisma) {
       orderBy: [{ priority: 'desc' }, { createdAt: 'desc' }],
       take: 50,
     }).catch(() => []),
+    prisma.user
+      .findMany({
+        where: {
+          scheduledAccountDeletionAt: { not: null, gt: new Date() },
+        },
+        select: {
+          id: true,
+          email: true,
+          userType: true,
+          scheduledAccountDeletionAt: true,
+          updatedAt: true,
+          intern: { select: { firstName: true, lastName: true } },
+          company: { select: { name: true } },
+        },
+        orderBy: { scheduledAccountDeletionAt: 'asc' },
+        take: 20,
+      })
+      .catch(() => []),
   ]);
 
   const hiringSpikeJobs = activeJobs
@@ -147,6 +166,23 @@ export async function buildAdminTicketFeed(prisma) {
       createdAt: toIsoSafe(user.createdAt),
       link: '/admin',
     })),
+    ...pendingScheduledDeletions.map((u) => {
+      const label =
+        u.userType === 'INTERN'
+          ? `${u.intern?.firstName || ''} ${u.intern?.lastName || ''}`.trim() || u.email
+          : u.company?.name || u.email;
+      return {
+        id: `scheduled-delete-${u.id}`,
+        source: 'SYSTEM',
+        category: 'ACCOUNT',
+        priority: 'HIGH',
+        status: 'OPEN',
+        title: `Account deletion scheduled: ${label}`,
+        message: `${u.email} (${u.userType}) requested permanent account deletion. Permanently removed after ${toIsoSafe(u.scheduledAccountDeletionAt)} (UTC) unless they cancel.`,
+        createdAt: toIsoSafe(u.updatedAt),
+        link: '/notifications',
+      };
+    }),
     ...hiringSpikeJobs.map((job) => ({
       id: `job-spike-${job.id}`,
       source: 'SYSTEM',

@@ -3,20 +3,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import Logo from '../components/Logo'
+import { GHANA_UNIVERSITIES } from '../data/ghanaUniversities'
 import './Register.css'
-
-const GHANA_UNIVERSITIES = [
-  'University of Ghana',
-  'Kwame Nkrumah University of Science and Technology',
-  'University of Cape Coast',
-  'University of Education, Winneba',
-  'University for Development Studies',
-  'University of Health and Allied Sciences',
-  'University of Energy and Natural Resources',
-  'Ghana Institute of Management and Public Administration',
-  'Ashesi University',
-  'Ghana Communication Technology University',
-]
 
 function Register() {
   const [searchParams] = useSearchParams()
@@ -405,7 +393,7 @@ function Register() {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Select your university</option>
+                    <option value="">Select your university or college</option>
                     {GHANA_UNIVERSITIES.map((university) => (
                       <option key={university} value={university}>
                         {university}

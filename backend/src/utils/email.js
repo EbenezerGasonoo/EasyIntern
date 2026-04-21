@@ -32,7 +32,7 @@ const getEnvSmtpConfig = () => {
     secure: process.env.SMTP_SECURE === 'true',
     username: process.env.SMTP_USER,
     password: process.env.SMTP_PASS,
-    fromName: process.env.SMTP_FROM_NAME || 'Easy Intern',
+    fromName: process.env.SMTP_FROM_NAME || 'EasyIntern',
     fromEmail: process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER,
   };
 };
@@ -81,7 +81,7 @@ export const sendEmail = async ({ to, subject, html, text }) => {
     });
 
     const info = await transporter.sendMail({
-      from: `"${smtpConfig.fromName || 'Easy Intern'}" <${smtpConfig.fromEmail || smtpConfig.username}>`,
+      from: `"${smtpConfig.fromName || 'EasyIntern'}" <${smtpConfig.fromEmail || smtpConfig.username}>`,
       to,
       subject,
       html,

@@ -977,3 +977,76 @@
     justify-content: flex-start;
   }
 }
+
+/* ========== Account deletion (intern / company) ========== */
+.account-deletion-section .account-deletion-card h2 {
+  margin-bottom: 12px;
+}
+
+.account-deletion-card p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #444;
+}
+
+.account-deletion-note {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px !important;
+}
+
+.account-deletion-muted {
+  margin: 0;
+  font-size: 14px;
+  color: #717171;
+}
+
+.account-deletion-card--muted {
+  border-style: dashed;
+  border-color: #e5e7eb;
+  background: #fafafa;
+}
+
+.account-deletion-card--warning {
+  border-color: #fecaca;
+  background: #fffbeb;
+}
+
+.account-deletion-form .form-group {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.account-deletion-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #374151;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.account-deletion-checkbox input {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: #dc3545;
+}
+
+.account-deletion-error {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.account-deletion-success {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #166534;
+}

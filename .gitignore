@@ -36,8 +36,7 @@ yarn-error.log*
 *.db
 *.sqlite
 
-# Prisma
-backend/prisma/migrations/
+# Prisma (keep migrations + migration_lock.toml in git for deploy)
 
 # OS
 Thumbs.db
@@ -46,3 +45,7 @@ backend-deploy.tar.gz
 
 # Local-only deploy notes (keep out of git)
 DEPLOY.md
+.deploy.env
+
+# Local deploy staging (build-production-zip / deploy-ssh)
+_deploy_staging/

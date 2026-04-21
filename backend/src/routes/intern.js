@@ -194,17 +194,50 @@ router.put('/profile', authenticate, requireIntern, requireEmailVerified, async 
       dateOfBirth,
       ghanaCardNumber,
       ghanaCardDocument,
+      schoolAffiliationDocument,
       notifyIndustryJobs,
       preferredIndustry,
     } = req.body;
 
+    const existing = await prisma.intern.findUnique({
+      where: { userId: req.userId },
+      select: {
+        firstName: true,
+        lastName: true,
+        phone: true,
+        dateOfBirth: true,
+        ghanaCardNumber: true,
+        ghanaCardDocument: true,
+        education: true,
+        schoolAffiliationDocument: true,
+      },
+    });
+
+    const eff = (incoming, prior) => (incoming !== undefined ? incoming : prior);
+    const eFirst = eff(firstName, existing?.firstName);
+    const eLast = eff(lastName, existing?.lastName);
+    const ePhone = eff(phone, existing?.phone);
+    const eDob = eff(dateOfBirth, existing?.dateOfBirth);
+    const eGhanaNum = eff(ghanaCardNumber, existing?.ghanaCardNumber);
+    const eGhanaDoc = eff(ghanaCardDocument, existing?.ghanaCardDocument);
+    const eEducation = eff(education, existing?.education);
+    const eSchoolDoc = eff(schoolAffiliationDocument, existing?.schoolAffiliationDocument);
+
+    const educationTrimmed = eEducation != null ? String(eEducation).trim() : '';
+    const hasSchoolVerification = Boolean(
+      educationTrimmed &&
+      eSchoolDoc &&
+      String(eSchoolDoc).trim()
+    );
+
     const hasKyiDetails = Boolean(
-      firstName &&
-      lastName &&
-      phone &&
-      dateOfBirth &&
-      ghanaCardNumber &&
-      ghanaCardDocument
+      eFirst &&
+      eLast &&
+      ePhone &&
+      eDob &&
+      eGhanaNum &&
+      eGhanaDoc &&
+      hasSchoolVerification
     );
 
     const intern = await prisma.intern.update({
@@ -223,6 +256,7 @@ router.put('/profile', authenticate, requireIntern, requireEmailVerified, async 
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
         ghanaCardNumber,
         ghanaCardDocument,
+        schoolAffiliationDocument,
         notifyIndustryJobs: Boolean(notifyIndustryJobs),
         preferredIndustry,
         isVerified: hasKyiDetails,

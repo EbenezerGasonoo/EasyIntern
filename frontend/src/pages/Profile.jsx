@@ -62,6 +62,7 @@ function Profile() {
           dateOfBirth: demo.dateOfBirth ?? '',
           ghanaCardNumber: demo.ghanaCardNumber ?? '',
           ghanaCardDocument: demo.ghanaCardDocument ?? '',
+          schoolAffiliationDocument: demo.schoolAffiliationDocument ?? '',
           isVerified: demo.isVerified ?? false,
           notifyIndustryJobs: demo.notifyIndustryJobs ?? false,
           preferredIndustry: demo.preferredIndustry ?? '',
@@ -125,11 +126,14 @@ function Profile() {
             : {
                 file: dataUrl,
                 fileName: file.name,
-                type: type === 'resume'
-                  ? 'resume'
-                  : type === 'ghanaCardDocument'
-                    ? 'ghana-card'
-                    : 'registration',
+                type:
+                  type === 'resume'
+                    ? 'resume'
+                    : type === 'ghanaCardDocument'
+                      ? 'ghana-card'
+                      : type === 'schoolAffiliationDocument'
+                        ? 'school-affiliation'
+                        : 'registration',
               }
 
           const { data } = await api.post(endpoint, payload)
@@ -195,7 +199,8 @@ function Profile() {
   const faqItems = [
     {
       question: 'How long does verification take after submitting KYI details?',
-      answer: 'Verification is completed automatically once required details are filled in and the Ghana Card document is uploaded.',
+      answer:
+        'Verification completes automatically when identity (Ghana Card), your education, and official school proof (enrollment letter or student ID from your institution) are all on file.',
     },
     {
       question: 'How can I improve my chances of being contacted?',
@@ -207,7 +212,8 @@ function Profile() {
     },
     {
       question: 'Can I edit my profile after getting verified?',
-      answer: 'Yes, you can update your profile anytime. If key KYI details are removed, verification status may change.',
+      answer:
+        'Yes, you can update your profile anytime. If key KYI details are removed (including education or school proof), your verification status may change.',
     },
   ]
 
@@ -500,7 +506,9 @@ function Profile() {
                 <div className="card profile-card kyi-card">
                   <h2>Know Your Intern (KYI)</h2>
                   <p className="profile-field-hint">
-                    Submit your Ghana Card and identity details to get verified in the system.
+                    Submit your Ghana Card and identity details, and verify your school affiliation. Your{' '}
+                    <strong>Education</strong> field (above) must list your institution; upload an official document from
+                    that school (enrollment letter, student ID, or registrar letter).
                   </p>
                   <div className="form-row">
                     <div className="form-group">
@@ -536,6 +544,27 @@ function Profile() {
                         {saving ? 'Uploading...' : 'Upload Ghana Card'}
                       </label>
                       {formData.ghanaCardDocument && <span className="file-name">✅ Ghana Card uploaded</span>}
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label>School verification document</label>
+                    <p className="profile-field-hint kyi-school-doc-hint">
+                      PDF or image from your university or college proving current enrollment (must match the school in
+                      Education).
+                    </p>
+                    <div className="file-upload-wrapper">
+                      <input
+                        type="file"
+                        id="school-affiliation-upload"
+                        onChange={(e) => handleFileUpload(e, 'schoolAffiliationDocument')}
+                        hidden
+                      />
+                      <label htmlFor="school-affiliation-upload" className="btn btn-secondary">
+                        {saving ? 'Uploading...' : 'Upload school proof'}
+                      </label>
+                      {formData.schoolAffiliationDocument && (
+                        <span className="file-name">✅ School document uploaded</span>
+                      )}
                     </div>
                   </div>
                   <p className="kyi-status">

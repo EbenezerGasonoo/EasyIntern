@@ -55,22 +55,24 @@ enum AdminRole {
 }
 
 model User {
-  id                String     @id @default(cuid())
-  email             String     @unique
-  password          String
-  userType          UserType
-  isEmailVerified   Boolean    @default(false)
-  isAdmin           Boolean    @default(false)
-  adminRole         AdminRole?
-  verificationToken String?
-  resetToken        String?
-  resetTokenExpiry  DateTime?
-  isSuspended       Boolean    @default(false)
-  suspensionReason  String?
-  suspendedAt       DateTime?
-  softBannedAt      DateTime?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
+  id                         String     @id @default(cuid())
+  email                      String     @unique
+  password                   String
+  userType                   UserType
+  isEmailVerified            Boolean    @default(false)
+  isAdmin                    Boolean    @default(false)
+  adminRole                  AdminRole?
+  verificationToken          String?
+  resetToken                 String?
+  resetTokenExpiry           DateTime?
+  isSuspended                Boolean    @default(false)
+  suspensionReason           String?
+  suspendedAt                DateTime?
+  softBannedAt               DateTime?
+  /// When set, the account is permanently deleted after this time (3-day grace from request).
+  scheduledAccountDeletionAt DateTime?  @map("scheduled_account_deletion_at")
+  createdAt                  DateTime   @default(now())
+  updatedAt                  DateTime   @updatedAt
 
   company        Company?
   intern         Intern?
@@ -112,28 +114,30 @@ model Company {
 }
 
 model Intern {
-  id                 String    @id @default(cuid())
-  userId             String    @unique
-  studentId          String?
-  dateOfBirth        DateTime?
-  ghanaCardNumber    String?
-  ghanaCardDocument  String?
-  isVerified         Boolean   @default(false)
-  notifyIndustryJobs Boolean   @default(false)
-  preferredIndustry  String?
-  firstName          String
-  lastName           String
-  bio                String?
-  phone              String?
-  skills             Json // MySQL-compatible JSON array of skills
-  education          String?
-  educationWebsite   String?
-  experience         Json? // Array of experience objects
-  location           String?
-  resume             String? // URL to resume file
-  profilePic         String? // URL to profile picture
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id                        String    @id @default(cuid())
+  userId                    String    @unique
+  studentId                 String?
+  dateOfBirth               DateTime?
+  ghanaCardNumber           String?
+  ghanaCardDocument         String?
+  /// Enrollment letter, official student ID, or similar proof from the school listed under Education (KYI).
+  schoolAffiliationDocument String?   @map("school_affiliation_document")
+  isVerified                Boolean   @default(false)
+  notifyIndustryJobs        Boolean   @default(false)
+  preferredIndustry         String?
+  firstName                 String
+  lastName                  String
+  bio                       String?
+  phone                     String?
+  skills                    Json // MySQL-compatible JSON array of skills
+  education                 String?
+  educationWebsite          String?
+  experience                Json? // Array of experience objects
+  location                  String?
+  resume                    String? // URL to resume file
+  profilePic                String? // URL to profile picture
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   applications Application[]
@@ -247,7 +251,7 @@ model SmtpConfiguration {
   secure    Boolean  @default(false)
   username  String
   password  String
-  fromName  String   @default("Easy Intern")
+  fromName  String   @default("EasyIntern")
   fromEmail String
   isActive  Boolean  @default(true)
   updatedBy String?

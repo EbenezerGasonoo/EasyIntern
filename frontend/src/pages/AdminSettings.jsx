@@ -44,7 +44,7 @@ function AdminSettings() {
     secure: true,
     username: '',
     password: '',
-    fromName: 'Easy Intern',
+    fromName: 'EasyIntern',
     fromEmail: 'support@easyintern.app',
     isActive: true,
     testRecipient: '',
@@ -98,7 +98,7 @@ function AdminSettings() {
             secure: cfg.secure !== undefined ? Boolean(cfg.secure) : true,
             username: cfg.username || '',
             password: '',
-            fromName: cfg.fromName || 'Easy Intern',
+            fromName: cfg.fromName || 'EasyIntern',
             fromEmail: cfg.fromEmail || 'support@easyintern.app',
             isActive: cfg.isActive !== false,
           }))
