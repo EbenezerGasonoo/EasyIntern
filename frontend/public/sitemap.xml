@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://easyintern.com/</loc>
+    <loc>https://easyintern.app/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://easyintern.com/login</loc>
+    <loc>https://easyintern.app/login</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://easyintern.com/register</loc>
+    <loc>https://easyintern.app/register</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://easyintern.com/jobs</loc>
+    <loc>https://easyintern.app/jobs</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://easyintern.com/interns</loc>
+    <loc>https://easyintern.app/interns</loc>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://easyintern.com/help</loc>
+    <loc>https://easyintern.app/help</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

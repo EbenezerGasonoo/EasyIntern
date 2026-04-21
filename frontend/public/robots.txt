@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /company/dashboard
+Disallow: /intern/dashboard
+Disallow: /notifications
+Disallow: /profile
+Disallow: /verify-email
+Disallow: /verify-email-notice
+Disallow: /forgot-password
+Disallow: /reset-password
 
-Sitemap: https://easyintern.com/sitemap.xml
+Sitemap: https://easyintern.app/sitemap.xml
