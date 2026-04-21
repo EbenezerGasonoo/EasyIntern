@@ -204,17 +204,21 @@
 }
 
 .landing-showcase-support-img-wrap {
+  position: relative;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 16px 40px rgba(30, 58, 95, 0.12);
   background: #e2e8f0;
+  aspect-ratio: 4 / 5;
+  max-height: min(70vh, 520px);
 }
 
 .landing-showcase-support-img-wrap img {
+  position: absolute;
+  inset: 0;
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 520px;
+  height: 100%;
   object-fit: cover;
   object-position: center 35%;
 }
@@ -635,7 +639,32 @@
 /* Responsive */
 @media (max-width: 768px) {
   .landing-hero {
-    padding: 48px 20px 56px;
+    padding: 48px max(16px, env(safe-area-inset-left)) 56px max(16px, env(safe-area-inset-right));
+  }
+
+  /* Portrait phones: keep the subject in frame; lighter overlay so the photo reads clearly */
+  .landing-hero::before {
+    background-position: center 18%;
+  }
+
+  .landing-hero::after {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 107, 53, 0.52) 0%,
+      rgba(247, 147, 30, 0.56) 42%,
+      rgba(229, 90, 43, 0.6) 100%
+    );
+  }
+
+  .landing-hero-badge,
+  .landing-hero-title,
+  .landing-hero-sub,
+  .landing-hero-login {
+    text-shadow: 0 2px 20px rgba(15, 23, 42, 0.45);
+  }
+
+  .landing-stat {
+    box-shadow: 0 2px 16px rgba(15, 23, 42, 0.2);
   }
 
   .landing-hero-ctas {
@@ -655,7 +684,7 @@
   }
 
   .landing-showcase-support {
-    padding: 40px 20px;
+    padding: 40px max(16px, env(safe-area-inset-left)) 40px max(16px, env(safe-area-inset-right));
   }
 
   .landing-showcase-support-inner {
@@ -665,13 +694,13 @@
 
   .landing-showcase-support-img-wrap {
     order: -1;
-    max-width: 420px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .landing-showcase-support-img-wrap img {
-    max-height: 380px;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    aspect-ratio: 5 / 4;
+    max-height: min(52vh, 420px);
+    border-radius: 14px;
   }
 
   .landing-showcase-support-copy {
@@ -875,7 +904,21 @@
 
 @media (max-width: 480px) {
   .landing-hero {
-    padding: 40px 14px 48px;
+    padding: 36px max(12px, env(safe-area-inset-left)) 44px max(12px, env(safe-area-inset-right));
+  }
+
+  .landing-hero::before {
+    background-position: center 12%;
+  }
+
+  /* Even more of the photo visible on small phones */
+  .landing-hero::after {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 107, 53, 0.42) 0%,
+      rgba(247, 147, 30, 0.48) 45%,
+      rgba(229, 90, 43, 0.52) 100%
+    );
   }
 
   .landing-hero-inner.container {
@@ -924,5 +967,20 @@
   .landing-trust-tags,
   .landing-social-links {
     justify-content: center;
+  }
+
+  .landing-showcase-support {
+    padding-top: 32px;
+    padding-bottom: 36px;
+  }
+
+  .landing-showcase-support-img-wrap {
+    aspect-ratio: 4 / 3;
+    max-height: min(46vh, 340px);
+    border-radius: 12px;
+  }
+
+  .landing-showcase-support-img-wrap img {
+    object-position: center 40%;
   }
 }

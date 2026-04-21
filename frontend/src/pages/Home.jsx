@@ -112,6 +112,7 @@ function Home() {
               alt="EasyIntern professionals networking and shaking hands in a modern office"
               width={640}
               height={800}
+              sizes="(max-width: 768px) 100vw, 45vw"
               loading="lazy"
               decoding="async"
             />
