@@ -11,6 +11,9 @@
     EASYINTERN_SSH_PORT=22
     EASYINTERN_SSH_POST=cd /path && touch tmp/restart.txt   (extra shell line on server after migrate)
     EASYINTERN_SSH_PATH_PREPEND=/opt/alt/alt-nodejs22/root/usr/bin   (if ssh has no npm — cPanel Alt Node)
+    EASYINTERN_USE_DB_PUSH=1   (use prisma db push instead of migrate deploy — non-empty prod DBs)
+    EASYINTERN_DB_PUSH_ACCEPT_DATA_LOSS=1   (append --accept-data-loss; only if you accept Prisma warnings)
+    EASYINTERN_SKIP_PRISMA_SCHEMA=1   (skip db push/migrate; only generate client — UI-only deploys)
 #>
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -77,6 +80,10 @@ if (Test-Path (Join-Path $be "package-lock.json")) {
 }
 Copy-Item (Join-Path $be "prisma") (Join-Path $stagingBackend "prisma") -Recurse -Force
 Copy-Item (Join-Path $be "src") (Join-Path $stagingBackend "src") -Recurse -Force
+# Omit Prisma client output: query-engine binaries are often locked in-place by the
+# running API on the server; regenerate on Linux with `npx prisma generate` over SSH.
+$genClient = Join-Path $stagingBackend "src\generated"
+if (Test-Path $genClient) { Remove-Item $genClient -Recurse -Force }
 if (Test-Path (Join-Path $be "scripts")) {
   Copy-Item (Join-Path $be "scripts") (Join-Path $stagingBackend "scripts") -Recurse -Force
 }
@@ -102,21 +109,27 @@ if ($LASTEXITCODE -ne 0) { throw "scp frontend failed with exit $LASTEXITCODE" }
 
 $cdPath = if ($apiRoot.Contains(" ")) { "`"$apiRoot`"" } else { $apiRoot }
 $pathPre = $env:EASYINTERN_SSH_PATH_PREPEND
-$prismaCmd = if ($env:EASYINTERN_USE_DB_PUSH -eq "1" -or $env:EASYINTERN_USE_DB_PUSH -eq "true") {
-  "npx prisma db push"
+$prismaCmd = if ($env:EASYINTERN_SKIP_PRISMA_SCHEMA -eq "1" -or $env:EASYINTERN_SKIP_PRISMA_SCHEMA -eq "true") {
+  "true"
+} elseif ($env:EASYINTERN_USE_DB_PUSH -eq "1" -or $env:EASYINTERN_USE_DB_PUSH -eq "true") {
+  if ($env:EASYINTERN_DB_PUSH_ACCEPT_DATA_LOSS -eq "1" -or $env:EASYINTERN_DB_PUSH_ACCEPT_DATA_LOSS -eq "true") {
+    "npx prisma db push --accept-data-loss"
+  } else {
+    "npx prisma db push"
+  }
 } else {
   "npx prisma migrate deploy"
 }
 if (-not [string]::IsNullOrWhiteSpace($pathPre)) {
-  $remoteScript = "export PATH=${pathPre}:`$PATH && cd $cdPath && npm ci --omit=dev && $prismaCmd"
+  $remoteScript = "export PATH=${pathPre}:`$PATH && cd $cdPath && npm ci --omit=dev && npx prisma generate && $prismaCmd"
 } else {
-  $remoteScript = "cd $cdPath && npm ci --omit=dev && $prismaCmd"
+  $remoteScript = "cd $cdPath && npm ci --omit=dev && npx prisma generate && $prismaCmd"
 }
 if (-not [string]::IsNullOrWhiteSpace($env:EASYINTERN_SSH_POST)) {
   $remoteScript += " && $($env:EASYINTERN_SSH_POST)"
 }
 
-Write-Host "=== SSH: install deps + migrate ===" -ForegroundColor Cyan
+Write-Host "=== SSH: install deps + prisma generate + migrate ===" -ForegroundColor Cyan
 $sshArgs = @()
 $sshArgs += $sshBase
 $sshArgs += $target
