@@ -468,13 +468,13 @@ function Profile() {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Location</label>
+                    <label>Your location</label>
                     <input
                       type="text"
                       name="location"
                       value={formData.location || ''}
                       onChange={handleChange}
-                      placeholder="e.g. Accra, Ghana"
+                      placeholder="Where you are based (e.g. Accra, Ghana)"
                     />
                   </div>
                 </div>
@@ -1003,13 +1003,13 @@ function Profile() {
                 </div>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Location</label>
+                    <label>Your company's location</label>
                     <input
                       type="text"
                       name="location"
                       value={formData.location || ''}
                       onChange={handleChange}
-                      placeholder="e.g. Accra, Ghana"
+                      placeholder="Where your company is based (city, region, country)"
                     />
                   </div>
                   <div className="form-group">
@@ -1051,13 +1051,13 @@ function Profile() {
                   </div>
                 </div>
                 <div className="form-group">
-                  <label>Google Maps Location (URL or Embed)</label>
+                  <label>Your office on Google Maps (optional)</label>
                   <input
                     type="text"
                     name="mapLocation"
                     value={formData.mapLocation || ''}
                     onChange={handleChange}
-                    placeholder="Paste Google Maps URL or embed iframe"
+                    placeholder="URL or embed link"
                   />
                 </div>
                 <div className="form-group">

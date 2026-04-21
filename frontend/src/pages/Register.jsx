@@ -293,18 +293,18 @@ function Register() {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="company-location">Location</label>
+                  <label htmlFor="company-location">Your company's location</label>
                   <input
                     id="company-location"
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    placeholder="City, Country"
+                    placeholder="Where your company is based (city, region, country)"
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="company-map">Google Maps Location</label>
+                  <label htmlFor="company-map">Your office on Google Maps (optional)</label>
                   <input
                     id="company-map"
                     type="text"
@@ -440,14 +440,14 @@ function Register() {
                   </>
                 )}
                 <div className="form-group">
-                  <label htmlFor="intern-location">Location</label>
+                  <label htmlFor="intern-location">Your location</label>
                   <input
                     id="intern-location"
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    placeholder="City, Country"
+                    placeholder="Where you are based (e.g. Accra, Ghana)"
                   />
                 </div>
               </>
