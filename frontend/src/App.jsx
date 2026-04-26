@@ -15,6 +15,7 @@ import JobDetail from './pages/JobDetail'
 import Interns from './pages/Interns'
 import InternDetail from './pages/InternDetail'
 import Profile from './pages/Profile'
+import UserSettings from './pages/UserSettings'
 import Help from './pages/Help'
 import VerifyEmailNotice from './pages/VerifyEmailNotice'
 import VerifyEmail from './pages/VerifyEmail'
@@ -111,6 +112,14 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <UserSettings />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/admin"
         element={
           <PrivateRoute requireAdmin>
@@ -173,6 +182,10 @@ function AppLayout() {
       '/profile': {
         title: 'Profile - EasyIntern',
         description: 'Update your EasyIntern profile to improve visibility and opportunities.',
+      },
+      '/settings': {
+        title: 'Settings - EasyIntern',
+        description: 'Manage account preferences, notifications, and account security on EasyIntern.',
       },
       '/admin': {
         title: 'Admin Dashboard - EasyIntern',

@@ -1,0 +1,153 @@
+.settings-page {
+  min-height: calc(100vh - 80px);
+  background: #f8fafc;
+  padding: 32px 0 48px;
+}
+
+.settings-shell {
+  max-width: 980px;
+}
+
+.settings-header {
+  margin-bottom: 20px;
+}
+
+.settings-header h1 {
+  margin: 0 0 8px;
+  color: #1e293b;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.settings-header p {
+  margin: 0;
+  color: #475569;
+}
+
+.settings-section {
+  margin-bottom: 16px;
+  padding: 22px;
+}
+
+.settings-section h2 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 1.1rem;
+}
+
+.settings-section-sub {
+  margin: 0 0 14px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.settings-control-group {
+  margin-bottom: 10px;
+}
+
+.settings-control-label {
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.settings-muted-text {
+  margin: 0 0 12px;
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.settings-radio-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.settings-radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eef2f7;
+  color: #1e293b;
+}
+
+.settings-toggle:last-of-type {
+  border-bottom: none;
+}
+
+.settings-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.settings-inline-note {
+  margin: 8px 0 2px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.settings-email-change {
+  margin-top: 16px;
+}
+
+.settings-email-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.settings-email-row input {
+  flex: 1 1 280px;
+  min-width: 240px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.settings-status {
+  margin: 12px 0 0;
+  color: #0f766e;
+  font-size: 0.9rem;
+}
+
+.settings-error {
+  margin: 12px 0 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
+.settings-save-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 20px 0 36px;
+  }
+
+  .settings-section {
+    padding: 18px;
+  }
+
+  .settings-radio-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

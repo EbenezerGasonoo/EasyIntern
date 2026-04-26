@@ -9,6 +9,15 @@ import { sendEmail } from '../utils/email.js';
 const router = express.Router();
 
 const ACCOUNT_DELETION_GRACE_MS = 3 * 24 * 60 * 60 * 1000;
+const DEFAULT_USER_SETTINGS = {
+  profileVisibility: 'public',
+  showContactInfo: true,
+  notifyJobRecommendations: true,
+  notifyApplicationUpdates: true,
+  notifyNewApplicants: true,
+  channelEmail: true,
+  channelInApp: true,
+};
 
 /** Links in emails (verify email, password reset). Set `FRONTEND_URL` on the API; production falls back to easyintern.app. */
 function frontendBaseUrl() {
@@ -709,6 +718,77 @@ router.post('/account/cancel-deletion', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Cancel account deletion error:', error);
     res.status(500).json({ error: 'Failed to cancel scheduled deletion' });
+  }
+});
+
+router.get('/settings', authenticate, async (req, res) => {
+  try {
+    if (req.isAdmin) {
+      return res.status(403).json({ error: 'Admin accounts use admin settings.' });
+    }
+
+    const preferences = await prisma.userPreference.findUnique({
+      where: { userId: req.userId },
+    });
+
+    if (!preferences) {
+      return res.json(DEFAULT_USER_SETTINGS);
+    }
+
+    return res.json({
+      profileVisibility: preferences.profileVisibility === 'limited' ? 'limited' : 'public',
+      showContactInfo: Boolean(preferences.showContactInfo),
+      notifyJobRecommendations: Boolean(preferences.notifyJobRecommendations),
+      notifyApplicationUpdates: Boolean(preferences.notifyApplicationUpdates),
+      notifyNewApplicants: Boolean(preferences.notifyNewApplicants),
+      channelEmail: Boolean(preferences.notificationChannelEmail),
+      channelInApp: Boolean(preferences.notificationChannelInApp),
+    });
+  } catch (error) {
+    console.error('Get settings error:', error);
+    res.status(500).json({ error: 'Failed to load settings' });
+  }
+});
+
+router.put('/settings', authenticate, async (req, res) => {
+  try {
+    if (req.isAdmin) {
+      return res.status(403).json({ error: 'Admin accounts use admin settings.' });
+    }
+
+    const body = req.body || {};
+    const profileVisibility = body.profileVisibility === 'limited' ? 'limited' : 'public';
+    const payload = {
+      profileVisibility,
+      showContactInfo: Boolean(body.showContactInfo),
+      notifyJobRecommendations: Boolean(body.notifyJobRecommendations),
+      notifyApplicationUpdates: Boolean(body.notifyApplicationUpdates),
+      notifyNewApplicants: Boolean(body.notifyNewApplicants),
+      notificationChannelEmail: Boolean(body.channelEmail),
+      notificationChannelInApp: Boolean(body.channelInApp),
+    };
+
+    const updated = await prisma.userPreference.upsert({
+      where: { userId: req.userId },
+      create: {
+        userId: req.userId,
+        ...payload,
+      },
+      update: payload,
+    });
+
+    res.json({
+      profileVisibility: updated.profileVisibility === 'limited' ? 'limited' : 'public',
+      showContactInfo: Boolean(updated.showContactInfo),
+      notifyJobRecommendations: Boolean(updated.notifyJobRecommendations),
+      notifyApplicationUpdates: Boolean(updated.notifyApplicationUpdates),
+      notifyNewApplicants: Boolean(updated.notifyNewApplicants),
+      channelEmail: Boolean(updated.notificationChannelEmail),
+      channelInApp: Boolean(updated.notificationChannelInApp),
+    });
+  } catch (error) {
+    console.error('Update settings error:', error);
+    res.status(500).json({ error: 'Failed to save settings' });
   }
 });
 

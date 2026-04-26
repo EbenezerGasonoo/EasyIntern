@@ -200,6 +200,9 @@ function Navbar() {
                             <NavLink to="/company/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
                               Dashboard
                             </NavLink>
+                            <NavLink to="/settings" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                              Settings
+                            </NavLink>
                           </>
                         ) : (
                           <>
@@ -208,6 +211,9 @@ function Navbar() {
                             </NavLink>
                             <NavLink to="/intern/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
                               Dashboard
+                            </NavLink>
+                            <NavLink to="/settings" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                              Settings
                             </NavLink>
                           </>
                         )}
@@ -324,11 +330,13 @@ function Navbar() {
                   <>
                     <NavLink to="/profile" className="navbar-drawer-link" onClick={closeDrawer}>Profile</NavLink>
                     <NavLink to="/company/dashboard" className="navbar-drawer-link" onClick={closeDrawer}>Dashboard</NavLink>
+                    <NavLink to="/settings" className="navbar-drawer-link" onClick={closeDrawer}>Settings</NavLink>
                   </>
                 ) : (
                   <>
                     <NavLink to="/profile" className="navbar-drawer-link" onClick={closeDrawer}>Profile</NavLink>
                     <NavLink to="/intern/dashboard" className="navbar-drawer-link" onClick={closeDrawer}>Dashboard</NavLink>
+                    <NavLink to="/settings" className="navbar-drawer-link" onClick={closeDrawer}>Settings</NavLink>
                   </>
                 )}
                 {accountReady && (

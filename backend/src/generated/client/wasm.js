@@ -142,6 +142,20 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.UserPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  profileVisibility: 'profileVisibility',
+  showContactInfo: 'showContactInfo',
+  notifyJobRecommendations: 'notifyJobRecommendations',
+  notifyApplicationUpdates: 'notifyApplicationUpdates',
+  notifyNewApplicants: 'notifyNewApplicants',
+  notificationChannelEmail: 'notificationChannelEmail',
+  notificationChannelInApp: 'notificationChannelInApp',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.CompanyScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -354,6 +368,7 @@ exports.TicketStatus = exports.$Enums.TicketStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  UserPreference: 'UserPreference',
   Company: 'Company',
   Intern: 'Intern',
   Job: 'Job',

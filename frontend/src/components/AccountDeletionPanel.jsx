@@ -159,7 +159,7 @@ export default function AccountDeletionPanel({ backendUnavailable = false }) {
               {error || success}
             </p>
           )}
-          <button type="submit" className="btn btn-danger" disabled={loading}>
+          <button type="submit" className="btn btn-danger account-deletion-btn-strong" disabled={loading}>
             {loading ? 'Scheduling…' : 'Request account deletion'}
           </button>
         </form>

@@ -77,10 +77,29 @@ model User {
   company Company?
   intern  Intern?
   notifications Notification[]
+  preferences   UserPreference?
   supportTickets SupportTicket[]
   auditLogs AuditLog[] @relation("AuditActor")
 
   @@map("users")
+}
+
+model UserPreference {
+  id                           String   @id @default(cuid())
+  userId                       String   @unique @map("user_id")
+  profileVisibility            String   @default("public") @map("profile_visibility")
+  showContactInfo              Boolean  @default(true) @map("show_contact_info")
+  notifyJobRecommendations     Boolean  @default(true) @map("notify_job_recommendations")
+  notifyApplicationUpdates     Boolean  @default(true) @map("notify_application_updates")
+  notifyNewApplicants          Boolean  @default(true) @map("notify_new_applicants")
+  notificationChannelEmail     Boolean  @default(true) @map("notification_channel_email")
+  notificationChannelInApp     Boolean  @default(true) @map("notification_channel_in_app")
+  createdAt                    DateTime @default(now()) @map("created_at")
+  updatedAt                    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
 }
 
 model Company {

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
-import AccountDeletionPanel from '../components/AccountDeletionPanel'
 import './Dashboard.css'
 
 function InternDashboard() {
@@ -251,8 +250,6 @@ function InternDashboard() {
               <p>You're viewing in demo mode. Sign up or connect the backend to see real data.</p>
             </div>
           )}
-
-          <AccountDeletionPanel backendUnavailable={apiFailed} />
 
           <section className="dashboard-stats intern-stats-grid">
             <div className="stat-card">

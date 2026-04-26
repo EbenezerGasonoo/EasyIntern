@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
-import AccountDeletionPanel from '../components/AccountDeletionPanel'
 import './Dashboard.css'
 
 function CompanyDashboard() {
@@ -183,8 +182,6 @@ function CompanyDashboard() {
             <p>You're viewing in demo mode. Sign up or connect the backend to manage real jobs and applications.</p>
           </div>
         )}
-
-        <AccountDeletionPanel backendUnavailable={apiFailed} />
 
         {showJobForm && (
           <section className="dashboard-section">
