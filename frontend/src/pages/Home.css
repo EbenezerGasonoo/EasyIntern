@@ -46,7 +46,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(255, 107, 53, 0.9) 0%, rgba(247, 147, 30, 0.92) 45%, rgba(229, 90, 43, 0.9) 100%);
+  background: transparent;
   z-index: 1;
 }
 
@@ -648,12 +648,7 @@
   }
 
   .landing-hero::after {
-    background: linear-gradient(
-      165deg,
-      rgba(255, 107, 53, 0.52) 0%,
-      rgba(247, 147, 30, 0.56) 42%,
-      rgba(229, 90, 43, 0.6) 100%
-    );
+    background: transparent;
   }
 
   .landing-hero-badge,
@@ -913,12 +908,7 @@
 
   /* Even more of the photo visible on small phones */
   .landing-hero::after {
-    background: linear-gradient(
-      165deg,
-      rgba(255, 107, 53, 0.42) 0%,
-      rgba(247, 147, 30, 0.48) 45%,
-      rgba(229, 90, 43, 0.52) 100%
-    );
+    background: transparent;
   }
 
   .landing-hero-inner.container {
