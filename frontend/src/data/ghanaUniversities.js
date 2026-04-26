@@ -85,6 +85,7 @@ const GHANA_UNIVERSITIES_RAW = [
   'University College of Management Studies',
   'Valley View University',
   'Webster University Ghana Campus',
+  'Wisconsin International University College',
   'Wisconsin International University College, Ghana',
   'Zenith University College',
 
