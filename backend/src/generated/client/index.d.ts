@@ -6692,6 +6692,7 @@ export namespace Prisma {
     userId: string | null
     name: string | null
     website: string | null
+    studentIdFormatHint: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6701,6 +6702,7 @@ export namespace Prisma {
     userId: string | null
     name: string | null
     website: string | null
+    studentIdFormatHint: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6710,6 +6712,7 @@ export namespace Prisma {
     userId: number
     name: number
     website: number
+    studentIdFormatHint: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6721,6 +6724,7 @@ export namespace Prisma {
     userId?: true
     name?: true
     website?: true
+    studentIdFormatHint?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6730,6 +6734,7 @@ export namespace Prisma {
     userId?: true
     name?: true
     website?: true
+    studentIdFormatHint?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6739,6 +6744,7 @@ export namespace Prisma {
     userId?: true
     name?: true
     website?: true
+    studentIdFormatHint?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6821,6 +6827,7 @@ export namespace Prisma {
     userId: string
     name: string
     website: string | null
+    studentIdFormatHint: string | null
     createdAt: Date
     updatedAt: Date
     _count: UniversityCountAggregateOutputType | null
@@ -6847,6 +6854,7 @@ export namespace Prisma {
     userId?: boolean
     name?: boolean
     website?: boolean
+    studentIdFormatHint?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -6862,6 +6870,7 @@ export namespace Prisma {
     userId?: boolean
     name?: boolean
     website?: boolean
+    studentIdFormatHint?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -6887,6 +6896,10 @@ export namespace Prisma {
       userId: string
       name: string
       website: string | null
+      /**
+       * Shown to interns when they select this school (e.g. “Format: GSU-########”).
+       */
+      studentIdFormatHint: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["university"]>
@@ -7266,6 +7279,7 @@ export namespace Prisma {
     readonly userId: FieldRef<"University", 'String'>
     readonly name: FieldRef<"University", 'String'>
     readonly website: FieldRef<"University", 'String'>
+    readonly studentIdFormatHint: FieldRef<"University", 'String'>
     readonly createdAt: FieldRef<"University", 'DateTime'>
     readonly updatedAt: FieldRef<"University", 'DateTime'>
   }
@@ -16295,6 +16309,7 @@ export namespace Prisma {
     userId: 'userId',
     name: 'name',
     website: 'website',
+    studentIdFormatHint: 'studentIdFormatHint',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -17143,6 +17158,7 @@ export namespace Prisma {
     userId?: StringFilter<"University"> | string
     name?: StringFilter<"University"> | string
     website?: StringNullableFilter<"University"> | string | null
+    studentIdFormatHint?: StringNullableFilter<"University"> | string | null
     createdAt?: DateTimeFilter<"University"> | Date | string
     updatedAt?: DateTimeFilter<"University"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -17156,6 +17172,7 @@ export namespace Prisma {
     userId?: SortOrder
     name?: SortOrder
     website?: SortOrderInput | SortOrder
+    studentIdFormatHint?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -17172,6 +17189,7 @@ export namespace Prisma {
     NOT?: UniversityWhereInput | UniversityWhereInput[]
     name?: StringFilter<"University"> | string
     website?: StringNullableFilter<"University"> | string | null
+    studentIdFormatHint?: StringNullableFilter<"University"> | string | null
     createdAt?: DateTimeFilter<"University"> | Date | string
     updatedAt?: DateTimeFilter<"University"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -17185,6 +17203,7 @@ export namespace Prisma {
     userId?: SortOrder
     name?: SortOrder
     website?: SortOrderInput | SortOrder
+    studentIdFormatHint?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UniversityCountOrderByAggregateInput
@@ -17200,6 +17219,7 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"University"> | string
     name?: StringWithAggregatesFilter<"University"> | string
     website?: StringNullableWithAggregatesFilter<"University"> | string | null
+    studentIdFormatHint?: StringNullableWithAggregatesFilter<"University"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"University"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"University"> | Date | string
   }
@@ -18633,6 +18653,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutUniversityInput
@@ -18646,6 +18667,7 @@ export namespace Prisma {
     userId: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedCreateNestedManyWithoutUniversityInput
@@ -18657,6 +18679,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUniversityNestedInput
@@ -18670,6 +18693,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedUpdateManyWithoutUniversityNestedInput
@@ -18682,6 +18706,7 @@ export namespace Prisma {
     userId: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18690,6 +18715,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18699,6 +18725,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20230,6 +20257,7 @@ export namespace Prisma {
     userId?: SortOrder
     name?: SortOrder
     website?: SortOrder
+    studentIdFormatHint?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20239,6 +20267,7 @@ export namespace Prisma {
     userId?: SortOrder
     name?: SortOrder
     website?: SortOrder
+    studentIdFormatHint?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20248,6 +20277,7 @@ export namespace Prisma {
     userId?: SortOrder
     name?: SortOrder
     website?: SortOrder
+    studentIdFormatHint?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -22125,6 +22155,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     catalogRecords?: UniversityStudentCatalogCreateNestedManyWithoutUniversityInput
@@ -22136,6 +22167,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedCreateNestedManyWithoutUniversityInput
@@ -22438,6 +22470,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     catalogRecords?: UniversityStudentCatalogUpdateManyWithoutUniversityNestedInput
@@ -22449,6 +22482,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedUpdateManyWithoutUniversityNestedInput
@@ -22972,6 +23006,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutUniversityInput
@@ -22984,6 +23019,7 @@ export namespace Prisma {
     userId: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedCreateNestedManyWithoutUniversityInput
@@ -23143,6 +23179,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUniversityNestedInput
@@ -23155,6 +23192,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedUpdateManyWithoutUniversityNestedInput
@@ -23595,6 +23633,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutUniversityInput
@@ -23607,6 +23646,7 @@ export namespace Prisma {
     userId: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     interns?: InternUncheckedCreateNestedManyWithoutUniversityInput
@@ -23673,6 +23713,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUniversityNestedInput
@@ -23685,6 +23726,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     interns?: InternUncheckedUpdateManyWithoutUniversityNestedInput
@@ -23782,6 +23824,7 @@ export namespace Prisma {
     id?: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutUniversityInput
@@ -23794,6 +23837,7 @@ export namespace Prisma {
     userId: string
     name: string
     website?: string | null
+    studentIdFormatHint?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedCreateNestedManyWithoutUniversityInput
@@ -23924,6 +23968,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutUniversityNestedInput
@@ -23936,6 +23981,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     website?: NullableStringFieldUpdateOperationsInput | string | null
+    studentIdFormatHint?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     catalogRecords?: UniversityStudentCatalogUncheckedUpdateManyWithoutUniversityNestedInput

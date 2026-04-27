@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
+import { educationMatchesSchoolName } from '../utils/institutionName'
 import './Dashboard.css'
 
 function InternDashboard() {
@@ -147,6 +148,20 @@ function InternDashboard() {
   const emailOk = user?.isEmailVerified === true
   const studentVerifyStatus =
     intern?.studentVerificationStatus ?? user?.intern?.studentVerificationStatus ?? 'NOT_SUBMITTED'
+
+  const selectedPlatformSchool = useMemo(
+    () => platformUniversities.find((u) => u.id === schoolForm.universityId) || null,
+    [platformUniversities, schoolForm.universityId]
+  )
+  const educationText = (intern?.education || user?.intern?.education || '').trim()
+  const showEducationMismatch =
+    emailOk &&
+    educationText &&
+    selectedPlatformSchool?.name &&
+    !educationMatchesSchoolName(educationText, selectedPlatformSchool.name)
+
+  const schoolInviteUrl =
+    typeof window !== 'undefined' ? `${window.location.origin}/register?type=university` : '/register?type=university'
 
   const handleSchoolFormChange = (e) => {
     const { name, value } = e.target
@@ -327,6 +342,54 @@ function InternDashboard() {
           </header>
 
           {user?.userType === 'INTERN' && (
+            <div className="intern-progress-strip" role="list" aria-label="Account setup">
+              <div
+                className={`intern-progress-step${emailOk ? ' intern-progress-step--done' : ' intern-progress-step--current'}`}
+                role="listitem"
+              >
+                <span className="intern-progress-idx" aria-hidden="true">
+                  1
+                </span>
+                <span>Verify email</span>
+              </div>
+              <div className="intern-progress-connector" aria-hidden="true" />
+              <div
+                className={`intern-progress-step${
+                  !emailOk
+                    ? ''
+                    : (intern?.education || user?.intern?.education || '').trim()
+                      ? ' intern-progress-step--done'
+                      : ' intern-progress-step--current'
+                }`}
+                role="listitem"
+              >
+                <span className="intern-progress-idx" aria-hidden="true">
+                  2
+                </span>
+                <span>Profile &amp; education</span>
+              </div>
+              <div className="intern-progress-connector" aria-hidden="true" />
+              <div
+                className={`intern-progress-step${
+                  studentVerifyStatus === 'APPROVED'
+                    ? ' intern-progress-step--done'
+                    : emailOk && studentVerifyStatus === 'PENDING'
+                      ? ' intern-progress-step--active'
+                      : studentVerifyStatus === 'NOT_SUBMITTED' && emailOk
+                        ? ' intern-progress-step--current'
+                        : ''
+                }`}
+                role="listitem"
+              >
+                <span className="intern-progress-idx" aria-hidden="true">
+                  3
+                </span>
+                <span>School verification (optional)</span>
+              </div>
+            </div>
+          )}
+
+          {user?.userType === 'INTERN' && (
             <section className="dashboard-section">
               <h2>Student verification (your school on EasyIntern)</h2>
               <div className="card intern-school-verify-card">
@@ -357,8 +420,9 @@ function InternDashboard() {
                 )}
                 {emailOk && studentVerifyStatus !== 'APPROVED' && platformUniversities.length === 0 && (
                   <p className="intern-school-verify-lead">
-                    There are no universities on EasyIntern to link yet. You can still complete your education on your
-                    profile.
+                    There are no universities on EasyIntern to link yet. You can still list your school under Education on
+                    your profile. If your school should use EasyIntern, share{' '}
+                    <a href={schoolInviteUrl}>this university registration link</a> with them.
                   </p>
                 )}
                 {emailOk && studentVerifyStatus === 'PENDING' && intern?.universityId && (
@@ -371,10 +435,18 @@ function InternDashboard() {
                   platformUniversities.length > 0 &&
                   (studentVerifyStatus !== 'PENDING' || intern?.universityId) && (
                     <form className="intern-school-verify-form" onSubmit={handleSchoolSubmit}>
+                      {showEducationMismatch && (
+                        <p className="intern-school-verify-mismatch" role="status">
+                          Your profile <strong>Education</strong> (“{educationText.slice(0, 80)}
+                          {educationText.length > 80 ? '…' : ''}”) does not obviously match the school you selected. If
+                          that is a mistake, update <Link to="/profile">your profile</Link> so it lines up, or change the
+                          school here.
+                        </p>
+                      )}
                       {studentVerifyStatus === 'PENDING' ? null : (
                         <p className="intern-school-verify-lead">
                           If your school is on EasyIntern, select it here so they can confirm you as a student. We use
-                          the student ID already on your profile.
+                          the student ID on your profile.
                         </p>
                       )}
                       <div className="form-group">
@@ -393,6 +465,11 @@ function InternDashboard() {
                             </option>
                           ))}
                         </select>
+                        {selectedPlatformSchool?.studentIdFormatHint && (
+                          <p className="intern-school-id-hint" id="student-id-hint">
+                            {selectedPlatformSchool.studentIdFormatHint}
+                          </p>
+                        )}
                       </div>
                       <div className="form-row">
                         <div className="form-group">
@@ -432,6 +509,18 @@ function InternDashboard() {
                       </div>
                       {schoolErr && <p className="intern-school-verify-error">{schoolErr}</p>}
                       {schoolMsg && <p className="intern-school-verify-success-msg">{schoolMsg}</p>}
+                      {schoolMsg && (schoolMsg.includes('Request sent') || schoolMsg.includes('matched')) && (
+                        <div className="intern-school-verify-next" role="status">
+                          <p>
+                            <strong>What happens next</strong>
+                          </p>
+                          <p>
+                            {schoolMsg.includes('matched')
+                              ? 'Your details matched a record your school already shared with us. You are all set for platform student verification for that school.'
+                              : 'We notify the school in the app, and if email is configured for them, we email their contact. Reviews often take a few business days, depending on the school.'}
+                          </p>
+                        </div>
+                      )}
                       <button
                         type="submit"
                         className="btn btn-primary"

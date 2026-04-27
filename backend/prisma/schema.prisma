@@ -182,12 +182,14 @@ model Intern {
 }
 
 model University {
-  id        String   @id @default(cuid())
-  userId    String   @unique @map("user_id")
-  name      String
-  website   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                   String   @id @default(cuid())
+  userId               String   @unique @map("user_id")
+  name                 String
+  website              String?
+  /// Shown to interns when they select this school (e.g. “Format: GSU-########”).
+  studentIdFormatHint  String?  @map("student_id_format_hint") @db.VarChar(512)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   catalogRecords UniversityStudentCatalog[]

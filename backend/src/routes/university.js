@@ -1,6 +1,7 @@
 import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate, requireUniversity, requireEmailVerified } from '../middleware/auth.js';
+import { formatInstitutionName } from '../utils/universityDisplay.js';
 
 const router = express.Router();
 
@@ -67,10 +68,43 @@ router.get('/profile', authenticate, requireUniversity, requireEmailVerified, as
       },
     });
     if (!university) return res.status(404).json({ error: 'University not found' });
-    res.json(university);
+    res.json({ ...university, name: formatInstitutionName(university.name) });
   } catch (error) {
     console.error('Get university profile error:', error);
     res.status(500).json({ error: 'Failed to load university profile' });
+  }
+});
+
+router.put('/profile', authenticate, requireUniversity, requireEmailVerified, async (req, res) => {
+  try {
+    const { name, website, studentIdFormatHint } = req.body || {};
+    const existing = await prisma.university.findUnique({ where: { userId: req.userId } });
+    if (!existing) return res.status(404).json({ error: 'University not found' });
+    const data = {};
+    if (name !== undefined) {
+      const trimmed = formatInstitutionName(name);
+      if (!trimmed) return res.status(400).json({ error: 'Name cannot be empty.' });
+      data.name = trimmed;
+    }
+    if (website !== undefined) {
+      data.website = website ? String(website).trim() : null;
+    }
+    if (studentIdFormatHint !== undefined) {
+      const t = String(studentIdFormatHint || '').trim();
+      data.studentIdFormatHint = t ? t.slice(0, 500) : null;
+    }
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No fields to update.' });
+    }
+    const university = await prisma.university.update({
+      where: { userId: req.userId },
+      data,
+      include: { user: { select: { email: true, createdAt: true } } },
+    });
+    res.json({ ...university, name: formatInstitutionName(university.name) });
+  } catch (error) {
+    console.error('Update university profile error:', error);
+    res.status(500).json({ error: 'Failed to update university profile' });
   }
 });
 
@@ -232,8 +266,28 @@ router.get('/verification-requests', authenticate, requireUniversity, requireEma
     });
     if (!university) return res.status(404).json({ error: 'University not found' });
 
+    const { q } = req.query;
+    const search = typeof q === 'string' && q.trim() ? q.trim() : '';
+    let where = { universityId: university.id };
+    if (search) {
+      where = {
+        AND: [
+          { universityId: university.id },
+          {
+            OR: [
+              { requestedStudentId: { contains: search } },
+              { intern: { firstName: { contains: search } } },
+              { intern: { lastName: { contains: search } } },
+              { intern: { studentId: { contains: search } } },
+              { intern: { user: { email: { contains: search } } } },
+            ],
+          },
+        ],
+      };
+    }
+
     const requests = await prisma.studentVerificationRequest.findMany({
-      where: { universityId: university.id },
+      where,
       include: {
         intern: {
           select: {
@@ -277,6 +331,11 @@ router.patch('/verification-requests/:id', authenticate, requireUniversity, requ
     });
     if (!request) return res.status(404).json({ error: 'Verification request not found' });
 
+    const actor = await prisma.user.findUnique({
+      where: { id: req.userId },
+      select: { email: true },
+    });
+
     const updated = await prisma.$transaction(async (tx) => {
       const updatedRequest = await tx.studentVerificationRequest.update({
         where: { id: request.id },
@@ -292,6 +351,22 @@ router.patch('/verification-requests/:id', authenticate, requireUniversity, requ
         data: {
           studentVerificationStatus: status,
           studentVerificationNotes: notes ? String(notes).trim() : null,
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorUserId: req.userId,
+          actorEmail: actor?.email || null,
+          action: 'STUDENT_VERIFICATION_REVIEW',
+          entityType: 'StudentVerificationRequest',
+          entityId: request.id,
+          reason: status,
+          metadata: {
+            internId: request.internId,
+            notes: notes ? String(notes).trim() : null,
+            at: new Date().toISOString(),
+          },
         },
       });
 

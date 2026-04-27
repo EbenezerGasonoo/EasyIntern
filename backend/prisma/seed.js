@@ -342,6 +342,7 @@ async function ensureGoldStateUniversity() {
         create: {
           name: 'Gold State University',
           website: null,
+          studentIdFormatHint: 'Use the student ID on your school card (format may look like GSU-######## or similar).',
         },
       },
     },

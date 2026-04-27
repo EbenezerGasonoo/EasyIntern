@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import prisma from '../utils/db.js';
 import { authenticate } from '../middleware/auth.js';
 import { sendEmail } from '../utils/email.js';
+import { frontendBaseUrl } from '../utils/frontendUrl.js';
+import { formatInstitutionName, mapUniversityForPublicList } from '../utils/universityDisplay.js';
 
 const router = express.Router();
 
@@ -18,14 +20,6 @@ const DEFAULT_USER_SETTINGS = {
   channelEmail: true,
   channelInApp: true,
 };
-
-/** Links in emails (verify email, password reset). Set `FRONTEND_URL` on the API; production falls back to easyintern.app. */
-function frontendBaseUrl() {
-  const raw = process.env.FRONTEND_URL?.trim();
-  if (raw) return raw.replace(/\/$/, '');
-  if (process.env.NODE_ENV === 'production') return 'https://easyintern.app';
-  return 'http://localhost:3000';
-}
 
 async function sendVerificationEmail(to, verificationToken) {
   const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
@@ -117,10 +111,10 @@ router.post('/admin-login', async (req, res) => {
 router.get('/universities', async (req, res) => {
   try {
     const universities = await prisma.university.findMany({
-      select: { id: true, name: true, website: true },
+      select: { id: true, name: true, website: true, studentIdFormatHint: true },
       orderBy: { name: 'asc' },
     });
-    res.json(universities);
+    res.json(universities.map(mapUniversityForPublicList));
   } catch (error) {
     console.error('List universities error:', error);
     res.status(500).json({ error: 'Failed to load universities' });
@@ -354,7 +348,7 @@ router.post('/register/university', async (req, res) => {
         verificationToken,
         university: {
           create: {
-            name,
+            name: formatInstitutionName(name),
             website: website || null,
           },
         },

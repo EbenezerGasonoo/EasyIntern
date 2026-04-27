@@ -1,10 +1,22 @@
+/**
+ * Intern API routes. Static path segments (e.g. /profile, /browse, /recommended-jobs) MUST be
+ * registered before the public GET /:id catch-all so "profile" is not parsed as a CUID.
+ */
 import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate, requireIntern, requireEmailVerified } from '../middleware/auth.js';
+import { createRateLimiter } from '../middleware/rateLimit.js';
 import { getSupabase, PROFILE_BUCKET } from '../utils/supabase.js';
 import { submitInternUniversityVerification } from '../utils/internUniversityVerification.js';
+import { formatInstitutionName } from '../utils/universityDisplay.js';
 
 const router = express.Router();
+const requestUniversityVerifyLimit = createRateLimiter({
+  name: 'req-uni-verify',
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  keyFn: (req) => req.userId || 'anon',
+});
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
@@ -142,7 +154,7 @@ router.get('/profile', authenticate, requireIntern, requireEmailVerified, async 
           orderBy: { appliedAt: 'desc' },
         },
         university: {
-          select: { id: true, name: true },
+          select: { id: true, name: true, studentIdFormatHint: true },
         },
       },
     });
@@ -151,7 +163,10 @@ router.get('/profile', authenticate, requireIntern, requireEmailVerified, async 
       return res.status(404).json({ error: 'Intern not found' });
     }
 
-    res.json(intern);
+    const u = intern.university
+      ? { ...intern.university, name: formatInstitutionName(intern.university.name) }
+      : null;
+    res.json({ ...intern, university: u });
   } catch (error) {
     console.error('Get intern profile error:', error);
     res.status(500).json({ error: 'Failed to get intern profile' });
@@ -317,7 +332,13 @@ router.get('/recommended-jobs', authenticate, requireIntern, requireEmailVerifie
 });
 
 // Request student verification with a university on the platform (after email verification; from dashboard)
-router.post('/request-university-verification', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
+router.post(
+  '/request-university-verification',
+  authenticate,
+  requireIntern,
+  requireEmailVerified,
+  requestUniversityVerifyLimit,
+  async (req, res) => {
   try {
     const { universityId, enrollmentYear, course, graduationDate } = req.body || {};
     if (!universityId) {
@@ -343,7 +364,7 @@ router.post('/request-university-verification', authenticate, requireIntern, req
     const intern = await prisma.intern.findUnique({
       where: { id: row.id },
       include: {
-        university: { select: { id: true, name: true } },
+        university: { select: { id: true, name: true, studentIdFormatHint: true } },
         user: { select: { email: true, createdAt: true } },
         applications: {
           include: {
@@ -357,9 +378,12 @@ router.post('/request-university-verification', authenticate, requireIntern, req
         },
       },
     });
+    const uni = intern.university
+      ? { ...intern.university, name: formatInstitutionName(intern.university.name) }
+      : null;
     return res.json({
       ...result,
-      intern,
+      intern: { ...intern, university: uni },
       message: result.autoApproved
         ? `Your student record matched the ${result.universityName} catalog; verification is complete.`
         : result.updated
@@ -370,7 +394,8 @@ router.post('/request-university-verification', authenticate, requireIntern, req
     console.error('Request university verification error:', error);
     res.status(500).json({ error: 'Failed to submit student verification' });
   }
-});
+}
+);
 
 // PUBLIC: Get single intern profile (for viewing) — keep after static paths
 router.get('/:id', async (req, res) => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import api from '../utils/api'
 import './Dashboard.css'
 
@@ -22,15 +22,23 @@ function UniversityDashboard() {
     course: '',
     graduationDate: '',
   })
+  const [requestSearch, setRequestSearch] = useState('')
+  const [profileHint, setProfileHint] = useState('')
+  const [savingHint, setSavingHint] = useState(false)
+  const skipSearchEffect = useRef(true)
 
   const fetchData = async () => {
     try {
+      const reqParams = requestSearch.trim() ? { q: requestSearch.trim() } : {}
       const [profileRes, catalogRes, requestsRes] = await Promise.all([
         api.get('/university/profile'),
         api.get('/university/catalog'),
-        api.get('/university/verification-requests'),
+        api.get('/university/verification-requests', { params: reqParams }),
       ])
       setProfile(profileRes.data)
+      if (profileRes.data && profileRes.data.studentIdFormatHint !== undefined) {
+        setProfileHint(profileRes.data.studentIdFormatHint || '')
+      }
       setCatalog(Array.isArray(catalogRes.data) ? catalogRes.data : [])
       setRequests(Array.isArray(requestsRes.data) ? requestsRes.data : [])
     } catch (err) {
@@ -41,9 +49,31 @@ function UniversityDashboard() {
     }
   }
 
+  const refetchRequests = useCallback(async () => {
+    try {
+      const { data } = await api.get('/university/verification-requests', {
+        params: requestSearch.trim() ? { q: requestSearch.trim() } : {},
+      })
+      setRequests(Array.isArray(data) ? data : [])
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to refresh requests.')
+    }
+  }, [requestSearch])
+
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (skipSearchEffect.current) {
+      skipSearchEffect.current = false
+      return
+    }
+    const t = setTimeout(() => {
+      refetchRequests()
+    }, 400)
+    return () => clearTimeout(t)
+  }, [requestSearch, refetchRequests])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -70,6 +100,22 @@ function UniversityDashboard() {
       setSuccess('')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const saveFormatHint = async (e) => {
+    e.preventDefault()
+    setSavingHint(true)
+    setError('')
+    setSuccess('')
+    try {
+      await api.put('/university/profile', { studentIdFormatHint: profileHint || null })
+      await fetchData()
+      setSuccess('Applicant hint saved. Interns will see it when they select your school.')
+    } catch (err) {
+      setError(err.response?.data?.error || 'Could not save hint.')
+    } finally {
+      setSavingHint(false)
     }
   }
 
@@ -396,9 +442,43 @@ function UniversityDashboard() {
         </section>
 
         <section className="dashboard-section">
+          <div className="university-hint-card card">
+            <h2>Help applicants enter the right student ID (optional)</h2>
+            <p className="university-section-note">
+              This short note appears to interns on their dashboard when they select your school (for example, “format
+              like 012345/25”). Leave blank if you do not need a hint.
+            </p>
+            <form onSubmit={saveFormatHint} className="university-hint-form">
+              <label htmlFor="university-student-hint" className="visually-hidden">
+                Student ID format hint
+              </label>
+              <textarea
+                id="university-student-hint"
+                value={profileHint}
+                onChange={(e) => setProfileHint(e.target.value)}
+                rows={2}
+                maxLength={500}
+                placeholder="e.g. Use the number on the front of your ID card, format GSU-########"
+              />
+              <button type="submit" className="btn btn-secondary" disabled={savingHint}>
+                {savingHint ? 'Saving…' : 'Save hint for applicants'}
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section className="dashboard-section">
           <div className="dashboard-section-header">
             <h2>Student verification requests</h2>
-            <div className="company-filters">
+            <div className="company-filters university-req-filters">
+              <input
+                type="search"
+                className="university-req-search"
+                value={requestSearch}
+                onChange={(e) => setRequestSearch(e.target.value)}
+                placeholder="Search by name, email, or student ID…"
+                aria-label="Search requests"
+              />
               <select value={requestFilter} onChange={(e) => setRequestFilter(e.target.value)}>
                 <option value="PENDING">Pending</option>
                 <option value="APPROVED">Approved</option>
@@ -418,11 +498,24 @@ function UniversityDashboard() {
                       <h3>
                         {request.intern?.firstName} {request.intern?.lastName}
                       </h3>
-                      <p>{request.intern?.user?.email}</p>
-                      <p>
-                        Student ID: <strong>{request.requestedStudentId}</strong> | Course:{' '}
-                        <strong>{request.requestedCourse || request.intern?.course || 'N/A'}</strong>
+                      <p className="university-req-line">{request.intern?.user?.email}</p>
+                      <p className="university-req-line university-req-summary">
+                        <span>
+                          Student ID: <strong>{request.requestedStudentId || request.intern?.studentId}</strong>
+                        </span>
+                        <span>
+                          Enrollment year: <strong>{request.requestedEnrollmentYear ?? request.intern?.enrollmentYear ?? '—'}</strong>
+                        </span>
+                        <span>
+                          Course: <strong>{request.requestedCourse || request.intern?.course || '—'}</strong>
+                        </span>
+                        <span>
+                          Submitted: <strong>{request.createdAt ? new Date(request.createdAt).toLocaleString() : '—'}</strong>
+                        </span>
                       </p>
+                      {request.reviewedAt && (
+                        <p className="university-req-line university-req-meta">Reviewed: {new Date(request.reviewedAt).toLocaleString()}</p>
+                      )}
                       <span className={`application-status-badge status-${String(request.status || '').toLowerCase()}`}>
                         {request.status}
                       </span>

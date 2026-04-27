@@ -218,6 +218,7 @@ exports.Prisma.UniversityScalarFieldEnum = {
   userId: 'userId',
   name: 'name',
   website: 'website',
+  studentIdFormatHint: 'studentIdFormatHint',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

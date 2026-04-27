@@ -1,4 +1,7 @@
 import prisma from './db.js';
+import { sendEmail } from './email.js';
+import { frontendBaseUrl } from './frontendUrl.js';
+import { formatInstitutionName } from './universityDisplay.js';
 
 /**
  * Submits or updates a university’s student verification for an intern
@@ -36,11 +39,22 @@ export async function submitInternUniversityVerification({
 
   const resolvedUniversity = await prisma.university.findUnique({
     where: { id: universityId },
-    select: { id: true, name: true, userId: true },
+    select: {
+      id: true,
+      name: true,
+      userId: true,
+      user: {
+        select: {
+          email: true,
+          preferences: { select: { notificationChannelEmail: true } },
+        },
+      },
+    },
   });
   if (!resolvedUniversity) {
     return { error: 'Selected university was not found.' };
   }
+  const displayName = formatInstitutionName(resolvedUniversity.name);
 
   const existingPending = await prisma.studentVerificationRequest.findFirst({
     where: { internId, status: 'PENDING' },
@@ -111,7 +125,7 @@ export async function submitInternUniversityVerification({
       success: true,
       updated: true,
       autoApproved: Boolean(catalogRecord),
-      universityName: resolvedUniversity.name,
+      universityName: displayName,
     };
   }
 
@@ -127,11 +141,30 @@ export async function submitInternUniversityVerification({
         data: {
           userId: resolvedUniversity.userId,
           type: 'WARNING',
-          message: `${firstName} ${lastName} (student ID: ${sid}) registered on EasyIntern as a student of ${resolvedUniversity.name} and is requesting verification. Open your university dashboard to review pending requests.`,
+          message: `${firstName} ${lastName} (student ID: ${sid}) registered on EasyIntern as a student of ${displayName} and is requesting verification. Open your university dashboard to review pending requests.`,
         },
       });
     } catch (notifErr) {
       console.error('University verification notification failed:', notifErr);
+    }
+
+    const emailAllowed = resolvedUniversity.user?.preferences?.notificationChannelEmail !== false;
+    const to = resolvedUniversity.user?.email;
+    if (emailAllowed && to) {
+      try {
+        const loginUrl = `${frontendBaseUrl()}/login`;
+        const dashHint = `${frontendBaseUrl()}`;
+        await sendEmail({
+          to,
+          subject: `EasyIntern: new student verification — ${displayName}`,
+          html: `<p><strong>${firstName} ${lastName}</strong> (student ID: <strong>${sid}</strong>) is asking <strong>${displayName}</strong> to verify their student status on EasyIntern.</p>
+            <p><a href="${loginUrl}">Sign in to your university account</a> and open the verification queue to approve or reject.</p>
+            <p style="color:#64748b;font-size:12px">If the button does not work: ${loginUrl} — then use your university dashboard after signing in.</p>
+            <p style="color:#64748b;font-size:12px">Dashboard: ${dashHint}</p>`,
+        });
+      } catch (emailErr) {
+        console.error('University verification email (SMTP) failed:', emailErr);
+      }
     }
   }
 
@@ -139,6 +172,6 @@ export async function submitInternUniversityVerification({
     success: true,
     updated: false,
     autoApproved: Boolean(catalogRecord),
-    universityName: resolvedUniversity.name,
+    universityName: displayName,
   };
 }

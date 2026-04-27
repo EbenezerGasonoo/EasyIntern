@@ -37,6 +37,7 @@ yarn-error.log*
 *.sqlite
 
 # Prisma (keep migrations + migration_lock.toml in git for deploy)
+backend/src/generated/client/query-engine*.tmp*
 
 # OS
 Thumbs.db
