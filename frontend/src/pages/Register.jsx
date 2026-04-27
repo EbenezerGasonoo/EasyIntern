@@ -35,32 +35,14 @@ function Register() {
     customEducation: '',
     educationWebsite: '',
     confirmEducationWebsite: false,
-    universityId: '',
-    enrollmentYear: '',
-    course: '',
-    graduationDate: '',
     universityName: '',
     universityWebsite: '',
   })
-  const [universities, setUniversities] = useState([])
   const [error, setError] = useState('')
   const [socialNotice, setSocialNotice] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const loadUniversities = async () => {
-      try {
-        const response = await api.get('/auth/universities')
-        setUniversities(Array.isArray(response.data) ? response.data : [])
-      } catch (err) {
-        console.error('Failed to load universities', err)
-        setUniversities([])
-      }
-    }
-    loadUniversities()
-  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -138,10 +120,6 @@ function Register() {
               firstName: formData.firstName,
               lastName: formData.lastName,
               studentId: formData.studentId,
-              universityId: formData.universityId || null,
-              enrollmentYear: formData.enrollmentYear || null,
-              course: formData.course || null,
-              graduationDate: formData.graduationDate || null,
               phone: formData.phone,
               bio: formData.bio,
               experience: formData.experience,
@@ -428,56 +406,6 @@ function Register() {
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="intern-university-id">University</label>
-                  <select
-                    id="intern-university-id"
-                    name="universityId"
-                    value={formData.universityId}
-                    onChange={handleChange}
-                  >
-                    <option value="">Select your university (for approval)</option>
-                    {universities.map((uni) => (
-                      <option key={uni.id} value={uni.id}>
-                        {uni.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="intern-enrollment-year">Enrollment Year</label>
-                    <input
-                      id="intern-enrollment-year"
-                      type="number"
-                      name="enrollmentYear"
-                      value={formData.enrollmentYear}
-                      onChange={handleChange}
-                      placeholder="e.g. 2023"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="intern-course">Course</label>
-                    <input
-                      id="intern-course"
-                      type="text"
-                      name="course"
-                      value={formData.course}
-                      onChange={handleChange}
-                      placeholder="e.g. BSc Computer Science"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="intern-graduation-date">Date of Graduation</label>
-                  <input
-                    id="intern-graduation-date"
-                    type="date"
-                    name="graduationDate"
-                    value={formData.graduationDate}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="form-group">
                   <label htmlFor="intern-bio">Bio</label>
                   <textarea
                     id="intern-bio"
@@ -525,6 +453,10 @@ function Register() {
                     ))}
                     <option value="OTHER">My university is not listed</option>
                   </select>
+                  <p className="register-intern-education-hint">
+                    After you create your account, you can link your school for official student verification from your
+                    dashboard when your university uses EasyIntern.
+                  </p>
                 </div>
                 {formData.education === 'OTHER' && (
                   <>

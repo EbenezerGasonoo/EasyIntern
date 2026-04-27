@@ -450,6 +450,65 @@
   box-shadow: 0 16px 34px rgba(229, 90, 43, 0.28) !important;
 }
 
+.intern-school-verify-card p {
+  margin: 0 0 0.75rem;
+  line-height: 1.45;
+  color: #1e293b;
+}
+
+.intern-school-verify-card p:last-child {
+  margin-bottom: 0;
+}
+
+.intern-school-verify-lead,
+.intern-school-verify-note {
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.intern-school-verify-note {
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.intern-school-verify-pending,
+.intern-school-verify-rejected,
+.intern-school-verify-success,
+.intern-school-verify-error,
+.intern-school-verify-success-msg {
+  font-size: 0.95rem;
+}
+
+.intern-school-verify-success,
+.intern-school-verify-success-msg {
+  color: #0f766e;
+}
+
+.intern-school-verify-pending {
+  color: #92400e;
+}
+
+.intern-school-verify-rejected,
+.intern-school-verify-error {
+  color: #b91c1c;
+}
+
+.intern-school-verify-form {
+  margin-top: 0.25rem;
+}
+
+.intern-school-verify-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+@media (max-width: 640px) {
+  .intern-school-verify-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .intern-dashboard-eyebrow {
   margin: 0 0 10px;
   color: rgba(229, 247, 250, 0.92);

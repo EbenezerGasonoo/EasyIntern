@@ -321,6 +321,35 @@ async function seedDemoApplications() {
   console.log(`✅ Demo applications created (new pairs): ${created}`);
 }
 
+const GOLD_STATE_UNIVERSITY_EMAIL = 'goldstate.university@easyintern.app';
+
+/** Demo portal for “Gold State University” so it appears in /auth/universities after seed (idempotent). */
+async function ensureGoldStateUniversity() {
+  const existing = await prisma.user.findUnique({ where: { email: GOLD_STATE_UNIVERSITY_EMAIL } });
+  if (existing) {
+    console.log(`⏭️  Skip Gold State University seed (exists): ${GOLD_STATE_UNIVERSITY_EMAIL}`);
+    return;
+  }
+
+  const hashed = await bcrypt.hash(DEMO_PASSWORD, 10);
+  await prisma.user.create({
+    data: {
+      email: GOLD_STATE_UNIVERSITY_EMAIL,
+      password: hashed,
+      userType: 'UNIVERSITY',
+      isEmailVerified: true,
+      university: {
+        create: {
+          name: 'Gold State University',
+          website: null,
+        },
+      },
+    },
+  });
+
+  console.log(`✅ Gold State University portal user: ${GOLD_STATE_UNIVERSITY_EMAIL}`);
+}
+
 async function main() {
   console.log(`🌱 Seeding demo data: ${COMPANY_COUNT} companies, ${INTERN_COUNT} interns (idempotent by email)...`);
 
@@ -335,12 +364,14 @@ async function main() {
     await ensureIntern(i);
   }
 
+  await ensureGoldStateUniversity();
   await seedDemoApplications();
 
   console.log('\n🎉 Demo seed done.');
   console.log(`\n🔑 Login for demo accounts (password for all): ${DEMO_PASSWORD}`);
   console.log(`   Companies: demo-company-01 … demo-company-${pad2(COMPANY_COUNT)}@easyintern.app`);
   console.log(`   Interns: demo-intern-01 … demo-intern-${pad2(INTERN_COUNT)}@easyintern.app`);
+  console.log(`   Gold State University (portal): ${GOLD_STATE_UNIVERSITY_EMAIL}`);
 }
 
 main()

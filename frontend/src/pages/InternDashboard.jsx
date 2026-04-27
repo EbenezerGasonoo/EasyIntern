@@ -18,6 +18,16 @@ function InternDashboard() {
     subject: '',
     message: '',
   })
+  const [platformUniversities, setPlatformUniversities] = useState([])
+  const [schoolForm, setSchoolForm] = useState({
+    universityId: '',
+    enrollmentYear: '',
+    course: '',
+    graduationDate: '',
+  })
+  const [schoolMsg, setSchoolMsg] = useState('')
+  const [schoolErr, setSchoolErr] = useState('')
+  const [schoolSubmitting, setSchoolSubmitting] = useState(false)
 
   const displayName = user?.intern
     ? `${user.intern.firstName} ${user.intern.lastName}`
@@ -26,6 +36,41 @@ function InternDashboard() {
   useEffect(() => {
     fetchData()
   }, [])
+
+  useEffect(() => {
+    if (user?.userType !== 'INTERN') return undefined
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await api.get('/auth/universities')
+        if (!cancelled) {
+          setPlatformUniversities(Array.isArray(res.data) ? res.data : [])
+        }
+      } catch {
+        if (!cancelled) setPlatformUniversities([])
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [user?.userType])
+
+  useEffect(() => {
+    if (!intern) return
+    const gd = intern.graduationDate
+    let gradStr = ''
+    if (gd) {
+      const d = new Date(gd)
+      gradStr = Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10)
+    }
+    setSchoolForm((prev) => ({
+      ...prev,
+      universityId: intern.universityId || '',
+      enrollmentYear: intern.enrollmentYear != null ? String(intern.enrollmentYear) : '',
+      course: intern.course || '',
+      graduationDate: gradStr,
+    }))
+  }, [intern?.id, intern?.universityId, intern?.enrollmentYear, intern?.course, intern?.graduationDate])
 
   const fetchData = async () => {
     setApiFailed(false)
@@ -89,7 +134,7 @@ function InternDashboard() {
     {
       question: 'How do I become verified?',
       answer:
-        'Go to Profile, complete KYI (Ghana Card and identity), add your Education, and upload school proof (enrollment letter or student ID from your institution).',
+        'Go to Profile for identity (KYI) and school documents. If your university uses EasyIntern, you can also request official student verification from your dashboard so your school can confirm you on the platform.',
     },
   ]
 
@@ -97,6 +142,42 @@ function InternDashboard() {
     const { name, value } = e.target
     setTicketStatus('')
     setTicketForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const emailOk = user?.isEmailVerified === true
+  const studentVerifyStatus =
+    intern?.studentVerificationStatus ?? user?.intern?.studentVerificationStatus ?? 'NOT_SUBMITTED'
+
+  const handleSchoolFormChange = (e) => {
+    const { name, value } = e.target
+    setSchoolErr('')
+    setSchoolMsg('')
+    setSchoolForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSchoolSubmit = async (e) => {
+    e.preventDefault()
+    setSchoolErr('')
+    setSchoolMsg('')
+    if (!schoolForm.universityId) {
+      setSchoolErr('Select the school that should verify you on EasyIntern.')
+      return
+    }
+    setSchoolSubmitting(true)
+    try {
+      const res = await api.post('/intern/request-university-verification', {
+        universityId: schoolForm.universityId,
+        enrollmentYear: schoolForm.enrollmentYear || null,
+        course: schoolForm.course || null,
+        graduationDate: schoolForm.graduationDate || null,
+      })
+      setSchoolMsg(res.data?.message || 'Request saved.')
+      await fetchData()
+    } catch (err) {
+      setSchoolErr(err.response?.data?.error || 'Could not submit verification request.')
+    } finally {
+      setSchoolSubmitting(false)
+    }
   }
 
   const handleTicketSubmit = (e) => {
@@ -244,6 +325,129 @@ function InternDashboard() {
               </div>
             </div>
           </header>
+
+          {user?.userType === 'INTERN' && (
+            <section className="dashboard-section">
+              <h2>Student verification (your school on EasyIntern)</h2>
+              <div className="card intern-school-verify-card">
+                {!emailOk && (
+                  <p className="intern-school-verify-lead">
+                    Verify your email first. After that, you can ask a school that uses EasyIntern to confirm you as
+                    their student.
+                  </p>
+                )}
+                {emailOk && studentVerifyStatus === 'APPROVED' && (
+                  <p className="intern-school-verify-success">
+                    Your student status is verified
+                    {intern?.university?.name ? ` with ${intern.university.name}` : ''}.
+                  </p>
+                )}
+                {emailOk && studentVerifyStatus === 'PENDING' && (
+                  <p className="intern-school-verify-pending">
+                    We are waiting for{' '}
+                    {intern?.university?.name || 'your school'} to confirm your student status. You will be notified
+                    when they respond.
+                  </p>
+                )}
+                {emailOk && studentVerifyStatus === 'REJECTED' && (
+                  <p className="intern-school-verify-rejected" role="status">
+                    Your previous request was not approved. You can submit again with the same or a different school on
+                    EasyIntern.
+                  </p>
+                )}
+                {emailOk && studentVerifyStatus !== 'APPROVED' && platformUniversities.length === 0 && (
+                  <p className="intern-school-verify-lead">
+                    There are no universities on EasyIntern to link yet. You can still complete your education on your
+                    profile.
+                  </p>
+                )}
+                {emailOk && studentVerifyStatus === 'PENDING' && intern?.universityId && (
+                  <p className="intern-school-verify-note">
+                    You can update the fields below; your request stays with your school until they respond.
+                  </p>
+                )}
+                {emailOk &&
+                  studentVerifyStatus !== 'APPROVED' &&
+                  platformUniversities.length > 0 &&
+                  (studentVerifyStatus !== 'PENDING' || intern?.universityId) && (
+                    <form className="intern-school-verify-form" onSubmit={handleSchoolSubmit}>
+                      {studentVerifyStatus === 'PENDING' ? null : (
+                        <p className="intern-school-verify-lead">
+                          If your school is on EasyIntern, select it here so they can confirm you as a student. We use
+                          the student ID already on your profile.
+                        </p>
+                      )}
+                      <div className="form-group">
+                        <label htmlFor="dashboard-school-id">School on EasyIntern</label>
+                        <select
+                          id="dashboard-school-id"
+                          name="universityId"
+                          value={schoolForm.universityId}
+                          onChange={handleSchoolFormChange}
+                          required
+                        >
+                          <option value="">Select your school</option>
+                          {platformUniversities.map((u) => (
+                            <option key={u.id} value={u.id}>
+                              {u.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="dashboard-enrollment-year">Enrollment year</label>
+                          <input
+                            id="dashboard-enrollment-year"
+                            type="number"
+                            name="enrollmentYear"
+                            value={schoolForm.enrollmentYear}
+                            onChange={handleSchoolFormChange}
+                            placeholder="e.g. 2023"
+                            min="1990"
+                            max="2100"
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="dashboard-course">Course</label>
+                          <input
+                            id="dashboard-course"
+                            type="text"
+                            name="course"
+                            value={schoolForm.course}
+                            onChange={handleSchoolFormChange}
+                            placeholder="e.g. BSc Computer Science"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="dashboard-graduation">Expected graduation (optional)</label>
+                        <input
+                          id="dashboard-graduation"
+                          type="date"
+                          name="graduationDate"
+                          value={schoolForm.graduationDate}
+                          onChange={handleSchoolFormChange}
+                        />
+                      </div>
+                      {schoolErr && <p className="intern-school-verify-error">{schoolErr}</p>}
+                      {schoolMsg && <p className="intern-school-verify-success-msg">{schoolMsg}</p>}
+                      <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={schoolSubmitting || !schoolForm.universityId}
+                      >
+                        {schoolSubmitting
+                          ? 'Sending…'
+                          : studentVerifyStatus === 'PENDING'
+                            ? 'Update request'
+                            : 'Submit for school review'}
+                      </button>
+                    </form>
+                  )}
+              </div>
+            </section>
+          )}
 
           {apiFailed && (
             <div className="dashboard-banner dashboard-banner-info">

@@ -2,6 +2,7 @@ import express from 'express';
 import prisma from '../utils/db.js';
 import { authenticate, requireIntern, requireEmailVerified } from '../middleware/auth.js';
 import { getSupabase, PROFILE_BUCKET } from '../utils/supabase.js';
+import { submitInternUniversityVerification } from '../utils/internUniversityVerification.js';
 
 const router = express.Router();
 
@@ -116,29 +117,6 @@ router.get('/browse', async (req, res) => {
   }
 });
 
-// PUBLIC: Get single intern profile (for viewing)
-router.get('/:id', async (req, res) => {
-  try {
-    const intern = await prisma.intern.findUnique({
-      where: { id: req.params.id },
-      include: {
-        user: {
-          select: { email: true }
-        }
-      }
-    });
-
-    if (!intern) {
-      return res.status(404).json({ error: 'Intern not found' });
-    }
-
-    res.json(intern);
-  } catch (error) {
-    console.error('Get intern error:', error);
-    res.status(500).json({ error: 'Failed to get intern' });
-  }
-});
-
 // Get own intern profile (authenticated)
 router.get('/profile', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
@@ -162,6 +140,9 @@ router.get('/profile', authenticate, requireIntern, requireEmailVerified, async 
             },
           },
           orderBy: { appliedAt: 'desc' },
+        },
+        university: {
+          select: { id: true, name: true },
         },
       },
     });
@@ -332,6 +313,85 @@ router.get('/recommended-jobs', authenticate, requireIntern, requireEmailVerifie
   } catch (error) {
     console.error('Get recommended jobs error:', error);
     res.status(500).json({ error: 'Failed to get recommended jobs' });
+  }
+});
+
+// Request student verification with a university on the platform (after email verification; from dashboard)
+router.post('/request-university-verification', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
+  try {
+    const { universityId, enrollmentYear, course, graduationDate } = req.body || {};
+    if (!universityId) {
+      return res.status(400).json({ error: 'Please select a university that uses EasyIntern.' });
+    }
+    const row = await prisma.intern.findUnique({ where: { userId: req.userId } });
+    if (!row) {
+      return res.status(404).json({ error: 'Intern not found' });
+    }
+    const result = await submitInternUniversityVerification({
+      internId: row.id,
+      firstName: row.firstName,
+      lastName: row.lastName,
+      studentId: row.studentId,
+      universityId,
+      enrollmentYear,
+      course,
+      graduationDate,
+    });
+    if (result.error) {
+      return res.status(400).json({ error: result.error });
+    }
+    const intern = await prisma.intern.findUnique({
+      where: { id: row.id },
+      include: {
+        university: { select: { id: true, name: true } },
+        user: { select: { email: true, createdAt: true } },
+        applications: {
+          include: {
+            job: {
+              include: {
+                company: { select: { name: true, logo: true } },
+              },
+            },
+          },
+          orderBy: { appliedAt: 'desc' },
+        },
+      },
+    });
+    return res.json({
+      ...result,
+      intern,
+      message: result.autoApproved
+        ? `Your student record matched the ${result.universityName} catalog; verification is complete.`
+        : result.updated
+          ? 'Your verification request was updated.'
+          : `Request sent to ${result.universityName}. They will review and confirm your student status.`,
+    });
+  } catch (error) {
+    console.error('Request university verification error:', error);
+    res.status(500).json({ error: 'Failed to submit student verification' });
+  }
+});
+
+// PUBLIC: Get single intern profile (for viewing) — keep after static paths
+router.get('/:id', async (req, res) => {
+  try {
+    const intern = await prisma.intern.findUnique({
+      where: { id: req.params.id },
+      include: {
+        user: {
+          select: { email: true }
+        }
+      }
+    });
+
+    if (!intern) {
+      return res.status(404).json({ error: 'Intern not found' });
+    }
+
+    res.json(intern);
+  } catch (error) {
+    console.error('Get intern error:', error);
+    res.status(500).json({ error: 'Failed to get intern' });
   }
 });
 

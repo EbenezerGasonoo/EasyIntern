@@ -471,3 +471,10 @@
     flex-direction: column;
   }
 }
+
+.register-intern-education-hint {
+  font-size: 0.85rem;
+  color: #5a6578;
+  margin: 0.4rem 0 0;
+  line-height: 1.45;
+}

@@ -13,6 +13,7 @@ const GHANA_UNIVERSITIES_RAW = [
   'Ghana Institute of Languages',
   'Ghana Institute of Management and Public Administration',
   'Ghana Institute of Surveying and Mapping',
+  'Gold State University',
   'Kofi Annan International Peacekeeping Training Centre',
   'Simon Diedong Dombo University of Business and Integrated Development Studies',
   'University of Cape Coast',

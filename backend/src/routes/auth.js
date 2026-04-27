@@ -225,10 +225,6 @@ router.post('/register/intern', async (req, res) => {
       firstName,
       lastName,
       studentId,
-      enrollmentYear,
-      course,
-      graduationDate,
-      universityId,
       bio,
       skills,
       education,
@@ -264,26 +260,6 @@ router.post('/register/intern', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
-    let resolvedUniversity = null;
-    if (universityId) {
-      resolvedUniversity = await prisma.university.findUnique({
-        where: { id: universityId },
-        select: { id: true, name: true },
-      });
-      if (!resolvedUniversity) {
-        return res.status(400).json({ error: 'Selected university was not found.' });
-      }
-    }
-
-    const parsedEnrollmentYear = enrollmentYear ? Number.parseInt(String(enrollmentYear), 10) : null;
-    if (enrollmentYear && Number.isNaN(parsedEnrollmentYear)) {
-      return res.status(400).json({ error: 'Enrollment year must be a valid number.' });
-    }
-    const parsedGraduationDate = graduationDate ? new Date(graduationDate) : null;
-    if (graduationDate && Number.isNaN(parsedGraduationDate.getTime())) {
-      return res.status(400).json({ error: 'Graduation date must be a valid date.' });
-    }
-
     // Create user and intern
     const user = await prisma.user.create({
       data: {
@@ -296,16 +272,12 @@ router.post('/register/intern', async (req, res) => {
             firstName,
             lastName,
             studentId,
-            enrollmentYear: parsedEnrollmentYear,
-            course: course || null,
-            graduationDate: parsedGraduationDate,
-            universityId: resolvedUniversity?.id || null,
-            studentVerificationStatus: resolvedUniversity ? 'PENDING' : 'NOT_SUBMITTED',
+            studentVerificationStatus: 'NOT_SUBMITTED',
             bio,
             phone,
             experience: experience || null,
             skills: skillsClean,
-            education: education || resolvedUniversity?.name || null,
+            education: education || null,
             educationWebsite: educationWebsite || null,
             location: location || null,
           },
@@ -313,43 +285,6 @@ router.post('/register/intern', async (req, res) => {
       },
       include: { intern: true },
     });
-
-    if (resolvedUniversity && user.intern?.id && user.intern?.studentId) {
-      const catalogRecord = await prisma.universityStudentCatalog.findUnique({
-        where: {
-          universityId_studentId: {
-            universityId: resolvedUniversity.id,
-            studentId: user.intern.studentId,
-          },
-        },
-        select: { id: true },
-      });
-
-      await prisma.studentVerificationRequest.create({
-        data: {
-          internId: user.intern.id,
-          universityId: resolvedUniversity.id,
-          catalogRecordId: catalogRecord?.id || null,
-          status: catalogRecord ? 'APPROVED' : 'PENDING',
-          requestedStudentId: user.intern.studentId,
-          requestedEnrollmentYear: parsedEnrollmentYear,
-          requestedCourse: course || null,
-          requestedGraduationDate: parsedGraduationDate,
-          reviewedAt: catalogRecord ? new Date() : null,
-          notes: catalogRecord ? 'Auto-approved from university catalog match during signup.' : null,
-        },
-      });
-
-      if (catalogRecord) {
-        await prisma.intern.update({
-          where: { id: user.intern.id },
-          data: {
-            studentVerificationStatus: 'APPROVED',
-            studentVerificationNotes: 'Auto-approved from university catalog during signup.',
-          },
-        });
-      }
-    }
 
     // Send verification email (do not fail signup if SMTP is misconfigured)
     const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
