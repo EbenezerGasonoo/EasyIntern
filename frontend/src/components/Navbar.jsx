@@ -94,9 +94,15 @@ function Navbar() {
 
   const displayName = user?.intern
     ? `${user.intern.firstName || ''} ${user.intern.lastName || ''}`.trim()
-    : (user?.company?.name || user?.email || 'Account')
+    : (user?.company?.name || user?.university?.name || user?.email || 'Account')
 
-  const roleLabel = user?.isAdmin ? 'Admin' : (user?.userType === 'COMPANY' ? 'Company' : 'Intern')
+  const roleLabel = user?.isAdmin
+    ? 'Admin'
+    : user?.userType === 'COMPANY'
+      ? 'Company'
+      : user?.userType === 'UNIVERSITY'
+        ? 'University'
+        : 'Intern'
 
   useEffect(() => {
     const closeOnOutside = (event) => {
@@ -198,6 +204,15 @@ function Navbar() {
                               Profile
                             </NavLink>
                             <NavLink to="/company/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                              Dashboard
+                            </NavLink>
+                            <NavLink to="/settings" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
+                              Settings
+                            </NavLink>
+                          </>
+                        ) : user.userType === 'UNIVERSITY' ? (
+                          <>
+                            <NavLink to="/university/dashboard" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
                               Dashboard
                             </NavLink>
                             <NavLink to="/settings" className="nav-user-dropdown-link" role="menuitem" onClick={() => setUserMenuOpen(false)}>
@@ -330,6 +345,11 @@ function Navbar() {
                   <>
                     <NavLink to="/profile" className="navbar-drawer-link" onClick={closeDrawer}>Profile</NavLink>
                     <NavLink to="/company/dashboard" className="navbar-drawer-link" onClick={closeDrawer}>Dashboard</NavLink>
+                    <NavLink to="/settings" className="navbar-drawer-link" onClick={closeDrawer}>Settings</NavLink>
+                  </>
+                ) : user.userType === 'UNIVERSITY' ? (
+                  <>
+                    <NavLink to="/university/dashboard" className="navbar-drawer-link" onClick={closeDrawer}>Dashboard</NavLink>
                     <NavLink to="/settings" className="navbar-drawer-link" onClick={closeDrawer}>Settings</NavLink>
                   </>
                 ) : (

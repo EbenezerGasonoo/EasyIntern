@@ -15,6 +15,7 @@ datasource db {
 enum UserType {
   COMPANY
   INTERN
+  UNIVERSITY
   ADMIN
 }
 
@@ -54,6 +55,13 @@ enum AdminRole {
   SUPPORT_ADMIN
 }
 
+enum StudentVerificationStatus {
+  NOT_SUBMITTED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id                String   @id @default(cuid())
   email             String   @unique
@@ -76,6 +84,7 @@ model User {
 
   company Company?
   intern  Intern?
+  university University?
   notifications Notification[]
   preferences   UserPreference?
   supportTickets SupportTicket[]
@@ -136,6 +145,12 @@ model Intern {
   id         String   @id @default(cuid())
   userId     String   @unique
   studentId  String?
+  enrollmentYear Int? @map("enrollment_year")
+  course String?
+  graduationDate DateTime? @map("graduation_date")
+  studentVerificationStatus StudentVerificationStatus @default(NOT_SUBMITTED) @map("student_verification_status")
+  studentVerificationNotes String? @map("student_verification_notes")
+  universityId String? @map("university_id")
   dateOfBirth DateTime?
   ghanaCardNumber String?
   ghanaCardDocument String?
@@ -159,9 +174,69 @@ model Intern {
   updatedAt  DateTime @updatedAt
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  university   University?   @relation(fields: [universityId], references: [id], onDelete: SetNull)
   applications Application[]
+  verificationRequests StudentVerificationRequest[]
 
   @@map("interns")
+}
+
+model University {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  name      String
+  website   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  catalogRecords UniversityStudentCatalog[]
+  interns Intern[]
+  verificationRequests StudentVerificationRequest[]
+
+  @@map("universities")
+}
+
+model UniversityStudentCatalog {
+  id             String   @id @default(cuid())
+  universityId   String   @map("university_id")
+  enrollmentYear Int      @map("enrollment_year")
+  studentId      String   @map("student_id")
+  course         String
+  graduationDate DateTime @map("graduation_date")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  verificationRequests StudentVerificationRequest[]
+
+  @@unique([universityId, studentId])
+  @@index([universityId, enrollmentYear])
+  @@map("university_student_catalog")
+}
+
+model StudentVerificationRequest {
+  id                    String                    @id @default(cuid())
+  internId              String                    @map("intern_id")
+  universityId          String                    @map("university_id")
+  catalogRecordId       String?                   @map("catalog_record_id")
+  status                StudentVerificationStatus @default(PENDING)
+  requestedStudentId    String                    @map("requested_student_id")
+  requestedEnrollmentYear Int?                    @map("requested_enrollment_year")
+  requestedCourse       String?                   @map("requested_course")
+  requestedGraduationDate DateTime?               @map("requested_graduation_date")
+  notes                 String?
+  reviewedAt            DateTime?                 @map("reviewed_at")
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  intern Intern @relation(fields: [internId], references: [id], onDelete: Cascade)
+  university University @relation(fields: [universityId], references: [id], onDelete: Cascade)
+  catalogRecord UniversityStudentCatalog? @relation(fields: [catalogRecordId], references: [id], onDelete: SetNull)
+
+  @@index([universityId, status])
+  @@index([internId, status])
+  @@map("student_verification_requests")
 }
 
 model Job {

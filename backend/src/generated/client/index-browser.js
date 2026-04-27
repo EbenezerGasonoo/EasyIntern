@@ -185,6 +185,12 @@ exports.Prisma.InternScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   studentId: 'studentId',
+  enrollmentYear: 'enrollmentYear',
+  course: 'course',
+  graduationDate: 'graduationDate',
+  studentVerificationStatus: 'studentVerificationStatus',
+  studentVerificationNotes: 'studentVerificationNotes',
+  universityId: 'universityId',
   dateOfBirth: 'dateOfBirth',
   ghanaCardNumber: 'ghanaCardNumber',
   ghanaCardDocument: 'ghanaCardDocument',
@@ -203,6 +209,42 @@ exports.Prisma.InternScalarFieldEnum = {
   location: 'location',
   resume: 'resume',
   profilePic: 'profilePic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UniversityScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  website: 'website',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UniversityStudentCatalogScalarFieldEnum = {
+  id: 'id',
+  universityId: 'universityId',
+  enrollmentYear: 'enrollmentYear',
+  studentId: 'studentId',
+  course: 'course',
+  graduationDate: 'graduationDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.StudentVerificationRequestScalarFieldEnum = {
+  id: 'id',
+  internId: 'internId',
+  universityId: 'universityId',
+  catalogRecordId: 'catalogRecordId',
+  status: 'status',
+  requestedStudentId: 'requestedStudentId',
+  requestedEnrollmentYear: 'requestedEnrollmentYear',
+  requestedCourse: 'requestedCourse',
+  requestedGraduationDate: 'requestedGraduationDate',
+  notes: 'notes',
+  reviewedAt: 'reviewedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -327,6 +369,7 @@ exports.Prisma.JsonNullValueFilter = {
 exports.UserType = exports.$Enums.UserType = {
   COMPANY: 'COMPANY',
   INTERN: 'INTERN',
+  UNIVERSITY: 'UNIVERSITY',
   ADMIN: 'ADMIN'
 };
 
@@ -334,6 +377,13 @@ exports.AdminRole = exports.$Enums.AdminRole = {
   SUPER_ADMIN: 'SUPER_ADMIN',
   OPS_ADMIN: 'OPS_ADMIN',
   SUPPORT_ADMIN: 'SUPPORT_ADMIN'
+};
+
+exports.StudentVerificationStatus = exports.$Enums.StudentVerificationStatus = {
+  NOT_SUBMITTED: 'NOT_SUBMITTED',
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
 };
 
 exports.ApplicationStatus = exports.$Enums.ApplicationStatus = {
@@ -371,6 +421,9 @@ exports.Prisma.ModelName = {
   UserPreference: 'UserPreference',
   Company: 'Company',
   Intern: 'Intern',
+  University: 'University',
+  UniversityStudentCatalog: 'UniversityStudentCatalog',
+  StudentVerificationRequest: 'StudentVerificationRequest',
   Job: 'Job',
   Application: 'Application',
   Notification: 'Notification',

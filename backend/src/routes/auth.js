@@ -113,6 +113,20 @@ router.post('/admin-login', async (req, res) => {
   }
 });
 
+// Public university directory for intern registration
+router.get('/universities', async (req, res) => {
+  try {
+    const universities = await prisma.university.findMany({
+      select: { id: true, name: true, website: true },
+      orderBy: { name: 'asc' },
+    });
+    res.json(universities);
+  } catch (error) {
+    console.error('List universities error:', error);
+    res.status(500).json({ error: 'Failed to load universities' });
+  }
+});
+
 // Register Company
 router.post('/register/company', async (req, res) => {
   try {
@@ -205,7 +219,24 @@ router.post('/register/intern', async (req, res) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
     }
-    const { email, password, firstName, lastName, studentId, bio, skills, education, educationWebsite, location, phone, experience } = req.body;
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      studentId,
+      enrollmentYear,
+      course,
+      graduationDate,
+      universityId,
+      bio,
+      skills,
+      education,
+      educationWebsite,
+      location,
+      phone,
+      experience,
+    } = req.body;
 
     if (!email || !password || !firstName || !lastName || !studentId) {
       return res.status(400).json({ error: 'Email, password, first name, last name, and student ID are required' });
@@ -233,6 +264,26 @@ router.post('/register/intern', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
+    let resolvedUniversity = null;
+    if (universityId) {
+      resolvedUniversity = await prisma.university.findUnique({
+        where: { id: universityId },
+        select: { id: true, name: true },
+      });
+      if (!resolvedUniversity) {
+        return res.status(400).json({ error: 'Selected university was not found.' });
+      }
+    }
+
+    const parsedEnrollmentYear = enrollmentYear ? Number.parseInt(String(enrollmentYear), 10) : null;
+    if (enrollmentYear && Number.isNaN(parsedEnrollmentYear)) {
+      return res.status(400).json({ error: 'Enrollment year must be a valid number.' });
+    }
+    const parsedGraduationDate = graduationDate ? new Date(graduationDate) : null;
+    if (graduationDate && Number.isNaN(parsedGraduationDate.getTime())) {
+      return res.status(400).json({ error: 'Graduation date must be a valid date.' });
+    }
+
     // Create user and intern
     const user = await prisma.user.create({
       data: {
@@ -245,11 +296,16 @@ router.post('/register/intern', async (req, res) => {
             firstName,
             lastName,
             studentId,
+            enrollmentYear: parsedEnrollmentYear,
+            course: course || null,
+            graduationDate: parsedGraduationDate,
+            universityId: resolvedUniversity?.id || null,
+            studentVerificationStatus: resolvedUniversity ? 'PENDING' : 'NOT_SUBMITTED',
             bio,
             phone,
             experience: experience || null,
             skills: skillsClean,
-            education: education || null,
+            education: education || resolvedUniversity?.name || null,
             educationWebsite: educationWebsite || null,
             location: location || null,
           },
@@ -257,6 +313,43 @@ router.post('/register/intern', async (req, res) => {
       },
       include: { intern: true },
     });
+
+    if (resolvedUniversity && user.intern?.id && user.intern?.studentId) {
+      const catalogRecord = await prisma.universityStudentCatalog.findUnique({
+        where: {
+          universityId_studentId: {
+            universityId: resolvedUniversity.id,
+            studentId: user.intern.studentId,
+          },
+        },
+        select: { id: true },
+      });
+
+      await prisma.studentVerificationRequest.create({
+        data: {
+          internId: user.intern.id,
+          universityId: resolvedUniversity.id,
+          catalogRecordId: catalogRecord?.id || null,
+          status: catalogRecord ? 'APPROVED' : 'PENDING',
+          requestedStudentId: user.intern.studentId,
+          requestedEnrollmentYear: parsedEnrollmentYear,
+          requestedCourse: course || null,
+          requestedGraduationDate: parsedGraduationDate,
+          reviewedAt: catalogRecord ? new Date() : null,
+          notes: catalogRecord ? 'Auto-approved from university catalog match during signup.' : null,
+        },
+      });
+
+      if (catalogRecord) {
+        await prisma.intern.update({
+          where: { id: user.intern.id },
+          data: {
+            studentVerificationStatus: 'APPROVED',
+            studentVerificationNotes: 'Auto-approved from university catalog during signup.',
+          },
+        });
+      }
+    }
 
     // Send verification email (do not fail signup if SMTP is misconfigured)
     const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
@@ -293,6 +386,80 @@ router.post('/register/intern', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
+    const message = error.code === 'P2002' ? 'This email is already registered' : (error.message || 'Registration failed');
+    res.status(500).json({ error: message });
+  }
+});
+
+// Register University
+router.post('/register/university', async (req, res) => {
+  try {
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ error: 'Server misconfiguration: JWT_SECRET is not set' });
+    }
+    const { email, password, name, website } = req.body || {};
+
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Email, password, and university name are required' });
+    }
+
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        userType: 'UNIVERSITY',
+        verificationToken,
+        university: {
+          create: {
+            name,
+            website: website || null,
+          },
+        },
+      },
+      include: { university: true },
+    });
+
+    const verifyUrl = `${frontendBaseUrl()}/verify-email?token=${verificationToken}`;
+    let emailSent = true;
+    try {
+      await sendEmail({
+        to: email,
+        subject: 'Verify your EasyIntern university account',
+        html: `<h1>Welcome to EasyIntern!</h1><p>Please click the link below to verify your email address:</p><a href="${verifyUrl}">${verifyUrl}</a>`,
+      });
+    } catch (emailErr) {
+      console.error('University verification email failed:', emailErr);
+      emailSent = false;
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, userType: user.userType },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      token,
+      emailSent,
+      emailWarning: emailSent ? undefined : 'Verification email could not be sent. Check SMTP settings; you can still log in.',
+      user: {
+        id: user.id,
+        email: user.email,
+        userType: user.userType,
+        isEmailVerified: user.isEmailVerified,
+        university: user.university,
+      },
+    });
+  } catch (error) {
+    console.error('University registration error:', error);
     const message = error.code === 'P2002' ? 'This email is already registered' : (error.message || 'Registration failed');
     res.status(500).json({ error: message });
   }
@@ -408,7 +575,7 @@ router.post('/login', async (req, res) => {
     // Find user
     const user = await prisma.user.findUnique({
       where: { email },
-      include: { company: true, intern: true },
+      include: { company: true, intern: true, university: true },
     });
 
     if (!user) {
@@ -437,6 +604,7 @@ router.post('/login', async (req, res) => {
         isEmailVerified: user.isEmailVerified,
         company: user.company,
         intern: user.intern,
+        university: user.university,
       },
     });
   } catch (error) {
@@ -556,6 +724,7 @@ router.get('/me', authenticate, async (req, res) => {
       include: {
         company: true,
         intern: true,
+        university: true,
       },
     });
 
@@ -571,6 +740,7 @@ router.get('/me', authenticate, async (req, res) => {
       scheduledAccountDeletionAt: user.scheduledAccountDeletionAt,
       company: user.company,
       intern: user.intern,
+      university: user.university,
     });
   } catch (error) {
     console.error('Get user error:', error);

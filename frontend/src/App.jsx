@@ -10,6 +10,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import CompanyDashboard from './pages/CompanyDashboard'
 import InternDashboard from './pages/InternDashboard'
+import UniversityDashboard from './pages/UniversityDashboard'
 import Jobs from './pages/Jobs'
 import JobDetail from './pages/JobDetail'
 import Interns from './pages/Interns'
@@ -49,7 +50,13 @@ function PrivateRoute({ children, requireType, requireAdmin, requireEmailVerifie
   }
 
   if (requireType && user.userType !== requireType) {
-    return <Navigate to={user.userType === 'COMPANY' ? '/company/dashboard' : '/intern/dashboard'} />
+    const fallback =
+      user.userType === 'COMPANY'
+        ? '/company/dashboard'
+        : user.userType === 'UNIVERSITY'
+          ? '/university/dashboard'
+          : '/intern/dashboard'
+    return <Navigate to={fallback} />
   }
 
   return children
@@ -92,6 +99,14 @@ function AppRoutes() {
         element={
           <PrivateRoute requireType="INTERN">
             <InternDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/university/dashboard"
+        element={
+          <PrivateRoute requireType="UNIVERSITY">
+            <UniversityDashboard />
           </PrivateRoute>
         }
       />

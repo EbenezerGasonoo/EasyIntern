@@ -9,7 +9,9 @@ import './Register.css'
 function Register() {
   const [searchParams] = useSearchParams()
   const typeParam = searchParams.get('type')
-  const [userType, setUserType] = useState(typeParam === 'company' ? 'COMPANY' : 'INTERN')
+  const [userType, setUserType] = useState(
+    typeParam === 'company' ? 'COMPANY' : typeParam === 'university' ? 'UNIVERSITY' : 'INTERN'
+  )
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
@@ -33,12 +35,32 @@ function Register() {
     customEducation: '',
     educationWebsite: '',
     confirmEducationWebsite: false,
+    universityId: '',
+    enrollmentYear: '',
+    course: '',
+    graduationDate: '',
+    universityName: '',
+    universityWebsite: '',
   })
+  const [universities, setUniversities] = useState([])
   const [error, setError] = useState('')
   const [socialNotice, setSocialNotice] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const loadUniversities = async () => {
+      try {
+        const response = await api.get('/auth/universities')
+        setUniversities(Array.isArray(response.data) ? response.data : [])
+      } catch (err) {
+        console.error('Failed to load universities', err)
+        setUniversities([])
+      }
+    }
+    loadUniversities()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -74,12 +96,20 @@ function Register() {
         }
       }
     }
+    if (userType === 'UNIVERSITY' && !formData.universityName.trim()) {
+      setError('University name is required.')
+      return
+    }
 
     setLoading(true)
 
     try {
       const endpoint =
-        userType === 'COMPANY' ? '/auth/register/company' : '/auth/register/intern'
+        userType === 'COMPANY'
+          ? '/auth/register/company'
+          : userType === 'UNIVERSITY'
+            ? '/auth/register/university'
+            : '/auth/register/intern'
       const payload =
         userType === 'COMPANY'
           ? {
@@ -95,12 +125,23 @@ function Register() {
               internIntake: formData.internIntake,
               mapLocation: formData.mapLocation,
             }
+          : userType === 'UNIVERSITY'
+            ? {
+                email: formData.email,
+                password: formData.password,
+                name: formData.universityName,
+                website: formData.universityWebsite || null,
+              }
           : {
               email: formData.email,
               password: formData.password,
               firstName: formData.firstName,
               lastName: formData.lastName,
               studentId: formData.studentId,
+              universityId: formData.universityId || null,
+              enrollmentYear: formData.enrollmentYear || null,
+              course: formData.course || null,
+              graduationDate: formData.graduationDate || null,
               phone: formData.phone,
               bio: formData.bio,
               experience: formData.experience,
@@ -169,6 +210,13 @@ function Register() {
               onClick={() => setUserType('COMPANY')}
             >
               I&apos;m a Company
+            </button>
+            <button
+              type="button"
+              className={`user-type-btn ${userType === 'UNIVERSITY' ? 'active' : ''}`}
+              onClick={() => setUserType('UNIVERSITY')}
+            >
+              I&apos;m a University
             </button>
           </div>
 
@@ -315,6 +363,32 @@ function Register() {
                   />
                 </div>
               </>
+            ) : userType === 'UNIVERSITY' ? (
+              <>
+                <div className="form-group">
+                  <label htmlFor="university-name">University Name</label>
+                  <input
+                    id="university-name"
+                    type="text"
+                    name="universityName"
+                    value={formData.universityName}
+                    onChange={handleChange}
+                    placeholder="Enter university name"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="university-website">University Website</label>
+                  <input
+                    id="university-website"
+                    type="url"
+                    name="universityWebsite"
+                    value={formData.universityWebsite}
+                    onChange={handleChange}
+                    placeholder="https://youruniversity.edu"
+                  />
+                </div>
+              </>
             ) : (
               <>
                 <div className="form-group">
@@ -351,6 +425,56 @@ function Register() {
                     onChange={handleChange}
                     placeholder="Enter student ID"
                     required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="intern-university-id">University</label>
+                  <select
+                    id="intern-university-id"
+                    name="universityId"
+                    value={formData.universityId}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select your university (for approval)</option>
+                    {universities.map((uni) => (
+                      <option key={uni.id} value={uni.id}>
+                        {uni.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="intern-enrollment-year">Enrollment Year</label>
+                    <input
+                      id="intern-enrollment-year"
+                      type="number"
+                      name="enrollmentYear"
+                      value={formData.enrollmentYear}
+                      onChange={handleChange}
+                      placeholder="e.g. 2023"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="intern-course">Course</label>
+                    <input
+                      id="intern-course"
+                      type="text"
+                      name="course"
+                      value={formData.course}
+                      onChange={handleChange}
+                      placeholder="e.g. BSc Computer Science"
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="intern-graduation-date">Date of Graduation</label>
+                  <input
+                    id="intern-graduation-date"
+                    type="date"
+                    name="graduationDate"
+                    value={formData.graduationDate}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="form-group">

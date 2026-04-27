@@ -12,6 +12,7 @@ import uploadRoutes from './routes/upload.js';
 import notificationRoutes from './routes/notification.js';
 import adminRoutes from './routes/admin.js';
 import supportRoutes from './routes/support.js';
+import universityRoutes from './routes/university.js';
 import { processScheduledAccountDeletions } from './utils/accountDeletion.js';
 
 dotenv.config();
@@ -57,6 +58,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api/university', universityRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

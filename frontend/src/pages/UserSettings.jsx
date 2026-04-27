@@ -88,7 +88,12 @@ function UserSettings() {
   }
 
   const issuedAt = getTokenIssuedAt()
-  const dashboardPath = user?.userType === 'COMPANY' ? '/company/dashboard' : '/intern/dashboard'
+  const dashboardPath = user?.userType === 'COMPANY'
+    ? '/company/dashboard'
+    : user?.userType === 'UNIVERSITY'
+      ? '/university/dashboard'
+      : '/intern/dashboard'
+  const canEditProfile = user?.userType === 'COMPANY' || user?.userType === 'INTERN'
   const canShowCompanyApplicantAlert = user?.userType === 'COMPANY'
 
   return (
@@ -148,7 +153,7 @@ function UserSettings() {
         <section className="card settings-section">
           <h2>Account</h2>
           <div className="settings-actions">
-            <Link to="/profile" className="btn btn-secondary">Edit profile</Link>
+            {canEditProfile && <Link to="/profile" className="btn btn-secondary">Edit profile</Link>}
             <Link to={dashboardPath} className="btn btn-secondary">Back to dashboard</Link>
             <Link to="/forgot-password" className="btn btn-secondary">Change password</Link>
             <button

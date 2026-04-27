@@ -24,11 +24,12 @@ function Login() {
     try {
       const response = await api.post('/auth/login', { email, password })
       login(response.data.token, response.data.user)
-      navigate(
-        response.data.user.userType === 'COMPANY'
-          ? '/company/dashboard'
+      const nextPath = response.data.user.userType === 'COMPANY'
+        ? '/company/dashboard'
+        : response.data.user.userType === 'UNIVERSITY'
+          ? '/university/dashboard'
           : '/intern/dashboard'
-      )
+      navigate(nextPath)
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed')
     } finally {
