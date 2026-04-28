@@ -331,27 +331,31 @@ async function reviewVerificationRequestHandler(req, res) {
     });
     if (!request) return res.status(404).json({ error: 'Verification request not found' });
 
-    const updated = await prisma.$transaction(async (tx) => {
-      const updatedRequest = await tx.studentVerificationRequest.update({
-        where: { id: request.id },
-        data: {
-          status,
-          notes: notes ? String(notes).trim() : null,
-          reviewedAt: new Date(),
-        },
-      });
+    // Avoid interactive transactions for hosted MySQL variants that can reject them.
+    const updated = await prisma.studentVerificationRequest.update({
+      where: { id: request.id },
+      data: {
+        status,
+        notes: notes ? String(notes).trim() : null,
+        reviewedAt: new Date(),
+      },
+    });
 
-      // Use updateMany so stale/missing intern rows do not block request review.
-      await tx.intern.updateMany({
+    // Keep intern sync best-effort so review can still succeed.
+    try {
+      await prisma.intern.updateMany({
         where: { id: request.internId },
         data: {
           studentVerificationStatus: status,
           studentVerificationNotes: notes ? String(notes).trim() : null,
         },
       });
-
-      return updatedRequest;
-    });
+    } catch (internUpdateError) {
+      console.warn(
+        'Intern verification status sync failed:',
+        internUpdateError?.message || internUpdateError
+      );
+    }
 
     // Best-effort audit trail: do not fail the user action if audit logging fails in production.
     try {
