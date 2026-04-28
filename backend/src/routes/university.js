@@ -331,11 +331,6 @@ async function reviewVerificationRequestHandler(req, res) {
     });
     if (!request) return res.status(404).json({ error: 'Verification request not found' });
 
-    const actor = await prisma.user.findUnique({
-      where: { id: req.userId },
-      select: { email: true },
-    });
-
     const updated = await prisma.$transaction(async (tx) => {
       const updatedRequest = await tx.studentVerificationRequest.update({
         where: { id: request.id },
@@ -346,7 +341,8 @@ async function reviewVerificationRequestHandler(req, res) {
         },
       });
 
-      await tx.intern.update({
+      // Use updateMany so stale/missing intern rows do not block request review.
+      await tx.intern.updateMany({
         where: { id: request.internId },
         data: {
           studentVerificationStatus: status,
@@ -354,7 +350,17 @@ async function reviewVerificationRequestHandler(req, res) {
         },
       });
 
-      await tx.auditLog.create({
+      return updatedRequest;
+    });
+
+    // Best-effort audit trail: do not fail the user action if audit logging fails in production.
+    try {
+      const actor = await prisma.user.findUnique({
+        where: { id: req.userId },
+        select: { email: true },
+      });
+
+      await prisma.auditLog.create({
         data: {
           actorUserId: req.userId,
           actorEmail: actor?.email || null,
@@ -369,9 +375,9 @@ async function reviewVerificationRequestHandler(req, res) {
           },
         },
       });
-
-      return updatedRequest;
-    });
+    } catch (auditError) {
+      console.warn('Audit log write failed for verification review:', auditError?.message || auditError);
+    }
 
     res.json(updated);
   } catch (error) {
