@@ -16,6 +16,7 @@ function UniversityDashboard() {
   const [bulkMode, setBulkMode] = useState('CSV')
   const [bulkUploading, setBulkUploading] = useState(false)
   const [bulkResult, setBulkResult] = useState(null)
+  const [reviewingRequestId, setReviewingRequestId] = useState(null)
   const [formData, setFormData] = useState({
     enrollmentYear: '',
     studentId: '',
@@ -122,13 +123,21 @@ function UniversityDashboard() {
   const reviewRequest = async (id, status) => {
     setError('')
     setSuccess('')
+    setReviewingRequestId(id)
     try {
-      await api.post(`/university/verification-requests/${id}/review`, { status })
+      try {
+        await api.post(`/university/verification-requests/${id}/review`, { status })
+      } catch {
+        // Fallback for environments where the new route is not deployed yet.
+        await api.patch(`/university/verification-requests/${id}`, { status })
+      }
       await fetchData()
       setSuccess(`Verification request ${status === 'APPROVED' ? 'approved' : 'rejected'} successfully.`)
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update verification status.')
       setSuccess('')
+    } finally {
+      setReviewingRequestId(null)
     }
   }
 
@@ -522,11 +531,21 @@ function UniversityDashboard() {
                     </div>
                     {request.status === 'PENDING' && (
                       <div className="application-actions">
-                        <button type="button" className="btn btn-success" onClick={() => reviewRequest(request.id, 'APPROVED')}>
-                          Approve
+                        <button
+                          type="button"
+                          className="btn btn-success"
+                          disabled={reviewingRequestId === request.id}
+                          onClick={() => reviewRequest(request.id, 'APPROVED')}
+                        >
+                          {reviewingRequestId === request.id ? 'Processing...' : 'Approve'}
                         </button>
-                        <button type="button" className="btn btn-danger" onClick={() => reviewRequest(request.id, 'REJECTED')}>
-                          Reject
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          disabled={reviewingRequestId === request.id}
+                          onClick={() => reviewRequest(request.id, 'REJECTED')}
+                        >
+                          {reviewingRequestId === request.id ? 'Processing...' : 'Reject'}
                         </button>
                       </div>
                     )}
