@@ -123,7 +123,7 @@ function UniversityDashboard() {
     setError('')
     setSuccess('')
     try {
-      await api.patch(`/university/verification-requests/${id}`, { status })
+      await api.post(`/university/verification-requests/${id}/review`, { status })
       await fetchData()
       setSuccess(`Verification request ${status === 'APPROVED' ? 'approved' : 'rejected'} successfully.`)
     } catch (err) {

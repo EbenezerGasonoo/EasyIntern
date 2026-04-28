@@ -312,7 +312,7 @@ router.get('/verification-requests', authenticate, requireUniversity, requireEma
   }
 });
 
-router.patch('/verification-requests/:id', authenticate, requireUniversity, requireEmailVerified, async (req, res) => {
+async function reviewVerificationRequestHandler(req, res) {
   try {
     const { status, notes } = req.body || {};
     if (status !== 'APPROVED' && status !== 'REJECTED') {
@@ -378,6 +378,22 @@ router.patch('/verification-requests/:id', authenticate, requireUniversity, requ
     console.error('Review verification request error:', error);
     res.status(500).json({ error: 'Failed to update verification request' });
   }
-});
+}
+
+router.patch(
+  '/verification-requests/:id',
+  authenticate,
+  requireUniversity,
+  requireEmailVerified,
+  reviewVerificationRequestHandler
+);
+
+router.post(
+  '/verification-requests/:id/review',
+  authenticate,
+  requireUniversity,
+  requireEmailVerified,
+  reviewVerificationRequestHandler
+);
 
 export default router;
