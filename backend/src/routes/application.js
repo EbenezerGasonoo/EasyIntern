@@ -5,6 +5,46 @@ import { sendEmail } from '../utils/email.js';
 
 const router = express.Router();
 
+const statusEmailContent = {
+  PENDING: {
+    subjectPrefix: 'Application Received',
+    heading: 'Application Submitted',
+    messageBuilder: (jobTitle, companyName) =>
+      `Your application for the <strong>${jobTitle}</strong> internship at <strong>${companyName}</strong> is now pending review.`,
+  },
+  REVIEWED: {
+    subjectPrefix: 'Application Shortlisted',
+    heading: 'You have been shortlisted',
+    messageBuilder: (jobTitle, companyName) =>
+      `Great news! Your application for the <strong>${jobTitle}</strong> internship at <strong>${companyName}</strong> has been shortlisted and is now under review.`,
+  },
+  ACCEPTED: {
+    subjectPrefix: 'Internship Accepted',
+    heading: 'Congratulations!',
+    messageBuilder: (jobTitle, companyName) =>
+      `Your application for the <strong>${jobTitle}</strong> internship at <strong>${companyName}</strong> has been accepted!`,
+  },
+  REJECTED: {
+    subjectPrefix: 'Application Update',
+    heading: 'Application Update',
+    messageBuilder: (jobTitle, companyName) =>
+      `Your application for the <strong>${jobTitle}</strong> internship at <strong>${companyName}</strong> was not selected at this time.`,
+  },
+};
+
+async function sendApplicationStatusEmail({ to, status, jobTitle, companyName }) {
+  const emailContent = statusEmailContent[status];
+  if (!emailContent) return;
+
+  await sendEmail({
+    to,
+    subject: `${emailContent.subjectPrefix}: ${jobTitle}`,
+    html: `<h1>${emailContent.heading}</h1>
+           <p>${emailContent.messageBuilder(jobTitle, companyName)}</p>
+           <p>Please log in to the portal to view details and next steps.</p>`,
+  });
+}
+
 // Apply to job (intern only)
 router.post('/', authenticate, requireIntern, requireEmailVerified, async (req, res) => {
   try {
@@ -82,6 +122,29 @@ router.post('/', authenticate, requireIntern, requireEmailVerified, async (req, 
         type: 'INFO'
       }
     });
+
+    // Notify intern when the application is created (initial status: PENDING)
+    const internWithUser = await prisma.intern.findUnique({
+      where: { id: application.internId },
+      select: {
+        user: {
+          select: { email: true },
+        },
+      },
+    });
+
+    if (internWithUser?.user?.email) {
+      try {
+        await sendApplicationStatusEmail({
+          to: internWithUser.user.email,
+          status: application.status,
+          jobTitle: application.job.title,
+          companyName: application.job.company.name,
+        });
+      } catch (err) {
+        console.error('Failed to send pending application email:', err);
+      }
+    }
 
     res.status(201).json(application);
   } catch (error) {
@@ -200,18 +263,17 @@ router.patch('/:id/status', authenticate, requireCompany, requireEmailVerified, 
       }
     });
 
-    // Requirement 13: Email confirmation ( sign and accepted internship )
-    if (status === 'ACCEPTED') {
+    // Email intern on status updates
+    if (['PENDING', 'REVIEWED', 'ACCEPTED', 'REJECTED'].includes(status)) {
       try {
-        await sendEmail({
+        await sendApplicationStatusEmail({
           to: updatedApplication.intern.user.email,
-          subject: `Internship Accepted: ${updatedApplication.job.title}`,
-          html: `<h1>Congratulations!</h1>
-                 <p>Your application for the <strong>${updatedApplication.job.title}</strong> internship at <strong>${updatedApplication.job.company.name}</strong> has been accepted!</p>
-                 <p>Please log in to the portal to view the next steps.</p>`
+          status,
+          jobTitle: updatedApplication.job.title,
+          companyName: updatedApplication.job.company.name,
         });
       } catch (err) {
-        console.error('Failed to send acceptance email:', err);
+        console.error('Failed to send application status email:', err);
       }
     }
 
